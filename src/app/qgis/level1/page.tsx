@@ -1,0 +1,137 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { Home, Check, Award } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { getProgress, saveProgress } from '@/utils/storage';
+import { qgisLevel1Steps } from '@/data/qgis/level1-steps';
+import { Language } from '@/types';
+
+export default function QGISLevel1Roadmap() {
+    const router = useRouter();
+    const [language, setLanguage] = useState<Language>('en');
+    const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+
+    useEffect(() => {
+        const progress = getProgress();
+        setLanguage(progress.preferredLanguage);
+        setCompletedSteps(progress.qgisProgress.level1.completedSteps);
+    }, []);
+
+    const handleLanguageChange = (newLang: Language) => {
+        setLanguage(newLang);
+        const progress = getProgress();
+        progress.preferredLanguage = newLang;
+        saveProgress(progress);
+    };
+
+    const handleStepClick = (stepId: number) => {
+        if (stepId > 1 && !completedSteps.includes(stepId - 1)) {
+        return;
+        }
+        router.push(`/qgis/level1/step/${stepId}`);
+    };
+
+    const t = {
+        en: {
+        title: 'QGIS Expression Basic Editor',
+        level1: 'Level 1',
+        completed: 'Completed',
+        steps: 'Steps',
+        backToHome: 'Back to Home',
+        takeTest: 'Take Final Test',
+        stepLocked: 'Complete previous steps to unlock'
+        },
+        zh: {
+        title: 'QGIS 表達式基礎編輯器',
+        level1: '第一級',
+        completed: '已完成',
+        steps: '步驟',
+        backToHome: '返回主頁',
+        takeTest: '參加最終測試',
+        stepLocked: '完成前面的步驟以解鎖'
+        }
+    };
+
+    const text = t[language];
+    const totalSteps = 20;
+
+    return (
+        <div className="min-h-screen bg-gray-50">
+        <nav className="bg-white shadow-sm border-b">
+            <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div className="flex items-center gap-4">
+                <button 
+                onClick={() => router.push('/')} 
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                >
+                <Home className="w-5 h-5" />
+                </button>
+                <span className="text-xl font-bold text-gray-800">{text.title}</span>
+            </div>
+            <button
+                onClick={() => handleLanguageChange(language === 'en' ? 'zh' : 'en')}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition"
+            >
+                {language === 'en' ? '中文' : 'English'}
+            </button>
+            </div>
+        </nav>
+
+        <div className="max-w-4xl mx-auto px-6 py-12">
+            <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">{text.level1}</h1>
+            <p className="text-gray-600">
+                {completedSteps.length} / {totalSteps} {text.completed}
+            </p>
+            </div>
+
+            <div className="grid grid-cols-5 gap-6">
+            {qgisLevel1Steps.map((step) => {
+                const isCompleted = completedSteps.includes(step.id);
+                const isLocked = step.id > 1 && !completedSteps.includes(step.id - 1);
+                
+                return (
+                <button
+                    key={step.id}
+                    onClick={() => handleStepClick(step.id)}
+                    disabled={isLocked}
+                    className={`aspect-square rounded-full flex items-center justify-center text-xl font-bold transition ${
+                    isCompleted
+                        ? 'bg-green-500 text-white shadow-lg'
+                        : isLocked
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                        : 'bg-white border-2 border-green-500 text-green-600 hover:bg-green-50 shadow-md'
+                    }`}
+                    title={isLocked ? text.stepLocked : step.title[language]}
+                >
+                    {isCompleted ? <Check className="w-6 h-6" /> : step.id}
+                </button>
+                );
+            })}
+            
+            {Array.from({ length: totalSteps - qgisLevel1Steps.length }).map((_, idx) => (
+                <div 
+                key={`future-${idx}`} 
+                className="aspect-square rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-xl font-bold"
+                >
+                {qgisLevel1Steps.length + idx + 1}
+                </div>
+            ))}
+            </div>
+
+            {completedSteps.length === qgisLevel1Steps.length && (
+            <div className="mt-12 text-center">
+                <button 
+                onClick={() => alert(language === 'en' ? 'Final test coming soon!' : '最終測試即將推出！')}
+                className="px-8 py-4 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl font-bold text-lg shadow-lg flex items-center gap-2 mx-auto transition"
+                >
+                <Award className="w-6 h-6" />
+                {text.takeTest}
+                </button>
+            </div>
+            )}
+        </div>
+        </div>
+    );
+    }
