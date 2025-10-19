@@ -50,6 +50,11 @@ export interface ExerciseStep {
         en: string[];
         zh: string[];
     };
+    tableData: { 
+        inputField: string;
+        inputValues: string[];
+        outputValues: string[];
+    }
     }
 
     // user progress（current: LocalStorage）

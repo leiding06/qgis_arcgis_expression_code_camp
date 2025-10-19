@@ -67,14 +67,14 @@ export default function HomePage() {
       <nav className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Globe className="w-6 h-6 text-green-600" />
+            <Globe className="w-6 h-6 text-black" />
             <span className="text-xl font-bold text-gray-800">{text.title}</span>
           </div>
           <button
             onClick={() => handleLanguageChange(language === 'en' ? 'zh' : 'en')}
-            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition"
+            className="px-4 py-2 bg-gray-100 border-1 border-white hover:bg-gray-200 text-gray-600 rounded-lg text-sm font-medium transition"
           >
-            {language === 'en' ? '中文' : 'English'}
+            {language === 'en' ? '中文' : 'EN'}
           </button>
         </div>
       </nav>
@@ -82,7 +82,7 @@ export default function HomePage() {
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">{text.title}</h1>
+        
           <p className="text-xl text-gray-600">{text.subtitle}</p>
         </div>
 
@@ -96,7 +96,7 @@ export default function HomePage() {
             onClick={() => handlePathSelect('QGIS')}
             className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition p-8 text-left border-2 border-transparent hover:border-green-500"
           >
-            <div className="text-5xl mb-4">🗺️</div>
+            
             <h3 className="text-2xl font-bold text-gray-900 mb-2">
               {text.qgisTitle}
             </h3>
@@ -111,7 +111,7 @@ export default function HomePage() {
             onClick={() => handlePathSelect('ArcGIS')}
             className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition p-8 text-left border-2 border-transparent hover:border-blue-500 opacity-60"
           >
-            <div className="text-5xl mb-4">🌍</div>
+            
             <h3 className="text-2xl font-bold text-gray-900 mb-2">
               {text.arcgisTitle}
             </h3>

@@ -63,22 +63,22 @@ export default function QGISLevel1Roadmap() {
             <div className="flex items-center gap-4">
                 <button 
                 onClick={() => router.push('/')} 
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 text-black hover:bg-gray-100 rounded-lg transition"
                 >
                 <Home className="w-5 h-5" />
                 </button>
-                <span className="text-xl font-bold text-gray-800">{text.title}</span>
+            
             </div>
             <button
                 onClick={() => handleLanguageChange(language === 'en' ? 'zh' : 'en')}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition"
+                className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-sm font-medium transition"
             >
-                {language === 'en' ? '中文' : 'English'}
+                {language === 'en' ? '中文' : 'EN'}
             </button>
             </div>
         </nav>
 
-        <div className="max-w-4xl mx-auto px-6 py-12">
+        <div className="max-w-xl mx-auto px-6 py-12">
             <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">{text.level1}</h1>
             <p className="text-gray-600">
