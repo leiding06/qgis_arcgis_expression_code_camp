@@ -213,9 +213,10 @@ export default function ExercisePage() {
                     {currentStep.tableData && (
                         <AttributeTable 
                             title={text.initialData}
-                            fieldName={currentStep.tableData.inputField}
-                            inputValues={currentStep.tableData.inputValues}
-                            outputValues={currentStep.tableData.inputValues}
+                            fieldName1={currentStep.tableData.field1}
+                            fieldName2={currentStep.tableData.field2}
+                            value1={currentStep.tableData.value1}
+                            value2={currentStep.tableData.value1}
                             isExpected={false}
                             isComparisonView={true}
                         />
@@ -225,9 +226,10 @@ export default function ExercisePage() {
                     {currentStep.tableData && (
                         <AttributeTable 
                             title={text.expectedResult}
-                            fieldName={currentStep.tableData.inputField}
-                            inputValues={currentStep.tableData.inputValues}
-                            outputValues={currentStep.tableData.outputValues}
+                            fieldName1={currentStep.tableData.field1}
+                            fieldName2={currentStep.tableData.field2}
+                            value1={currentStep.tableData.value1}
+                            value2={currentStep.tableData.value2}
                             isExpected={true}
                             isComparisonView={true}
                         />

@@ -53,9 +53,10 @@ export const qgisLevel1Steps: ExerciseStep[] = [
         },
         // Step 1 tableData
         tableData: {
-            inputField: 'field_name',
-            inputValues: ['No1223', 'No3242', 'No5566', 'Yes789'],
-            outputValues: ['NO1223', 'NO3242', 'NO5566', 'Yes789'],
+            field1: 'original_field',
+            field2: 'field_name',
+            value1: ['No1223', 'No3242', 'No5566', 'Yes789'],
+            value2: ['NO1223', 'NO3242', 'NO5566', 'Yes789'],
         }
     },
     {
@@ -104,9 +105,10 @@ export const qgisLevel1Steps: ExerciseStep[] = [
         },
         // Step 2 tableData
         tableData: {
-            inputField: 'city_name',
-            inputValues: ['london', 'paris', 'tokyo', 'rome'],
-            outputValues: ['LONDON', 'PARIS', 'TOKYO', 'ROME'],
+            field1: 'city_name',
+            field2: 'city_name_uppercase',
+            value1: ['london', 'paris', 'tokyo', 'rome'],
+            value2: ['LONDON', 'PARIS', 'TOKYO', 'ROME'],
         }
     },
     {
@@ -161,9 +163,10 @@ export const qgisLevel1Steps: ExerciseStep[] = [
         },
         // Step 3 tableData
         tableData: {
-            inputField: 'first_name / last_name',
-            inputValues: ['John / Doe', 'Jane / Smith', 'Alex / Wu', 'Chris / Lee'],
-            outputValues: ['John Doe', 'Jane Smith', 'Alex Wu', 'Chris Lee'],
+            field1: 'first_name / last_name',
+            field2: 'first_name / last_name',
+            value1: ['John / Doe', 'Jane / Smith', 'Alex / Wu', 'Chris / Lee'],
+            value2: ['John Doe', 'Jane Smith', 'Alex Wu', 'Chris Lee'],
         }
     },
     // TODO: 添加 Step 4-20

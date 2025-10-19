@@ -3,9 +3,10 @@ import React from 'react';
 
 export interface AttributeTableProps {
     title: string;
-    fieldName: string;
-    inputValues: string[];
-    outputValues: string[];
+    fieldName1: string;
+    fieldName2?: string;
+    value1: string[];
+    value2: string[];
     isExpected: boolean;
     isComparisonView?: boolean; 
 }
@@ -13,7 +14,7 @@ export interface AttributeTableProps {
 // =================================================================
 // AttributeTable 
 // =================================================================
-export const AttributeTable: React.FC<AttributeTableProps> = ({ title, fieldName, inputValues, outputValues, isExpected, isComparisonView = false }) => {
+export const AttributeTable: React.FC<AttributeTableProps> = ({ title, fieldName1, fieldName2,value1, value2, isExpected, isComparisonView = false }) => {
     const baseField: string = 'ID'; 
     const rowsToShow: number = isComparisonView ? 3 : 4; 
     const fontSizeClass = isComparisonView ? 'text-xs' : 'text-sm';
@@ -29,31 +30,31 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({ title, fieldName
                                 {baseField}
                             </th>
                             <th className="py-1 px-2 border-b text-left text-gray-700 font-medium w-1/3">
-                                {fieldName} 
+                                {fieldName1} 
                             </th>
                             <th className="py-1 px-2 border-b text-left text-gray-700 font-medium w-1/3">
-                                new_field
+                                {fieldName2}
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {inputValues.slice(0, rowsToShow).map((inputValue: string, index: number) => (
+                        {value1.slice(0, rowsToShow).map((value1: string, index: number) => (
                             <tr key={index} className="hover:bg-gray-100">
                                 <td className="py-1 px-2 text-gray-500 border-b border-gray-200 sticky left-0 bg-white">
                                     {index + 1}
                                 </td>
                                 <td className="py-1 px-2 text-gray-700 border-b border-gray-200">
-                                    {inputValue}
+                                    {value1}
                                 </td>
                                 <td className={`py-1 px-2 font-semibold border-b border-gray-200 ${isExpected ? 'text-green-700' : 'text-gray-700'}`}>
-                                    {outputValues[index]}
+                                    {value2[index]}
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
-            {inputValues.length > rowsToShow && (
+            {value1.length > rowsToShow && (
                 <p className="text-xs text-gray-500 mt-2 text-center">... Only display {rowsToShow} rows ...</p>
             )}
         </div>
