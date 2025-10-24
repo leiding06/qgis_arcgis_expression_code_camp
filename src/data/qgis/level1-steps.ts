@@ -1,175 +1,413 @@
 import { ExerciseStep } from '@/types';
 
 // QGIS Level 1 - 20
+//src/data/qgis/level1-steps.ts
+// src/data/qgis/level1-steps.ts
+// QGIS Expression Editor - Level 1 (10 steps + intro)
+
+import { ExerciseStep } from '@/types';
 
 export const qgisLevel1Steps: ExerciseStep[] = [
+    {
+        id: 0,
+        pathType: 'QGIS',
+        level: 1,
+        title: { en: 'Introduction to the Expression Editor' },
+        description: {
+        en: `The QGIS Expression Editor is a powerful tool that allows you to build dynamic values and automate data entry. 
+    It can be accessed from the Field Calculator in the Attribute Table (see official docs: https://docs.qgis.org/3.40/en/docs/user_manual/expressions/expression.html), 
+    as well as from places like the Label, Atlas, or Rule-based styling panels. 
+    In this Level 1 series, you will learn the basics of expressions—how to call fields, use data types, perform calculations, 
+    and combine strings and numbers.`
+        },
+        example: {
+        en: `Example use cases:
+    - Automatically populate a field value
+    - Create dynamic labels
+    - Build conditional styling rules
+
+    This level contains 10 short exercises designed to introduce you to QGIS expression syntax step by step.`
+        }
+    },
+
+    // Step 1 ------------------------------------------------------------------
     {
         id: 1,
         pathType: 'QGIS',
         level: 1,
-        title: {
-            en: 'Call a field',
-            zh: '字段調用'
-        },
+        title: { en: 'Call a field' },
         description: {
-            en: 'Learn how to get a value from a field - Call a field. If you are familiar with SQL, this is same logic. If you are not familiar with SQL, this can build a foundation for you as SQL is very important for spatial data handling',
-            zh: '學習如何從欄位中獲取值 - 調用欄位。如果你熟悉 SQL，這是相同的邏輯。如果你不熟悉 SQL，這可以為你建立基礎，因為 SQL 是非常重要的空間數據處理的工具。'
+        en: `Learn how to reference a field directly. 
+    When creating a new field, you can make its value equal to another existing field.
+    Field names without spaces can be written directly; field names with spaces must be enclosed in double quotes.`
         },
         example: {
-            en: 'Syntax: field_name or "field_name"\n\nExample:\nMake a new field\'s value equal to the field [field_name]\nPut field_name in the field calculater\n↓\nResult: "No123"\n\nreplace("No123", "No", "NO")\n↓\nResult: "NO123"',
-            zh: '語法：replace(字串, 尋找, 替換)\n\n範例：\nreplace("No123", "No", "NO")\n↓\n結果："NO123"'
+        en: `Syntax: field_name  or  "field_name"
+
+    Example:
+    new_field = source_field`
         },
         question: {
-            en: 'Write an expression to change all "No" prefixes to "NO" (uppercase) in the field_name field.',
-            zh: '寫一個表達式，將 field_name 欄位中所有 "No" 開頭改成大寫 "NO"。'
+        en: `Write an expression to make the new_field equal to the source_field.`
         },
-        initialData: {
-            en: 'Before: No1223, No3242, No5566',
-            zh: '之前：No1223, No3242, No5566'
-        },
-        expectedResult: {
-            en: 'After: NO1223, NO3242, NO5566',
-            zh: '之後：NO1223, NO3242, NO5566'
-        },
+        initialData: { en: 'Before: source_field = "ABC123"' },
+        expectedResult: { en: 'After: new_field = "ABC123"' },
         correctAnswers: [
-            'replace("field_name",\'No\',\'NO\')',
-            'replace(field_name,\'No\',\'NO\')',
-            'replace("field_name", \'No\', \'NO\')',
-            'replace(field_name, \'No\', \'NO\')',
-            'replace( "field_name" , \'No\' , \'NO\' )',
-            'replace( field_name , \'No\' , \'NO\' )'
+        'source_field',
+        '"source_field"'
         ],
         hints: {
-            en: [
-                'Use the replace() function',
-                'Three parameters: source string, text to find, replacement text',
-                'Field name can be written with or without quotes'
-            ],
-            zh: [
-                '使用 replace() 函數',
-                '三個參數：來源字串、要尋找的文字、替換文字',
-                '欄位名稱可加引號或不加引號'
-            ]
+        en: [
+            'Simply reference the field name.',
+            'No quotes needed for field names without spaces.'
+        ]
         },
-        // Step 1 tableData
         tableData: {
-            field1: 'original_field',
-            field2: 'field_name',
-            value1: ['No1223', 'No3242', 'No5566', 'Yes789'],
-            value2: ['NO1223', 'NO3242', 'NO5566', 'Yes789'],
+        field1: 'source_field',
+        field2: 'new_field',
+        value1: ['ABC123', 'DEF456', 'GHI789'],
+        value2: ['ABC123', 'DEF456', 'GHI789']
         }
     },
+
+    // Step 2 ------------------------------------------------------------------
     {
         id: 2,
         pathType: 'QGIS',
         level: 1,
-        title: {
-            en: 'String Case - Upper & Lower',
-            zh: '字串大小寫 - 轉換'
-        },
+        title: { en: 'Field name with space' },
         description: {
-            en: 'Learn to use upper() and lower() functions to change text case. The upper() function converts text to uppercase, while lower() converts to lowercase.',
-            zh: '學習使用 upper() 和 lower() 函數來改變文字大小寫。upper() 函數將文字轉成大寫，lower() 則轉成小寫。'
+        en: `Some field names may contain spaces. In this case, you must use double quotes around the field name.`
         },
         example: {
-            en: 'Syntax: upper(string) or lower(string)\n\nExample:\nupper("hello")\n↓\nResult: "HELLO"\n\nlower("WORLD")\n↓\nResult: "world"',
-            zh: '語法：upper(字串) 或 lower(字串)\n\n範例：\nupper("hello")\n↓\n結果："HELLO"\n\nlower("WORLD")\n↓\n結果："world"'
+        en: `Syntax: "Field with space"
+
+    Example:
+    new_field = "Field with space"`
         },
         question: {
-            en: 'Convert all values in the city_name field to uppercase.',
-            zh: '將 city_name 欄位的所有值轉成大寫。'
+        en: `Write an expression to make new_field equal to "Field with space".`
         },
-        initialData: {
-            en: 'Before: london, paris, tokyo',
-            zh: '之前：london, paris, tokyo'
-        },
-        expectedResult: {
-            en: 'After: LONDON, PARIS, TOKYO',
-            zh: '之後：LONDON, PARIS, TOKYO'
-        },
-        correctAnswers: [
-            'upper("city_name")',
-            'upper(city_name)',
-            'upper( "city_name" )',
-            'upper( city_name )'
-        ],
+        initialData: { en: 'Before: "Field with space" = "London"' },
+        expectedResult: { en: 'After: new_field = "London"' },
+        correctAnswers: ['"Field with space"'],
         hints: {
-            en: [
-                'Use the upper() function',
-                'Pass the field name as the parameter'
-            ],
-            zh: [
-                '使用 upper() 函數',
-                '將欄位名稱作為參數傳入'
-            ]
+        en: [
+            'Always use double quotes when field names contain spaces.'
+        ]
         },
-        // Step 2 tableData
         tableData: {
-            field1: 'city_name',
-            field2: 'city_name_uppercase',
-            value1: ['london', 'paris', 'tokyo', 'rome'],
-            value2: ['LONDON', 'PARIS', 'TOKYO', 'ROME'],
+        field1: 'Field with space',
+        field2: 'new_field',
+        value1: ['London', 'Paris', 'Berlin'],
+        value2: ['London', 'Paris', 'Berlin']
         }
     },
+
+    // Step 3 ------------------------------------------------------------------
     {
         id: 3,
         pathType: 'QGIS',
         level: 1,
-        title: {
-            en: 'String Concatenation',
-            zh: '字串連接'
-        },
+        title: { en: 'Numeric field (Integer)' },
         description: {
-            en: 'Learn to combine multiple strings using the || operator or concat() function. String concatenation is useful for creating new values from existing fields.',
-            zh: '學習使用 || 運算子或 concat() 函數來組合多個字串。字串連接對於從現有欄位創建新值很有用。'
+        en: `Learn how to use numeric values. 
+    In this example, the new field 'month' is of integer type, so you can only use numbers, not text.`
         },
         example: {
-            en: 'Syntax: string1 || string2\nor: concat(string1, string2, ...)\n\nExample:\n"Hello" || " " || "World"\n↓\nResult: "Hello World"',
-            zh: '語法：字串1 || 字串2\n或：concat(字串1, 字串2, ...)\n\n範例：\n"Hello" || " " || "World"\n↓\n結果："Hello World"'
+        en: `Example:
+    month = 10
+    // October represented as number`
         },
         question: {
-            en: 'Combine the first_name and last_name fields with a space in between.',
-            zh: '將 first_name 和 last_name 欄位組合，中間加一個空格。'
+        en: `Set the month field to 10 (October).`
         },
-        initialData: {
-            en: 'Before: first_name="John", last_name="Doe"',
-            zh: '之前：first_name="John", last_name="Doe"'
-        },
-        expectedResult: {
-            en: 'After: "John Doe"',
-            zh: '之後："John Doe"'
-        },
-        correctAnswers: [
-            'first_name||\' \'||last_name',
-            'first_name || \' \' || last_name',
-            '"first_name"||\' \'||"last_name"',
-            '"first_name" || \' \' || "last_name"',
-            'concat(first_name,\' \',last_name)',
-            'concat(first_name, \' \', last_name)',
-            'concat("first_name",\' \',"last_name")',
-            'concat("first_name", \' \', "last_name")'
-        ],
+        initialData: { en: 'Before: year = 2025' },
+        expectedResult: { en: 'After: month = 10' },
+        correctAnswers: ['10'],
         hints: {
-            en: [
-                'Use the || operator or concat() function',
-                'Add a space between the names using \' \'',
-                'Remember to include the space character'
-            ],
-            zh: [
-                '使用 || 運算子或 concat() 函數',
-                '使用 \' \' 在名字之間加入空格',
-                '記得加入空格字符'
-            ]
+        en: [
+            'Do not use quotes for numbers.',
+            'Integer fields can only store whole numbers.'
+        ]
         },
-        // Step 3 tableData
         tableData: {
-            field1: 'first_name / last_name',
-            field2: 'first_name / last_name',
-            value1: ['John / Doe', 'Jane / Smith', 'Alex / Wu', 'Chris / Lee'],
-            value2: ['John Doe', 'Jane Smith', 'Alex Wu', 'Chris Lee'],
+        field1: 'year',
+        field2: 'month',
+        value1: [2025, 2025, 2025],
+        value2: [10, 10, 10]
         }
     },
-    // TODO: 添加 Step 4-20
+
+    // Step 4 ------------------------------------------------------------------
+    {
+        id: 4,
+        pathType: 'QGIS',
+        level: 1,
+        title: { en: 'String data type' },
+        description: {
+        en: `Strings are text values and must be enclosed in single quotes.`
+        },
+        example: {
+        en: `Example:
+    weekday = 'Wednesday'`
+        },
+        question: {
+        en: `Set the weekday field to the string 'Wednesday'.`
+        },
+        initialData: { en: 'Before: month = 10' },
+        expectedResult: { en: "After: weekday = 'Wednesday'" },
+        correctAnswers: ["'Wednesday'"],
+        hints: {
+        en: [
+            'Use single quotes around text values.',
+            'Text fields cannot store numeric values directly.'
+        ]
+        },
+        tableData: {
+        field1: 'month',
+        field2: 'weekday',
+        value1: [10, 10, 10],
+        value2: ['Wednesday', 'Wednesday', 'Wednesday']
+        }
+    },
+
+    // Step 5 ------------------------------------------------------------------
+    {
+        id: 5,
+        pathType: 'QGIS',
+        level: 1,
+        title: { en: 'Numeric calculation (Decimal)' },
+        description: {
+        en: `You can perform mathematical operations between numeric fields.
+    In this example, you will convert 'meter' to 'hectare' using the formula hectare = meter / 10000.`
+        },
+        example: {
+        en: `Example:
+    hectare = meter / 10000`
+        },
+        question: {
+        en: `Write an expression to calculate hectare from meter.`
+        },
+        initialData: { en: 'Before: meter = 52300' },
+        expectedResult: { en: 'After: hectare = 5.23' },
+        correctAnswers: [
+        'meter/10000',
+        '"meter"/10000',
+        '(meter/10000)',
+        '("meter"/10000)'
+        ],
+        hints: {
+        en: [
+            'Use / for division.',
+            'Make sure the output field type is decimal (real) and set to 2 decimal places.'
+        ]
+        },
+        tableData: {
+        field1: 'meter',
+        field2: 'hectare',
+        value1: [52300, 110000, 30450],
+        value2: [5.23, 11.00, 3.05]
+        }
+    },
+
+    // Step 6 ------------------------------------------------------------------
+    {
+        id: 6,
+        pathType: 'QGIS',
+        level: 1,
+        title: { en: 'Combine field and string' },
+        description: {
+        en: `Combine a field value with a string using the || operator.
+    Here, you will add a surname to an existing first_name field.`
+        },
+        example: {
+        en: `Example:
+    full_name = first_name || ' Smith'`
+        },
+        question: {
+        en: `Write an expression to create full_name by combining first_name with ' Smith'.`
+        },
+        initialData: { en: 'Before: first_name = "Peter"' },
+        expectedResult: { en: 'After: full_name = "Peter Smith"' },
+        correctAnswers: [
+        "first_name||' Smith'",
+        "first_name || ' Smith'",
+        '"first_name"||\' Smith\'',
+        '"first_name" || \' Smith\''
+        ],
+        hints: {
+        en: [
+            'Use || to concatenate text.',
+            'Strings must be enclosed in single quotes.'
+        ]
+        },
+        tableData: {
+        field1: 'first_name',
+        field2: 'full_name',
+        value1: ['Peter', 'Anna', 'Tom'],
+        value2: ['Peter Smith', 'Anna Smith', 'Tom Smith']
+        }
+    },
+
+    // Step 7 ------------------------------------------------------------------
+    {
+        id: 7,
+        pathType: 'QGIS',
+        level: 1,
+        title: { en: 'Use two fields - area calculation' },
+        description: {
+        en: `You can combine multiple fields in one expression. 
+    Here, multiply 'length' and 'width' to calculate 'area'.
+    You can also edit the ID field if needed.`
+        },
+        example: {
+        en: `Example:
+    area = length * width`
+        },
+        question: {
+        en: `Write an expression to calculate area using length and width.`
+        },
+        initialData: { en: 'Before: length = 10, width = 5' },
+        expectedResult: { en: 'After: area = 50' },
+        correctAnswers: [
+        'length*width',
+        '"length"*"width"',
+        '(length*width)',
+        '("length"*"width")'
+        ],
+        hints: {
+        en: [
+            'Use * for multiplication.',
+            'Ensure both fields are numeric.'
+        ]
+        },
+        tableData: {
+        field1: 'length / width',
+        field2: 'area',
+        value1: ['10 / 5', '12 / 6', '8 / 4'],
+        value2: [50, 72, 32]
+        }
+    },
+
+    // Step 8 ------------------------------------------------------------------
+    {
+        id: 8,
+        pathType: 'QGIS',
+        level: 1,
+        title: { en: 'Update an existing field' },
+        description: {
+        en: `In the Field Calculator, you can either create a new field or update an existing one. 
+    Here, the field 'fullname' already exists but only contains surnames. 
+    You will update it using another field 'firstname'.`
+        },
+        example: {
+        en: `Example:
+    fullname = firstname || ' ' || fullname`
+        },
+        question: {
+        en: `Write an expression to update fullname by adding firstname in front of it.`
+        },
+        initialData: { en: 'Before: firstname = "Jane", fullname = "Smith"' },
+        expectedResult: { en: 'After: fullname = "Jane Smith"' },
+        correctAnswers: [
+        "firstname||' '||fullname",
+        "firstname || ' ' || fullname",
+        '"firstname"||\' \'||"fullname"',
+        '"firstname" || \' \' || "fullname"'
+        ],
+        hints: {
+        en: [
+            'Use the same expression structure as concatenation.',
+            'Choose "Update existing field" instead of "Create new field".'
+        ]
+        },
+        tableData: {
+        field1: 'firstname / fullname',
+        field2: 'fullname (updated)',
+        value1: ['Jane / Smith', 'Alex / Johnson', 'Eva / Brown'],
+        value2: ['Jane Smith', 'Alex Johnson', 'Eva Brown']
+        }
+    },
+
+    // Step 9 ------------------------------------------------------------------
+    {
+        id: 9,
+        pathType: 'QGIS',
+        level: 1,
+        title: { en: 'Boolean (True / False)' },
+        description: {
+        en: `Boolean expressions return True or False. 
+    You can test conditions such as whether a value is greater than a threshold.`
+        },
+        example: {
+        en: `Example:
+    length_over_five = length > 5`
+        },
+        question: {
+        en: `Write an expression to check if length is greater than 5.`
+        },
+        initialData: { en: 'Before: length = 3, 5, 8' },
+        expectedResult: { en: 'After: False, False, True' },
+        correctAnswers: [
+        'length>5',
+        '"length">5',
+        '(length>5)',
+        '("length">5)'
+        ],
+        hints: {
+        en: [
+            'Use comparison operators like >, <, =.',
+            'The result will be True or False.'
+        ]
+        },
+        tableData: {
+        field1: 'length',
+        field2: 'length_over_five',
+        value1: [3, 5, 8],
+        value2: [false, false, true]
+        }
+    },
+
+    // Step 10 ------------------------------------------------------------------
+    {
+        id: 10,
+        pathType: 'QGIS',
+        level: 1,
+        title: { en: 'Date and Time (function without variable)' },
+        description: {
+        en: `Some functions do not need input fields. 
+    You can use them to return system values such as the current date or time. 
+    This introduces you to functions without variables.`
+        },
+        example: {
+        en: `Example:
+    today_date = to_date(now())`
+        },
+        question: {
+        en: `Write an expression that returns today's date (dd/mm/yyyy format).`
+        },
+        initialData: { en: 'No input fields needed.' },
+        expectedResult: { en: 'After: today_date = 24/11/2025' },
+        correctAnswers: [
+        'to_date(now())',
+        'date(now())',
+        'to_date( now() )',
+        'date( now() )'
+        ],
+        hints: {
+        en: [
+            'Use now() to get the current date and time.',
+            'Wrap it with to_date() to show only the date.'
+        ]
+        },
+        tableData: {
+        field1: '(none)',
+        field2: 'today_date',
+        value1: ['-', '-', '-'],
+        value2: ['24/11/2025', '24/11/2025', '24/11/2025']
+        }
+    }
 ];
 
 export const getTotalSteps = () => qgisLevel1Steps.length;
