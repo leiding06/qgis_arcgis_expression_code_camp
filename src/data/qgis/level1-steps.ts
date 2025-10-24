@@ -5,30 +5,9 @@ import { ExerciseStep } from '@/types';
 // src/data/qgis/level1-steps.ts
 // QGIS Expression Editor - Level 1 (10 steps + intro)
 
-import { ExerciseStep } from '@/types';
+
 
 export const qgisLevel1Steps: ExerciseStep[] = [
-    {
-        id: 0,
-        pathType: 'QGIS',
-        level: 1,
-        title: { en: 'Introduction to the Expression Editor' },
-        description: {
-        en: `The QGIS Expression Editor is a powerful tool that allows you to build dynamic values and automate data entry. 
-    It can be accessed from the Field Calculator in the Attribute Table (see official docs: https://docs.qgis.org/3.40/en/docs/user_manual/expressions/expression.html), 
-    as well as from places like the Label, Atlas, or Rule-based styling panels. 
-    In this Level 1 series, you will learn the basics of expressions—how to call fields, use data types, perform calculations, 
-    and combine strings and numbers.`
-        },
-        example: {
-        en: `Example use cases:
-    - Automatically populate a field value
-    - Create dynamic labels
-    - Build conditional styling rules
-
-    This level contains 10 short exercises designed to introduce you to QGIS expression syntax step by step.`
-        }
-    },
 
     // Step 1 ------------------------------------------------------------------
     {
@@ -134,8 +113,8 @@ export const qgisLevel1Steps: ExerciseStep[] = [
         tableData: {
         field1: 'year',
         field2: 'month',
-        value1: [2025, 2025, 2025],
-        value2: [10, 10, 10]
+        value1: ['2025', '2025', '2025'],
+        value2: ['10', '10', '10']
         }
     },
 
@@ -167,7 +146,7 @@ export const qgisLevel1Steps: ExerciseStep[] = [
         tableData: {
         field1: 'month',
         field2: 'weekday',
-        value1: [10, 10, 10],
+        value1: ['10', '10', '10'],
         value2: ['Wednesday', 'Wednesday', 'Wednesday']
         }
     },
@@ -206,8 +185,8 @@ export const qgisLevel1Steps: ExerciseStep[] = [
         tableData: {
         field1: 'meter',
         field2: 'hectare',
-        value1: [52300, 110000, 30450],
-        value2: [5.23, 11.00, 3.05]
+        value1: ['52300', '110000', '30450'],
+        value2: ['5.23', '11.00', '3.05']
         }
     },
 
@@ -286,7 +265,7 @@ export const qgisLevel1Steps: ExerciseStep[] = [
         field1: 'length / width',
         field2: 'area',
         value1: ['10 / 5', '12 / 6', '8 / 4'],
-        value2: [50, 72, 32]
+        value2: ['50', '72', '32']
         }
     },
 
@@ -364,8 +343,8 @@ export const qgisLevel1Steps: ExerciseStep[] = [
         tableData: {
         field1: 'length',
         field2: 'length_over_five',
-        value1: [3, 5, 8],
-        value2: [false, false, true]
+        value1: ['3', '5', '8'],
+        value2: ['false', 'false', 'true']
         }
     },
 
