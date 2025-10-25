@@ -1,29 +1,22 @@
 'use client';
-
+//src/app/qgis/level1/page.tsx
 import React, { useState, useEffect } from 'react';
 import { Home, Check, Award } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { getProgress, saveProgress } from '@/utils/storage';
+import { getProgress } from '@/utils/storage';
 import { qgisLevel1Steps } from '@/data/qgis/level1-steps';
-import { Language } from '@/types';
+
 
 export default function QGISLevel1Roadmap() {
     const router = useRouter();
-    const [language, setLanguage] = useState<Language>('en');
     const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
     useEffect(() => {
         const progress = getProgress();
-        setLanguage(progress.preferredLanguage);
         setCompletedSteps(progress.qgisProgress.level1.completedSteps);
     }, []);
 
-    const handleLanguageChange = (newLang: Language) => {
-        setLanguage(newLang);
-        const progress = getProgress();
-        progress.preferredLanguage = newLang;
-        saveProgress(progress);
-    };
+
 
     const handleStepClick = (stepId: number) => {
         if (stepId > 1 && !completedSteps.includes(stepId - 1)) {
@@ -32,8 +25,8 @@ export default function QGISLevel1Roadmap() {
         router.push(`/qgis/level1/step/${stepId}`);
     };
 
-    const t = {
-        en: {
+
+    const text =  {
         title: 'QGIS Expression Basic Editor',
         level1: 'Level 1',
         completed: 'Completed',
@@ -41,20 +34,8 @@ export default function QGISLevel1Roadmap() {
         backToHome: 'Back to Home',
         takeTest: 'Take Final Test',
         stepLocked: 'Complete previous steps to unlock'
-        },
-        zh: {
-        title: 'QGIS 表達式基礎編輯器',
-        level1: '第一級',
-        completed: '已完成',
-        steps: '步驟',
-        backToHome: '返回主頁',
-        takeTest: '參加最終測試',
-        stepLocked: '完成前面的步驟以解鎖'
         }
-    };
-
-    const text = t[language];
-    const totalSteps = 20;
+    const totalSteps = 10;
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -69,12 +50,7 @@ export default function QGISLevel1Roadmap() {
                 </button>
             
             </div>
-            <button
-                onClick={() => handleLanguageChange(language === 'en' ? 'zh' : 'en')}
-                className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-sm font-medium transition"
-            >
-                {language === 'en' ? '中文' : 'EN'}
-            </button>
+            
             </div>
         </nav>
 
@@ -103,7 +79,7 @@ export default function QGISLevel1Roadmap() {
                         ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                         : 'bg-white border-2 border-green-500 text-green-600 hover:bg-green-50 shadow-md'
                     }`}
-                    title={isLocked ? text.stepLocked : step.title[language]}
+                    title={isLocked ? text.stepLocked : step.title}
                 >
                     {isCompleted ? <Check className="w-6 h-6" /> : step.id}
                 </button>
@@ -123,7 +99,7 @@ export default function QGISLevel1Roadmap() {
             {completedSteps.length === qgisLevel1Steps.length && (
             <div className="mt-12 text-center">
                 <button 
-                onClick={() => alert(language === 'en' ? 'Final test coming soon!' : '最終測試即將推出！')}
+                onClick={() => alert('Congratulations! You have completed all the steps for Level 1 Basic, you can now proceed to the next level.')}
                 className="px-8 py-4 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl font-bold text-lg shadow-lg flex items-center gap-2 mx-auto transition"
                 >
                 <Award className="w-6 h-6" />

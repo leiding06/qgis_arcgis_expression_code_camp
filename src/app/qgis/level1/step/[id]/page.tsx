@@ -1,12 +1,11 @@
 'use client';
-
-import React, { useState, useEffect } from 'react';
+// src/app/qgis/level1/step/[id]/page.tsx
+import React, { useState } from 'react';
 import { ChevronRight, Check, X } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
-import { getProgress, markStepCompleted, saveProgress } from '@/utils/storage';
+import { getProgress, markStepCompleted} from '@/utils/storage';
 import { validateAnswer } from '@/utils/validator';
 import { qgisLevel1Steps } from '@/data/qgis/level1-steps';
-import { Language } from '@/types';
 import { AttributeTable } from '@/components/AttributeTable';
 
 
@@ -16,17 +15,12 @@ export default function ExercisePage() {
     const params = useParams();
     const stepId = parseInt(params.id as string);
     
-    const [language, setLanguage] = useState<Language>('en');
+
     const [userCode, setUserCode] = useState('');
     const [showFeedback, setShowFeedback] = useState<'correct' | 'wrong' | null>(null);
     const [showHints, setShowHints] = useState(false);
 
     const currentStep = qgisLevel1Steps.find(s => s.id === stepId);
-
-    useEffect(() => {
-        const progress = getProgress();
-        setLanguage(progress.preferredLanguage);
-    }, []);
 
     if (!currentStep) {
         return (
@@ -44,12 +38,7 @@ export default function ExercisePage() {
         );
     }
 
-    const handleLanguageChange = (newLang: Language) => {
-        setLanguage(newLang);
-        const progress = getProgress();
-        progress.preferredLanguage = newLang;
-        saveProgress(progress);
-    };
+
 
     const handleSubmit = () => {
         const isCorrect = validateAnswer(userCode, currentStep.correctAnswers);
@@ -76,8 +65,7 @@ export default function ExercisePage() {
         }
     };
 
-    const t = {
-        en: {
+    const text = {
         description: 'Description',
         example: 'Example',
         question: 'Question',
@@ -93,27 +81,8 @@ export default function ExercisePage() {
         hints: 'Hints',
         showHints: 'Show Hints',
         hideHints: 'Hide Hints'
-        },
-        zh: {
-        description: '說明',
-        example: '範例',
-        question: '題目',
-        yourCode: '你的程式碼',
-        initialData: '初始數據',
-        expectedResult: '預期結果',
-        submit: '提交答案',
-        nextStep: '下一步',
-        tryAgain: '再試一次',
-        correct: '正確！做得好！',
-        wrong: '不太對。再試一次！',
-        backToRoadmap: '返回路線圖',
-        hints: '提示',
-        showHints: '顯示提示',
-        hideHints: '隱藏提示'
-        }
     };
 
-    const text = t[language];
 
     return (
         <div className="h-screen flex flex-col bg-gray-50">
@@ -128,15 +97,10 @@ export default function ExercisePage() {
                 <ChevronRight className="w-5 h-5 text-black rotate-180" />
                 </button>
                 <span className="font-bold text-gray-800">
-                Step {currentStep.id}: {currentStep.title[language]}
+                Step {currentStep.id}: {currentStep.title}
                 </span>
             </div>
-            <button
-                onClick={() => handleLanguageChange(language === 'en' ? 'zh' : 'en')}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-sm font-medium transition"
-            >
-                {language === 'en' ? '中文' : 'EN'}
-            </button>
+            
             </div>
         </nav>
 
@@ -146,7 +110,7 @@ export default function ExercisePage() {
             {/* Left Panel - Instructions */}
             <div className="bg-white rounded-xl shadow-lg p-6 overflow-y-auto">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                {currentStep.title[language]}
+                {currentStep.title}
             </h2>
             
             {/* Description, Example, and Question */}
@@ -155,7 +119,7 @@ export default function ExercisePage() {
                 {text.description}
                 </h3>
                 <p className="text-gray-600 whitespace-pre-line">
-                {currentStep.description[language]}
+                {currentStep.description}
                 </p>
             </div>
 
@@ -164,7 +128,7 @@ export default function ExercisePage() {
                 {text.example}
                 </h3>
                 <pre className="bg-gray-50 p-4 rounded-lg text-sm text-gray-800 font-mono overflow-x-auto border border-gray-200">
-                {currentStep.example[language]}
+                {currentStep.example}
                 </pre>
             </div>
 
@@ -173,7 +137,7 @@ export default function ExercisePage() {
                 {text.question}
                 </h3>
                 <p className="text-gray-700 font-medium bg-green-50 p-4 rounded-lg border border-green-200">
-                {currentStep.question[language]}
+                {currentStep.question}
                 </p>
             </div>
 
@@ -193,7 +157,7 @@ export default function ExercisePage() {
                         💡 {text.hints}
                     </h3>
                     <ul className="list-disc list-inside text-gray-700 space-y-1">
-                        {currentStep.hints[language].map((hint, idx) => (
+                        {currentStep.hints.map((hint, idx) => (
                         <li key={idx}>{hint}</li>
                         ))}
                     </ul>

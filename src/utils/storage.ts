@@ -21,7 +21,6 @@ export const initialProgress: UserProgress = {
         }
     },
     achievements: [],
-    preferredLanguage: 'en',
     lastUpdated: new Date().toISOString()
     };
 

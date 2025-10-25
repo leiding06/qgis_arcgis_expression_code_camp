@@ -4,7 +4,6 @@
 // ==========================================
 
 export type PathType = 'QGIS' | 'ArcGIS';
-export type Language = 'en' | 'zh';
 export type StepStatus = 'locked' | 'unlocked' | 'completed';
 
 // single exercise
@@ -13,47 +12,31 @@ export interface ExerciseStep {
     pathType: PathType;
     level: number;
     
-    title: {
-        en: string;
-        zh: string;
-    };
+    title: string;
+
     
-    description: {
-        en: string;
-        zh: string;
-    };
+    description: string;
     
-    example: {
-        en: string;
-        zh: string;
-    };
+    example: string;
     
-    question: {
-        en: string;
-        zh: string;
-    };
+    question: string;
     
-    initialData: {
-        en: string;
-        zh: string;
-    };
+    initialData: string;
+
     
-    expectedResult: {
-        en: string;
-        zh: string;
-    };
+    expectedResult:string;
+
     
     // correct answers
     correctAnswers: string[];
     
-    hints?: {
-        en: string[];
-        zh: string[];
-    };
+    hints?: string[];
+
     tableData: { 
-        inputField: string;
-        inputValues: string[];
-        outputValues: string[];
+        field1: string;
+        value1: string[];
+        field2: string;
+        value2: string[];
     }
     }
 
@@ -79,21 +62,14 @@ export interface ExerciseStep {
     };
     
     achievements: string[];
-    preferredLanguage: Language;
     lastUpdated: string;
     }
 
     // path config
     export interface PathConfig {
     type: PathType;
-    title: {
-        en: string;
-        zh: string;
-    };
-    description: {
-        en: string;
-        zh: string;
-    };
+    title:  string;
+    description:string;
     icon: string;
     color: string;
     }

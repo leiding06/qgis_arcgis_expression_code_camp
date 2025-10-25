@@ -1,30 +1,19 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+
 import { Globe, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { getProgress, saveProgress } from '@/utils/storage';
-import { Language } from '@/types';
+
 
 export default function HomePage() {
   const router = useRouter();
-  const [language, setLanguage] = useState<Language>('en');
 
-  useEffect(() => {
-    const progress = getProgress();
-    setLanguage(progress.preferredLanguage);
-  }, []);
 
-  const handleLanguageChange = (newLang: Language) => {
-    setLanguage(newLang);
-    const progress = getProgress();
-    progress.preferredLanguage = newLang;
-    saveProgress(progress);
-  };
 
   const handlePathSelect = (path: 'QGIS' | 'ArcGIS') => {
     if (path === 'ArcGIS') {
-      alert(language === 'en' ? 'Coming Soon!' : '即將推出！');
+      alert('Coming Soon!' );
       return;
     }
     
@@ -34,8 +23,7 @@ export default function HomePage() {
     router.push(`/${path.toLowerCase()}/level1`);
   };
 
-  const t = {
-    en: {
+  const text = {
       title: 'GIS Expression Learning Platform',
       subtitle: 'Learn QGIS & ArcGIS expressions step by step',
       selectPath: 'Select Your Learning Path',
@@ -45,21 +33,10 @@ export default function HomePage() {
       arcgisDesc: 'Learn ArcGIS Pro Arcade expressions',
       level1: 'Level 1',
       comingSoon: 'Coming Soon'
-    },
-    zh: {
-      title: 'GIS 表達式學習平台',
-      subtitle: '逐步學習 QGIS 和 ArcGIS 表達式',
-      selectPath: '選擇你的學習路徑',
-      qgisTitle: 'QGIS 表達式基礎編輯器',
-      qgisDesc: '學習 QGIS 欄位計算器表達式',
-      arcgisTitle: 'ArcGIS 表達式基礎編輯器',
-      arcgisDesc: '學習 ArcGIS Pro Arcade 表達式',
-      level1: '第一級',
-      comingSoon: '即將推出'
-    }
+
   };
 
-  const text = t[language];
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
@@ -70,12 +47,7 @@ export default function HomePage() {
             <Globe className="w-6 h-6 text-black" />
             <span className="text-xl font-bold text-gray-800">{text.title}</span>
           </div>
-          <button
-            onClick={() => handleLanguageChange(language === 'en' ? 'zh' : 'en')}
-            className="px-4 py-2 bg-gray-100 border-1 border-white hover:bg-gray-200 text-gray-600 rounded-lg text-sm font-medium transition"
-          >
-            {language === 'en' ? '中文' : 'EN'}
-          </button>
+          
         </div>
       </nav>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-
+// src/components/AttributeTable.tsx
 
 export interface AttributeTableProps {
     title: string;
