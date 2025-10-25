@@ -38,9 +38,9 @@ export default function QGISLevel1Roadmap() {
     const totalSteps = 10;
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
         <nav className="bg-white shadow-sm border-b">
-            <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
             <div className="flex items-center gap-4">
                 <button 
                 onClick={() => router.push('/')} 
@@ -56,13 +56,13 @@ export default function QGISLevel1Roadmap() {
 
         <div className="max-w-xl mx-auto px-6 py-12">
             <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">{text.level1}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{text.level1}</h1>
             <p className="text-gray-600">
                 {completedSteps.length} / {totalSteps} {text.completed}
             </p>
             </div>
 
-            <div className="grid grid-cols-5 gap-6">
+            <div className="grid grid-cols-5 gap-10">
             {qgisLevel1Steps.map((step) => {
                 const isCompleted = completedSteps.includes(step.id);
                 const isLocked = step.id > 1 && !completedSteps.includes(step.id - 1);
@@ -74,14 +74,14 @@ export default function QGISLevel1Roadmap() {
                     disabled={isLocked}
                     className={`aspect-square rounded-full flex items-center justify-center text-xl font-bold transition ${
                     isCompleted
-                        ? 'bg-green-500 text-white shadow-lg'
+                        ? 'bg-green-600 text-white shadow-lg'
                         : isLocked
                         ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                         : 'bg-white border-2 border-green-500 text-green-600 hover:bg-green-50 shadow-md'
                     }`}
                     title={isLocked ? text.stepLocked : step.title}
                 >
-                    {isCompleted ? <Check className="w-6 h-6" /> : step.id}
+                    {isCompleted ? <Check className="w-7 h-7" /> : step.id}
                 </button>
                 );
             })}

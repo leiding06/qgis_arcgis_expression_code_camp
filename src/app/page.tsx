@@ -42,7 +42,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
       {/* Navbar */}
       <nav className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Globe className="w-6 h-6 text-black" />
             <span className="text-xl font-bold text-gray-800">{text.title}</span>
