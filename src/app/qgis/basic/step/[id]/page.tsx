@@ -1,5 +1,5 @@
 'use client';
-// src/app/qgis/level1/step/[id]/page.tsx
+// src/app/qgis/basic/step/[id]/page.tsx
 import React, { useState } from 'react';
 import { ChevronRight, Check, X } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
@@ -28,8 +28,8 @@ export default function ExercisePage() {
             <div className="text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">Step not found</h1>
             <button
-                onClick={() => router.push('/qgis/level1')}
-                className="px-6 py-3 bg-green-600 rounded-lg hover:bg-green-700 transition"
+                onClick={() => router.push('/qgis/basic')}
+                className="px-6 py-3 bg-green-100 rounded-lg hover:bg-green-700 transition"
             >
                 Back to Roadmap
             </button>
@@ -46,9 +46,10 @@ export default function ExercisePage() {
 
         if (isCorrect) {
         const progress = getProgress();
-        markStepCompleted(progress, 'QGIS', 1, stepId);
+      // markStepCompleted will auto-detect level from stepId
+        markStepCompleted(progress, 'QGIS', 'basic', 1, stepId);
         setShowHints(false);
-        } else {
+    } else {
         setShowHints(true);
         }
     };
@@ -59,9 +60,9 @@ export default function ExercisePage() {
         setShowHints(false);
         
         if (stepId < qgisBasicSteps.length) {
-        router.push(`/qgis/level1/step/${stepId + 1}`);
+        router.push(`/qgis/basic/step/${stepId + 1}`);
         } else {
-        router.push('/qgis/level1');
+        router.push('/qgis/basic');
         }
     };
 
@@ -91,7 +92,7 @@ export default function ExercisePage() {
             <div className="max-w-full px-6 py-3 flex justify-between items-center">
             <div className="flex items-center gap-4">
                 <button 
-                onClick={() => router.push('/qgis/level1')} 
+                onClick={() => router.push('/qgis/basic')} 
                 className="p-2 hover:bg-gray-300 border-1 border-gray-300 rounded-lg transition"
                 >
                 <ChevronRight className="w-5 h-5 text-black rotate-180" />

@@ -4,11 +4,16 @@
 import { Globe, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { getProgress, saveProgress } from '@/utils/storage';
-
+import { UserProgress } from '@/types';
+import { useEffect, useState } from 'react';
 
 export default function HomePage() {
   const router = useRouter();
-
+  const [displayLevel, setDisplayLevel] = useState('Level 1'); //initial level
+  useEffect(() => {
+    const progress = getProgress();
+    setDisplayLevel(computeDisplayLevel(progress));
+  }, []); 
 
 
   const handlePathSelect = (path: 'QGIS' | 'ArcGIS') => {
@@ -20,9 +25,35 @@ export default function HomePage() {
     const progress = getProgress();
     progress.currentPath = path;
     saveProgress(progress);
-    router.push(`/${path.toLowerCase()}/level1`);
+    router.push(`/${path.toLowerCase()}/basic`);
   };
 
+  // Get display level from progress
+  const computeDisplayLevel = (p: UserProgress)=> {
+    if (p.currentPath === 'QGIS') {
+      if (p.currentLevel === 1) {
+        return 'Level 1';
+      } else if (p.currentLevel === 2) {
+        return 'Level 2';
+      } else if (p.currentLevel === 3) {
+        return 'Level 3';
+      } else {
+        return 'Level 1';
+      }
+    } else if (p.currentPath === 'ArcGIS') {
+      if (p.currentLevel === 1) {
+        return 'Level 1';
+      } else if (p.currentLevel === 2) {
+        return 'Level 2';
+      } else if (p.currentLevel === 3) {
+        return 'Level 3';
+      } else {
+        return 'Level 1';
+      }
+    }
+    return 'Level 1'; // default return incase return undefined.
+  }
+  
   const text = {
       title: 'GIS Expression Learning Platform',
       subtitle: 'Learn QGIS & ArcGIS expressions step by step',
@@ -31,11 +62,11 @@ export default function HomePage() {
       qgisDesc: 'Learn QGIS field calculator expressions',
       arcgisTitle: 'ArcGIS Expression Basic Editor',
       arcgisDesc: 'Learn ArcGIS Pro Arcade expressions',
-      level1: 'Level 1',
+      display_level: computeDisplayLevel(getProgress()),
       comingSoon: 'Coming Soon'
 
   };
-
+    
 
 
   return (
@@ -74,7 +105,7 @@ export default function HomePage() {
             </h3>
             <p className="text-gray-600 mb-6">{text.qgisDesc}</p>
             <div className="flex items-center text-green-600 font-medium">
-              {text.level1} <ChevronRight className="w-5 h-5 ml-1" />
+              {displayLevel} <ChevronRight className="w-5 h-5 ml-1" />
             </div>
           </button>
 
@@ -96,4 +127,4 @@ export default function HomePage() {
       </div>
     </div>
   );
-}
+};
