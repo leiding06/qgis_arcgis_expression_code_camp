@@ -1,16 +1,19 @@
 import { ExerciseStep } from '@/types';
 
-// QGIS Level 1 - 20
+// QGIS Basic - 3 levels - 30 steps, each level has 10 steps
 // src/data/qgis/level1-steps.ts
 // QGIS Expression Editor - Level 1 (10 steps + intro)
 
 
-export const qgisLevel1Steps: ExerciseStep[] = [
+export const qgisBasicSteps: ExerciseStep[] = [
+      // ==========================================
+  // LEVEL 1: Data Types & Basic Operations (Steps 1-10)
+  // ==========================================
     {
         id: 1,
         pathType: 'QGIS',
         level: 1,
-        title: 'Call a field',
+        title: 'Call a field - Basic',
         description: `Learn how to reference a field directly. 
 When creating a new field, you can make its value equal to another existing field.
 Field names without spaces can be written directly; field names with spaces must be enclosed in double quotes.`,
@@ -283,7 +286,97 @@ today_date = to_date(now())`,
             value1: ['-', '-', '-'],
             value2: ['24/11/2025', '24/11/2025', '24/11/2025']
         }
-    }
+    },
+    // ==========================================
+  // LEVEL 2: Advanced Functions (Steps 11-20)
+  // ==========================================
+    {
+        id: 10,
+        pathType: 'QGIS',
+        level: 1,
+        title: 'Date and Time (function without variable)',
+        description: `Some functions do not need input fields. 
+You can use them to return system values such as the current date or time. 
+This introduces you to functions without variables.`,
+        example: `Example:
+today_date = to_date(now())`,
+        question: `Write an expression that returns today's date (dd/mm/yyyy format).`,
+        initialData: 'No input fields needed.',
+        expectedResult: 'After: today_date = 24/11/2025',
+        correctAnswers: [
+            'to_date(now())',
+            'date(now())',
+            'to_date( now() )',
+            'date( now() )'
+        ],
+        hints: [
+            'Use now() to get the current date and time.',
+            'Wrap it with to_date() to show only the date.'
+        ],
+        tableData: {
+            field1: '(none)',
+            field2: 'today_date',
+            value1: ['-', '-', '-'],
+            value2: ['24/11/2025', '24/11/2025', '24/11/2025']
+        }
+    },
+    // Steps 12-20...
+    
+    // ==========================================
+    // LEVEL 3: Conditional Logic (Steps 21-30)
+    // ==========================================
+    {
+        id: 10,
+        pathType: 'QGIS',
+        level: 1,
+        title: 'Date and Time (function without variable)',
+        description: `Some functions do not need input fields. 
+You can use them to return system values such as the current date or time. 
+This introduces you to functions without variables.`,
+        example: `Example:
+today_date = to_date(now())`,
+        question: `Write an expression that returns today's date (dd/mm/yyyy format).`,
+        initialData: 'No input fields needed.',
+        expectedResult: 'After: today_date = 24/11/2025',
+        correctAnswers: [
+            'to_date(now())',
+            'date(now())',
+            'to_date( now() )',
+            'date( now() )'
+        ],
+        hints: [
+            'Use now() to get the current date and time.',
+            'Wrap it with to_date() to show only the date.'
+        ],
+        tableData: {
+            field1: '(none)',
+            field2: 'today_date',
+            value1: ['-', '-', '-'],
+            value2: ['24/11/2025', '24/11/2025', '24/11/2025']
+        }
+    },
+    // Steps 22-30...
 ];
+// ==========================================
+// LEVEL 2: Advanced Functions (Steps 11-20)
+// ==========================================
 
-export const getTotalSteps = () => qgisLevel1Steps.length;
+
+
+
+export const getTotalSteps = () => qgisBasicSteps.length;
+
+
+export const getStepsByLevel = (level: number) => {
+    return qgisBasicSteps.filter(step => step.level === level);
+    };
+
+    export const getLevelInfo = (level: number) => {
+    const steps = getStepsByLevel(level);
+    return {
+        level,
+        totalSteps: steps.length,
+        firstStepId: steps[0]?.id || 0,
+        lastStepId: steps[steps.length - 1]?.id || 0
+    };
+};

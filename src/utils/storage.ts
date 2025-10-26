@@ -7,14 +7,14 @@ export const initialProgress: UserProgress = {
     currentPath: null,
     currentLevel: 1,
     qgisProgress: {
-        level1: {
+        basic: {
         completedSteps: [],
         currentStep: 1,
         testPassed: false
         }
     },
     arcgisProgress: {
-        level1: {
+        basic: {
         completedSteps: [],
         currentStep: 1,
         testPassed: false
@@ -61,14 +61,14 @@ export const initialProgress: UserProgress = {
     const newProgress = { ...progress };
     
     if (path === 'QGIS' && level === 1) {
-        if (!newProgress.qgisProgress.level1.completedSteps.includes(stepId)) {
-        newProgress.qgisProgress.level1.completedSteps.push(stepId);
-        newProgress.qgisProgress.level1.completedSteps.sort((a, b) => a - b);
+        if (!newProgress.qgisProgress.basic.completedSteps.includes(stepId)) {
+        newProgress.qgisProgress.basic.completedSteps.push(stepId);
+        newProgress.qgisProgress.basic.completedSteps.sort((a, b) => a - b);
         }
     } else if (path === 'ArcGIS' && level === 1) {
-        if (!newProgress.arcgisProgress.level1.completedSteps.includes(stepId)) {
-        newProgress.arcgisProgress.level1.completedSteps.push(stepId);
-        newProgress.arcgisProgress.level1.completedSteps.sort((a, b) => a - b);
+        if (!newProgress.arcgisProgress.basic.completedSteps.includes(stepId)) {
+        newProgress.arcgisProgress.basic.completedSteps.push(stepId);
+        newProgress.arcgisProgress.basic.completedSteps.sort((a, b) => a - b);
         }
     }
     
@@ -83,9 +83,9 @@ export const initialProgress: UserProgress = {
     level: number
     ): number[] => {
     if (path === 'QGIS' && level === 1) {
-        return progress.qgisProgress.level1.completedSteps;
+        return progress.qgisProgress.basic.completedSteps;
     } else if (path === 'ArcGIS' && level === 1) {
-        return progress.arcgisProgress.level1.completedSteps;
+        return progress.arcgisProgress.basic.completedSteps;
     }
     return [];
     };

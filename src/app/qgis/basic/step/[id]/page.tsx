@@ -5,7 +5,7 @@ import { ChevronRight, Check, X } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import { getProgress, markStepCompleted} from '@/utils/storage';
 import { validateAnswer } from '@/utils/validator';
-import { qgisLevel1Steps } from '@/data/qgis/level1-steps';
+import { qgisBasicSteps } from '@/data/qgis/basic-steps';
 import { AttributeTable } from '@/components/AttributeTable';
 
 
@@ -20,7 +20,7 @@ export default function ExercisePage() {
     const [showFeedback, setShowFeedback] = useState<'correct' | 'wrong' | null>(null);
     const [showHints, setShowHints] = useState(false);
 
-    const currentStep = qgisLevel1Steps.find(s => s.id === stepId);
+    const currentStep = qgisBasicSteps.find(s => s.id === stepId);
 
     if (!currentStep) {
         return (
@@ -58,7 +58,7 @@ export default function ExercisePage() {
         setUserCode('');
         setShowHints(false);
         
-        if (stepId < qgisLevel1Steps.length) {
+        if (stepId < qgisBasicSteps.length) {
         router.push(`/qgis/level1/step/${stepId + 1}`);
         } else {
         router.push('/qgis/level1');
@@ -239,7 +239,7 @@ export default function ExercisePage() {
                                 onClick={handleNext}
                                 className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition"
                             >
-                                {stepId < qgisLevel1Steps.length ? text.nextStep : text.backToRoadmap}
+                                {stepId < qgisBasicSteps.length ? text.nextStep : text.backToRoadmap}
                             </button>
                             </div>
                         </>
