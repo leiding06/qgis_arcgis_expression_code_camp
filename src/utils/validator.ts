@@ -12,7 +12,7 @@
  */
 export const validateAnswer = (
     userAnswer: string,
-    correctAnswers: string[]
+    correctAnswers:  (string | number)[] 
     ): boolean => {
     // Only trim leading/trailing whitespace, preserve everything else
     const trimmedAnswer = userAnswer.trim();
@@ -37,8 +37,9 @@ export const validateAnswer = (
      * Only normalizes things that QGIS itself treats as equivalent
      * DOES NOT change quote types - they must match SQL standard
      */
-    const normalizeForComparison = (expr: string): string => {
-    return expr
+    const normalizeForComparison = (expr: string | number): string => {
+        const strExpr = String(expr);
+        return strExpr
         .toLowerCase() // QGIS functions are case-insensitive
         .replace(/\s+/g, ' ') // Normalize multiple spaces to single space
         .replace(/\s*,\s*/g, ',') // Normalize spaces around commas

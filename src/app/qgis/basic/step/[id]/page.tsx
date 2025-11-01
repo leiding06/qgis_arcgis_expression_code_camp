@@ -29,7 +29,7 @@ export default function ExercisePage() {
             <h1 className="text-2xl font-bold text-gray-900 mb-4">Step not found</h1>
             <button
                 onClick={() => router.push('/qgis/basic')}
-                className="px-6 py-3 bg-green-100 rounded-lg hover:bg-green-700 transition"
+                className="px-6 py-3 bg-green-600 rounded-lg hover:bg-green-700 transition"
             >
                 Back to Roadmap
             </button>
@@ -46,8 +46,8 @@ export default function ExercisePage() {
 
         if (isCorrect) {
         const progress = getProgress();
-      // markStepCompleted will auto-detect level from stepId
-        markStepCompleted(progress, 'QGIS', 'basic', 1, stepId);
+        // Use the actual level from currentStep instead of hardcoded 1
+        markStepCompleted(progress, 'QGIS', 'basic', currentStep.level, stepId);
         setShowHints(false);
     } else {
         setShowHints(true);
@@ -110,34 +110,35 @@ export default function ExercisePage() {
             
             {/* Left Panel - Instructions */}
             <div className="bg-white rounded-xl shadow-lg p-6 overflow-y-auto">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-md font-bold text-gray-900 mb-4">
                 {currentStep.title}
             </h2>
             
             {/* Description, Example, and Question */}
-            <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            <div className="mb-3">
+                <h3 className="text-md font-semibold text-gray-700 mb-2">
                 {text.description}
                 </h3>
-                <p className="text-gray-600 whitespace-pre-line">
-                {currentStep.description}
-                </p>
+                <div
+                    className="text-md text-gray-600 whitespace-pre-line"
+                    dangerouslySetInnerHTML={{ __html: currentStep.description }} // For adopt the inner HTML formatting in description
+                />
             </div>
 
-            <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                {text.example}
-                </h3>
-                <pre className="bg-gray-50 p-4 rounded-lg text-sm text-gray-800 font-mono overflow-x-auto border border-gray-200">
-                {currentStep.example}
-                </pre>
+            {/* Make example support array of strings for multi-line*/}
+            <div className="mb-6 bg-gray-50 p-3 rounded-lg text-sm text-gray-800 font-mono overflow-x-auto border border-gray-200">
+            {Array.isArray(currentStep.example)
+                ? currentStep.example.map((line, idx) => (
+                    <div key={idx}>{line}</div>
+                ))
+                : currentStep.example}
             </div>
-
-            <div className="mb-6">
-                <h3 className="text-lg font-semibold text-green-700 mb-2">
+            {/* Question */}
+            <div className="mb-4">
+                <h3 className="text-md font-semibold text-green-700 mb-4">
                 {text.question}
                 </h3>
-                <p className="text-gray-700 font-medium bg-green-50 p-4 rounded-lg border border-green-200">
+                <p className="text-md text-gray-700 font-medium bg-green-50 p-4 rounded-lg border border-green-200">
                 {currentStep.question}
                 </p>
             </div>
@@ -154,12 +155,12 @@ export default function ExercisePage() {
                 </button>
                 {showHints && (
                     <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <h3 className="text-lg font-semibold text-blue-700 mb-2">
+                    <h3 className="text-sm font-semibold text-blue-700 mb-2">
                         💡 {text.hints}
                     </h3>
-                    <ul className="list-disc list-inside text-gray-700 space-y-1">
+                    <ul className="text-sm list-disc list-inside text-gray-700 space-y-1">
                         {currentStep.hints.map((hint, idx) => (
-                        <li key={idx}>{hint}</li>
+                        <li key={idx} dangerouslySetInnerHTML={{ __html: hint }} />
                         ))}
                     </ul>
                     </div>
@@ -175,29 +176,29 @@ export default function ExercisePage() {
                 <div className="flex-shrink-0 bg-white rounded-xl shadow-lg p-4 md:p-6 space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-4">
                     
                     {/* Initial Attribute Table */}
-                    {currentStep.tableData && (
-                        <AttributeTable 
-                            title={text.initialData}
-                            fieldName1={currentStep.tableData.field1}
-                            fieldName2={currentStep.tableData.field2}
-                            value1={currentStep.tableData.value1}
-                            value2={currentStep.tableData.value1}
-                            isExpected={false}
-                            isComparisonView={true}
-                        />
+                    {currentStep.initialTable && (
+                    <AttributeTable
+                        title="Initial Attribute Table" 
+                        columns={[currentStep.initialTable.id_field, ...currentStep.initialTable.columns]}
+                        data={currentStep.initialTable.id_value.map((id, idx) => [
+                        id, ...currentStep.initialTable.values[idx]
+                        ])}
+                        isExpected={false}
+                        isComparisonView={true}
+                    />
                     )}
-                    
+
                     {/* Expected Attribute Table */}
-                    {currentStep.tableData && (
-                        <AttributeTable 
-                            title={text.expectedResult}
-                            fieldName1={currentStep.tableData.field1}
-                            fieldName2={currentStep.tableData.field2}
-                            value1={currentStep.tableData.value1}
-                            value2={currentStep.tableData.value2}
-                            isExpected={true}
-                            isComparisonView={true}
-                        />
+                    {currentStep.expectedTable && (
+                    <AttributeTable 
+                        title='Expected Attribute Table'
+                        columns={[currentStep.expectedTable.id_field, ...currentStep.expectedTable.columns]}
+                        data={currentStep.expectedTable.id_value.map((id, idx) => [
+                        id, ...currentStep.expectedTable.values[idx]
+                        ])}
+                        isExpected={true}
+                        isComparisonView={true}
+                    />
                     )}
                 </div>
 

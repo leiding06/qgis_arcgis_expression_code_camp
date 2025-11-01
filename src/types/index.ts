@@ -36,6 +36,17 @@ export interface UserProgress {
     lastUpdated: string;
     }
 
+export interface TableData {
+  id_field: string;     // ID字段名：如 'fid', 用于第一列
+  id_value: string[];   // ID列所有值
+  columns: string[];    // e.g., ['source_field', 'new_field', 'extra_field']
+  values: string[][];   // e.g.,
+                        // [
+                        //   ['123', 'ABC123', 'foo'],
+                        //   ['456', 'DEF456', 'bar'],
+                        //   ['789', 'GHI789', 'baz']
+                        // ]
+}
 
 // single exercise
 export interface ExerciseStep {
@@ -46,25 +57,19 @@ export interface ExerciseStep {
     
     title: string;
     description: string;
-    example: string;
+    example: string | string[];
     question: string;
     initialData: string;    
     expectedResult:string;
 
     
     // correct answers
-    correctAnswers: string[];
+    correctAnswers: (number | string)[];
 
     hints?: string[];
 
-    tableData: { 
-        id_field:string;
-        id_value: string[];
-        field1: string;
-        value1: string[];
-        field2: string;
-        value2: string[];
-    }
+    initialTable: TableData;
+    expectedTable: TableData;
     }
 
 

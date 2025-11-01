@@ -10,63 +10,101 @@ export const qgisBasicSteps: ExerciseStep[] = [
   // LEVEL 1: Data Types & Basic Operations (Steps 1-10)
   // ==========================================
     {
-        id: 1,
-        pathType: 'QGIS',
-        moduleKey: 'basic',
-        level: 1,
-        title: 'Call a field - Basic',
-        description: `Learn how to reference a field directly. 
-    When creating a new field, you can make its value equal to another existing field.
-    Field names without spaces can be written directly; field names with spaces must be enclosed in double quotes.`,
-        example: `Syntax: field_name  or  "field_name"
-    Example:
-    new_field = source_field`,
-        question: `Write an expression to make the new_field equal to the source_field.`,
-        initialData: 'Before: source_field = "ABC123"',
-        expectedResult: 'After: new_field = "ABC123"',
-        correctAnswers: [
+    id: 1,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 1,
+    title: 'Calling an attribute field',
+    description: `Learn how to reference a field directly. 
+    This is useful when you need to get the value from one field and assign it to another, 
+    or when you want to use another field's value for calculations.
+
+    Single quotes are for text values, and double quotes are for field names.
+    However, you don’t need to use quotes for field names that contain no spaces.
+    
+    <p class="italic text-sm">
+    Extra tip for new users: the 'Initial Attribute Table' shows the data before applying the expression,
+    and the 'Expected Attribute Table' shows the data after applying it.
+    Please enter your answer in the Expression box and click 'OK'. 
+    We will check your answer against the expected result.
+    If you are new to QGIS expressions, note that the expression area on this website simulates the QGIS Expression Editor.
+    You can find the QGIS Expression Editor by right-clicking your layer in QGIS, selecting 'Open Attribute Table',
+    and then clicking the 'Field Calculator' icon (the calculator symbol).
+    You can use the same experessions here as you would in QGIS.
+    </p>`,
+
+    example: ['Syntax: field_name or "field_name"'],
+
+    question: `Write an expression to make the new_field's values equal to the source_field's.
+    Assume that you have already chosen "new_field" as the field to update in the QGIS field calculator.`,
+
+
+    correctAnswers: [
         'source_field',
-        '"source_field"'
-        ],
-        hints: [
-        'Simply reference the field name.',
-        'No quotes needed for field names without spaces.'
-        ],
-        tableData: {
+        '"source_field"',
+        'new_field = source_field',
+        'new_field = "source_field"'
+    ],
+
+    hints: [
+        'Simply reference the field name, e.g. <strong>source_field</strong>.',
+        'No quotes are needed for field names without spaces.',
+        'However, you can also include double quotes around field names.<p><strong>new_field = source_field</strong> or <strong>new_field = "source_field"</strong></p>.'
+    ],
+
+    initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        field1: 'source_field',
-        value1: ['123', '456', '789'],
-        field2: 'new_field',
-        value2: ['ABC123', 'DEF456', 'GHI789']
-        }
+        columns: ['source_field', 'new_field'],
+        values: [
+            ['123', 'NULL'],
+            ['456', 'NULL'],
+            ['789', 'NULL']
+        ],
     },
-    {
+
+    expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['source_field', 'new_field'],
+        values: [
+            ['123', '123'],
+            ['456', '456'],
+            ['789', '789']
+        ],
+    },
+},
+        {
         id: 2,
         pathType: 'QGIS',
         moduleKey: 'basic',
         level: 1,
         title: 'Field name with space',
         description: `Some field names may contain spaces. In this case, you must use double quotes around the field name.`,
-        example: `Syntax: "Field with space"
-
-    Example:
-    new_field = "Field with space"`,
+        example: `Syntax: "Field with space"\n\nExample:\nnew_field = "Field with space"`,
         question: `Write an expression to make new_field equal to "Field with space".`,
-        initialData: 'Before: "Field with space" = "London"',
-        expectedResult: 'After: new_field = "London"',
         correctAnswers: ['"Field with space"'],
-        hints: [
-        'Always use double quotes when field names contain spaces.'
-        ],
-        tableData: {
+        hints: ['Always use double quotes when field names contain spaces.'],
+        initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        field1: 'Field with space',
-        value1: ['London', 'Paris', 'Berlin'],
-        field2: 'new_field',
-        value2: ['London', 'Paris', 'Berlin']
-        }
+        columns: ['Field with space', 'new_field'],
+        values: [
+            ['London', ''],
+            ['Paris', ''],
+            ['Berlin', ''],
+        ],
+        },
+        expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['Field with space', 'new_field'],
+        values: [
+            ['London', 'London'],
+            ['Paris', 'Paris'],
+            ['Berlin', 'Berlin'],
+        ],
+        },
     },
     {
         id: 3,
@@ -74,27 +112,43 @@ export const qgisBasicSteps: ExerciseStep[] = [
         moduleKey: 'basic',
         level: 1,
         title: 'Numeric field (Integer)',
-        description: `Learn how to use numeric values. 
-    In this example, the new field 'month' is of integer type, so you can only use numbers, not text.`,
+        description: `Learn how to work with numeric values. 
+        When defining an attribute field, you should consider what data type is suitable for your data.
+        'Int' stands for Integer, which means whole numbers without decimals.
+        You can also define length limits; for example, a length of 3 means the maximum storable value is 999.
+        Please be aware that direct calculations between different data types (like text and numbers) are not possible. We will cover type conversion functions in later steps.
+        In this example, the new field 'month' is an Integer type, so you can only use numbers, not text.
+        You do not need to use quotes when entering numeric values, but you are allowed to do so.`,
+
         example: `Example:
-    month = 10
+    10 or "10"
     // October represented as number`,
         question: `Set the month field to 10 (October).`,
-        initialData: 'Before: year = 2025',
-        expectedResult: 'After: month = 10',
-        correctAnswers: ['10'],
+        correctAnswers: [10, '10'],
         hints: [
         'Do not use quotes for numbers.',
-        'Integer fields can only store whole numbers.'
+        'Integer fields can only store whole numbers.',
         ],
-        tableData: {
+        initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        field1: 'year',
-        value1: ['2025', '2025', '2025'],
-        field2: 'month',
-        value2: ['10', '10', '10']
-        }
+        columns: ['year', 'month'],
+        values: [
+            ['2025', ''],
+            ['2025', ''],
+            ['2025', ''],
+        ],
+        },
+        expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['year', 'month'],
+        values: [
+            ['2025', '10'],
+            ['2025', '10'],
+            ['2025', '10'],
+        ],
+        },
     },
     {
         id: 4,
@@ -102,25 +156,41 @@ export const qgisBasicSteps: ExerciseStep[] = [
         moduleKey: 'basic',
         level: 1,
         title: 'String data type',
-        description: `Strings are text values and must be enclosed in single quotes.`,
+        description: `Strings are text values and must be enclosed in single quotes.
+        When defining an attribute field, choose 'Text' as the data type for string values.
+        You can specify the maximum length for text fields; for example, a length of 20 means the field can store up to 20 characters.
+        Remember that text fields cannot store numeric values directly. We will cover type conversion functions in later steps.
+        In this example, you will set the 'weekday' field to a string value representing a day of the week.
+        Please assume we have selected the 'weekday' field to update in the QGIS field calculator.`,
         example: `Example:
-    weekday = 'Wednesday'`,
+    'This is a string value'`,
         question: `Set the weekday field to the string 'Wednesday'.`,
-        initialData: 'Before: month = 10',
-        expectedResult: "After: weekday = 'Wednesday'",
+
         correctAnswers: ["'Wednesday'"],
         hints: [
         'Use single quotes around text values.',
-        'Text fields cannot store numeric values directly.'
+        'Text fields cannot store numeric values directly.',
         ],
-        tableData: {
+        initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        field1: 'month',
-        value1: ['10', '10', '10'],
-        field2: 'weekday',
-        value2: ['Wednesday', 'Wednesday', 'Wednesday']
-        }
+        columns: ['month', 'weekday'],
+        values: [
+            ['10', ''],
+            ['10', ''],
+            ['10', ''],
+        ],
+        },
+        expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['month', 'weekday'],
+        values: [
+            ['10', 'Wednesday'],
+            ['10', 'Wednesday'],
+            ['10', 'Wednesday'],
+        ],
+        },
     },
     {
         id: 5,
@@ -129,30 +199,45 @@ export const qgisBasicSteps: ExerciseStep[] = [
         level: 1,
         title: 'Numeric calculation (Decimal)',
         description: `You can perform mathematical operations between numeric fields.
-    In this example, you will convert 'meter' to 'hectare' using the formula hectare = meter / 10000.`,
+        Decimal fields can store numbers with fractional parts (decimals). 
+        When defining an attribute field, choose 'Decimal' as the data type for fields that require decimal values.
+        You can specify the total number of digits and the number of decimal places; for example, a total length of 5 with 2 decimal places means the maximum storable value is 999.99.
+        In this example, the new field 'hectare' is a Decimal type, so you can perform division to convert 'meter' to 'hectare'.
+        Please assume we have selected the 'hectare' field to update in the QGIS field calculator.`,
         example: `Example:
-    hectare = meter / 10000`,
-        question: `Write an expression to calculate hectare from meter.`,
-        initialData: 'Before: meter = 52300',
-        expectedResult: 'After: hectare = 5.23',
+    'month_salary * 12' to calculate annual salary from monthly salary field.`,
+        question: `Write an expression to calculate hectare from meter. Tip: 1 hectare = 10,000 meter.`,
+
         correctAnswers: [
         'meter/10000',
         '"meter"/10000',
         '(meter/10000)',
-        '("meter"/10000)'
+        '("meter"/10000)',
         ],
         hints: [
         'Use / for division.',
-        'Make sure the output field type is decimal (real) and set to 2 decimal places.'
+        'Make sure the output field type is decimal (real) and set to 2 decimal places.',
         ],
-        tableData: {
+        initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        field1: 'meter',
-        value1: ['52300', '110000', '30450'],
-        field2: 'hectare',
-        value2: ['5.23', '11.00', '3.05']
-        }
+        columns: ['meter', 'hectare'],
+        values: [
+            ['52300', ''],
+            ['110000', ''],
+            ['30450', ''],
+        ],
+        },
+        expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['meter', 'hectare'],
+        values: [
+            ['52300', '5.23'],
+            ['110000', '11.00'],
+            ['30450', '3.05'],
+        ],
+        },
     },
     {
         id: 6,
@@ -165,26 +250,36 @@ export const qgisBasicSteps: ExerciseStep[] = [
         example: `Example:
     full_name = first_name || ' Smith'`,
         question: `Write an expression to create full_name by combining first_name with ' Smith'.`,
-        initialData: 'Before: first_name = "Peter"',
-        expectedResult: 'After: full_name = "Peter Smith"',
         correctAnswers: [
         "first_name||' Smith'",
         "first_name || ' Smith'",
         '"first_name"||\' Smith\'',
-        '"first_name" || \' Smith\''
+        '"first_name" || \' Smith\'',
         ],
         hints: [
         'Use || to concatenate text.',
-        'Strings must be enclosed in single quotes.'
+        'Strings must be enclosed in single quotes.',
         ],
-        tableData: {
+        initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        field1: 'first_name',
-        value1: ['Peter', 'Anna', 'Tom'],
-        field2: 'full_name',
-        value2: ['Peter Smith', 'Anna Smith', 'Tom Smith']
-        }
+        columns: ['first_name', 'full_name'],
+        values: [
+            ['Peter', ''],
+            ['Anna', ''],
+            ['Tom', ''],
+        ],
+        },
+        expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['first_name', 'full_name'],
+        values: [
+            ['Peter', 'Peter Smith'],
+            ['Anna', 'Anna Smith'],
+            ['Tom', 'Tom Smith'],
+        ],
+        },
     },
     {
         id: 7,
@@ -197,28 +292,38 @@ export const qgisBasicSteps: ExerciseStep[] = [
         example: `Example:
     area = length * width`,
         question: `Write an expression to calculate area using length and width.`,
-        initialData: 'Before: length = 10, width = 5',
-        expectedResult: 'After: area = 50',
         correctAnswers: [
         'length*width',
         '"length"*"width"',
         '(length*width)',
         '("length"*"width")',
         'width*length',
-        'width * length'
+        'width * length',
         ],
         hints: [
         'Use * for multiplication.',
-        'Ensure both fields are numeric.'
+        'Ensure both fields are numeric.',
         ],
-        tableData: {
+        initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        field1: 'length / width',
-        value1: ['10 / 5', '12 / 6', '8 / 4'],
-        field2: 'area',
-        value2: ['50', '72', '32']
-        }
+        columns: ['length', 'width', 'area'],
+        values: [
+            ['10', '5', ''],
+            ['12', '6', ''],
+            ['8', '4', ''],
+        ],
+        },
+        expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['length', 'width', 'area'],
+        values: [
+            ['10', '5', '50'],
+            ['12', '6', '72'],
+            ['8', '4', '32'],
+        ],
+        },
     },
     {
         id: 8,
@@ -232,26 +337,37 @@ export const qgisBasicSteps: ExerciseStep[] = [
         example: `Example:
     fullname = firstname || ' ' || fullname`,
         question: `Write an expression to update fullname by adding firstname in front of it.`,
-        initialData: 'Before: firstname = "Jane", fullname = "Smith"',
-        expectedResult: 'After: fullname = "Jane Smith"',
+
         correctAnswers: [
         "firstname||' '||fullname",
         "firstname || ' ' || fullname",
         '"firstname"||\' \'||"fullname"',
-        '"firstname" || \' \' || "fullname"'
+        '"firstname" || \' \' || "fullname"',
         ],
         hints: [
         'Use the same expression structure as concatenation.',
-        'Choose "Update existing field" instead of "Create new field".'
+        'Choose "Update existing field" instead of "Create new field".',
         ],
-        tableData: {
+        initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        field1: 'firstname / fullname',
-        value1: ['Jane / Smith', 'Alex / Johnson', 'Eva / Brown'],
-        field2: 'fullname (updated)',
-        value2: ['Jane Smith', 'Alex Johnson', 'Eva Brown']
-        }
+        columns: ['firstname', 'fullname'],
+        values: [
+            ['Jane', 'Smith'],
+            ['Alex', 'Johnson'],
+            ['Eva', 'Brown'],
+        ],
+        },
+        expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['fullname'],
+        values: [
+            ['Jane Smith'],
+            ['Alex Johnson'],
+            ['Eva Brown'],
+        ],
+        },
     },
     {
         id: 9,
@@ -264,26 +380,37 @@ export const qgisBasicSteps: ExerciseStep[] = [
         example: `Example:
     length_over_five = length > 5`,
         question: `Write an expression to check if length is greater than 5.`,
-        initialData: 'Before: length = 3, 5, 8',
-        expectedResult: 'After: False, False, True',
+
         correctAnswers: [
         'length>5',
         '"length">5',
         '(length>5)',
-        '("length">5)'
+        '("length">5)',
         ],
         hints: [
         'Use comparison operators like >, <, =.',
-        'The result will be True or False.'
+        'The result will be True or False.',
         ],
-        tableData: {
+        initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        field1: 'length',
-        value1: ['3', '5', '8'],
-        field2: 'length_over_five',
-        value2: ['false', 'false', 'true']
-        }
+        columns: ['length'],
+        values: [
+            ['3'],
+            ['5'],
+            ['8'],
+        ],
+        },
+        expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['length', 'length_over_five'],
+        values: [
+            ['3', 'false'],
+            ['5', 'false'],
+            ['8', 'true'],
+        ],
+        },
     },
     {
         id: 10,
@@ -297,30 +424,45 @@ export const qgisBasicSteps: ExerciseStep[] = [
         example: `Example:
     today_date = to_date(now())`,
         question: `Write an expression that returns today's date (dd/mm/yyyy format).`,
-        initialData: 'No input fields needed.',
-        expectedResult: 'After: today_date = 24/11/2025',
+
         correctAnswers: [
         'to_date(now())',
         'date(now())',
         'to_date( now() )',
-        'date( now() )'
+        'date( now() )',
         ],
         hints: [
         'Use now() to get the current date and time.',
-        'Wrap it with to_date() to show only the date.'
+        'Wrap it with to_date() to show only the date.',
         ],
-        tableData: {
+        initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        field1: '(none)',
-        value1: ['-', '-', '-'],
-        field2: 'today_date',
-        value2: ['24/11/2025', '24/11/2025', '24/11/2025']
+        columns: ['(none)'],
+        values: [
+            ['-'],
+            ['-'],
+            ['-'],
+        ],
+        },
+        expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['today_date'],
+        values: [
+            ['24/11/2025'],
+            ['24/11/2025'],
+            ['24/11/2025'],
+        ],
         },
     },
+
+
+    // Steps 12-20...
+    
     // ==========================================
-  // LEVEL 2: Advanced Functions (Steps 11-20)
-  // ==========================================
+    // LEVEL 2: Conditional Logic (Steps 21-30)
+    // ==========================================
     {
         id: 11,
         pathType: 'QGIS',
@@ -333,8 +475,7 @@ This introduces you to functions without variables.`,
         example: `Example:
 today_date = to_date(now())`,
         question: `Write an expression that returns today's date (dd/mm/yyyy format).`,
-        initialData: 'No input fields needed.',
-        expectedResult: 'After: today_date = 24/11/2025',
+
         correctAnswers: [
             'to_date(now())',
             'date(now())',
@@ -345,20 +486,32 @@ today_date = to_date(now())`,
             'Use now() to get the current date and time.',
             'Wrap it with to_date() to show only the date.'
         ],
-        tableData: {
-            id_field: 'fid',
-            id_value: ['1', '2', '3'],
-            field1: '(none)',
-            field2: 'today_date',
-            value1: ['-', '-', '-'],
-            value2: ['24/11/2025', '24/11/2025', '24/11/2025']
+        initialTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['(none)'],
+        values: [
+            ['-'],
+            ['-'],
+            ['-'],
+        ],
+        },
+        expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['today_date'],
+        values: [
+            ['24/11/2025'],
+            ['24/11/2025'],
+            ['24/11/2025'],
+        ],
         }
     },
-    // Steps 12-20...
-    
-    // ==========================================
-    // LEVEL 3: Conditional Logic (Steps 21-30)
-    // ==========================================
+    // Steps 22-30...
+
+// ==========================================
+// LEVEL 3: Advanced Functions (Steps 11-20)
+// ==========================================
     {
         id: 21,
         pathType: 'QGIS',
@@ -371,8 +524,7 @@ This introduces you to functions without variables.`,
         example: `Example:
 today_date = to_date(now())`,
         question: `Write an expression that returns today's date (dd/mm/yyyy format).`,
-        initialData: 'No input fields needed.',
-        expectedResult: 'After: today_date = 24/11/2025',
+
         correctAnswers: [
             'to_date(now())',
             'date(now())',
@@ -383,23 +535,29 @@ today_date = to_date(now())`,
             'Use now() to get the current date and time.',
             'Wrap it with to_date() to show only the date.'
         ],
-        tableData: {
-            id_field: 'fid',
-            id_value: ['1', '2', '3'],
-            field1: '(none)',
-            field2: 'today_date',
-            value1: ['-', '-', '-'],
-            value2: ['24/11/2025', '24/11/2025', '24/11/2025']
+        initialTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['(none)'],
+        values: [
+            ['-'],
+            ['-'],
+            ['-'],
+        ],
+        },
+        expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['today_date'],
+        values: [
+            ['24/11/2025'],
+            ['24/11/2025'],
+            ['24/11/2025'],
+        ],
         }
     },
-    // Steps 22-30...
+
 ];
-// ==========================================
-// LEVEL 2: Advanced Functions (Steps 11-20)
-// ==========================================
-
-
-
 
 export const getTotalSteps = () => qgisBasicSteps.length;
 

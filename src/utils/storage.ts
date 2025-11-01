@@ -17,11 +17,17 @@ export const initialProgress: UserProgress = {
     // Get user progress
     export const getProgress = (): UserProgress => {
     if (typeof window === 'undefined') return initialProgress;
-    
     try {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // 保证 qgis/arcgis 至少为对象
+        return {
+            ...initialProgress,
+            ...parsed,
+            qgis: parsed.qgis || {},
+            arcgis: parsed.arcgis || {},
+        };
         }
     } catch (error) {
         console.error('Failed to load progress:', error);
@@ -76,7 +82,7 @@ export const initialProgress: UserProgress = {
     progress: UserProgress,
     path: PathType,
     moduleKey: ModuleKey,
-    level: number | undefined,
+    level: number,
     stepId: number
     ): UserProgress => {
     // Deep clone progress object
@@ -92,6 +98,8 @@ export const initialProgress: UserProgress = {
         : inferLevelFromStepId(path, moduleKey, stepId);
 
     const pathKey = path === 'QGIS' ? 'qgis' : 'arcgis';
+    //make sure path/module/level exist
+    if (!newProgress[pathKey]) newProgress[pathKey] = {};
     const levelKey = `level${resolvedLevel}` as const;
     // initialize if not exist
     if (!newProgress[pathKey][moduleKey]) newProgress[pathKey][moduleKey] = {};
