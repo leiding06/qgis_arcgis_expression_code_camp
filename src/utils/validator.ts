@@ -40,12 +40,13 @@ export const validateAnswer = (
     const normalizeForComparison = (expr: string | number): string => {
         const strExpr = String(expr);
         return strExpr
-        .toLowerCase() // QGIS functions are case-insensitive
+// QGIS functions are case-insensitive
         .replace(/\s+/g, ' ') // Normalize multiple spaces to single space
         .replace(/\s*,\s*/g, ',') // Normalize spaces around commas
         .replace(/\s*\(\s*/g, '(') // Normalize spaces after opening parenthesis
         .replace(/\s*\)\s*/g, ')') // Normalize spaces before closing parenthesis
         .replace(/\s*\|\|\s*/g, '||') // Normalize spaces around concatenation operator
+        .replace(/\s*([+\-*/=<>!]+)\s*/g, (match, p1) => p1) // Normalize spaces around operators
         .trim();
     // NOTE: We do NOT normalize quotes - they must be correct!
     };

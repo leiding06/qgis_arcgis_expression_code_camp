@@ -138,7 +138,7 @@ export default function ExercisePage() {
                 <h3 className="text-md font-semibold text-green-700 mb-4">
                 {text.question}
                 </h3>
-                <p className="text-md text-gray-700 font-medium bg-green-50 p-4 rounded-lg border border-green-200">
+                <p className="text-md text-gray-700 whitespace-pre-line font-medium bg-green-50 p-4 rounded-lg border border-green-200">
                 {currentStep.question}
                 </p>
             </div>

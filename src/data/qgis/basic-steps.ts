@@ -36,7 +36,7 @@ export const qgisBasicSteps: ExerciseStep[] = [
     example: ['Syntax: field_name or "field_name"'],
 
     question: `Write an expression to make the new_field's values equal to the source_field's.
-    Assume that you have already chosen "new_field" as the field to update in the QGIS field calculator.`,
+    Please assume that you have already chosen "new_field" as the field to update in the QGIS field calculator.`,
 
 
     correctAnswers: [
@@ -82,7 +82,8 @@ export const qgisBasicSteps: ExerciseStep[] = [
         title: 'Field name with space',
         description: `Some field names may contain spaces. In this case, you must use double quotes around the field name.`,
         example: `Syntax: "Field with space"\n\nExample:\nnew_field = "Field with space"`,
-        question: `Write an expression to make new_field equal to "Field with space".`,
+        question: `Write an expression to make new_field equal to "Field with space".
+        Please assume we have selected the "new_field" field to update in the QGIS field calculator.`,
         correctAnswers: ['"Field with space"'],
         hints: ['Always use double quotes when field names contain spaces.'],
         initialTable: {
@@ -117,16 +118,17 @@ export const qgisBasicSteps: ExerciseStep[] = [
         'Int' stands for Integer, which means whole numbers without decimals.
         You can also define length limits; for example, a length of 3 means the maximum storable value is 999.
         Please be aware that direct calculations between different data types (like text and numbers) are not possible. We will cover type conversion functions in later steps.
-        In this example, the new field 'month' is an Integer type, so you can only use numbers, not text.
+        In this practice, the new field 'month' is an Integer type, so you can only use numbers, not text.
         You do not need to use quotes when entering numeric values, but you are allowed to do so.`,
 
         example: `Example:
     10 or "10"
     // October represented as number`,
-        question: `Set the month field to 10 (October).`,
+        question: `Set the month field to 10 (October).
+        Please assume we have selected the "month" field to update in the QGIS field calculator.`,
         correctAnswers: [10, '10'],
         hints: [
-        'Do not use quotes for numbers.',
+        'You can use single quotes, but not necessary.',
         'Integer fields can only store whole numbers.',
         ],
         initialTable: {
@@ -160,16 +162,14 @@ export const qgisBasicSteps: ExerciseStep[] = [
         When defining an attribute field, choose 'Text' as the data type for string values.
         You can specify the maximum length for text fields; for example, a length of 20 means the field can store up to 20 characters.
         Remember that text fields cannot store numeric values directly. We will cover type conversion functions in later steps.
-        In this example, you will set the 'weekday' field to a string value representing a day of the week.
-        Please assume we have selected the 'weekday' field to update in the QGIS field calculator.`,
-        example: `Example:
-    'This is a string value'`,
-        question: `Set the weekday field to the string 'Wednesday'.`,
+        In this Practice, you will set the "weekday" field to a string value representing a day of the week.`,
+        example: `Example: 'This is a string value'`,
+        question: `Set the weekday field to the string 'Wednesday'.
+        Please assume we have selected the "weekday" field to update in the QGIS field calculator.`,
 
         correctAnswers: ["'Wednesday'"],
         hints: [
         'Use single quotes around text values.',
-        'Text fields cannot store numeric values directly.',
         ],
         initialTable: {
         id_field: 'fid',
@@ -202,21 +202,21 @@ export const qgisBasicSteps: ExerciseStep[] = [
         Decimal fields can store numbers with fractional parts (decimals). 
         When defining an attribute field, choose 'Decimal' as the data type for fields that require decimal values.
         You can specify the total number of digits and the number of decimal places; for example, a total length of 5 with 2 decimal places means the maximum storable value is 999.99.
-        In this example, the new field 'hectare' is a Decimal type, so you can perform division to convert 'meter' to 'hectare'.
-        Please assume we have selected the 'hectare' field to update in the QGIS field calculator.`,
+        In this practice, the new field "hectare" is a Decimal type and the "meter" field is Int type.
+        Both are numeric fields, so you can perform division to convert "meter" to "hectare".
+        `,
         example: `Example:
-    'month_salary * 12' to calculate annual salary from monthly salary field.`,
-        question: `Write an expression to calculate hectare from meter. Tip: 1 hectare = 10,000 meter.`,
+    numeric_field_name * 12  .`,
+        question: `Write an expression to calculate hectare from meter. Tip: 1 hectare = 10,000 meter.
+        Please assume we have selected the "hectare" field to update in the QGIS field calculator.`,
 
         correctAnswers: [
         'meter/10000',
         '"meter"/10000',
-        '(meter/10000)',
-        '("meter"/10000)',
         ],
         hints: [
         'Use / for division.',
-        'Make sure the output field type is decimal (real) and set to 2 decimal places.',
+        'If you are tring this in your QGIS, make sure the output field type is decimal (real) and set to 2 decimal places.',
         ],
         initialTable: {
         id_field: 'fid',
@@ -245,20 +245,22 @@ export const qgisBasicSteps: ExerciseStep[] = [
         moduleKey: 'basic',
         level: 1,
         title: 'Combine field and string',
-        description: `Combine a field value with a string using the || operator.
-    Here, you will add a surname to an existing first_name field.`,
+        description: `Combine a field value with a string using the || operator or just the numeric + operator.
+        If you want to join two field value and both them are string fields, you can also use || or + operator.
+        In this practice, , you will add a surname to an existing first_name field.
+        `,
         example: `Example:
-    full_name = first_name || ' Smith'`,
-        question: `Write an expression to create full_name by combining first_name with ' Smith'.`,
+        string_field || 'a string' OR string_field_one + 'a string'`,
+        question: `Write an expression to create full_name by combining first_name with ' Smith'. Don't forget the space before Smith.
+        Please assume we have selected the "full_name" field to update in the QGIS field calculator.`,
         correctAnswers: [
         "first_name||' Smith'",
-        "first_name || ' Smith'",
-        '"first_name"||\' Smith\'',
-        '"first_name" || \' Smith\'',
+        "first_name+' Smith'"
         ],
         hints: [
-        'Use || to concatenate text.',
+        'Use || or + to concatenate text.',
         'Strings must be enclosed in single quotes.',
+        'There should be a space between first name and last name.',
         ],
         initialTable: {
         id_field: 'fid',
@@ -286,19 +288,21 @@ export const qgisBasicSteps: ExerciseStep[] = [
         pathType: 'QGIS',
         moduleKey: 'basic',
         level: 1,
-        title: 'Use two fields - area calculation',
+        title: 'Use two numeric fields - area calculation',
         description: `You can combine multiple fields in one expression. 
-    Here, multiply 'length' and 'width' to calculate 'area'.`,
+        Make sure they are same data type (numeric) when performing calculations.
+        You can use +, -, *, / operators to perform addition, subtraction, multiplication, and division respectively.
+        In this practice, you will calculate area using length and width fields.
+        `,
         example: `Example:
-    area = length * width`,
-        question: `Write an expression to calculate area using length and width.`,
+    field_one * field_two OR field_one + field_two .`,
+        question: `Write an expression to calculate area using length and width. Area should equal to the product of length and width.
+        Please assume we have selected the "area" field to update in the QGIS field calculator.`,
         correctAnswers: [
         'length*width',
         '"length"*"width"',
-        '(length*width)',
-        '("length"*"width")',
         'width*length',
-        'width * length',
+        '"width"*"length"',
         ],
         hints: [
         'Use * for multiplication.',
@@ -331,22 +335,26 @@ export const qgisBasicSteps: ExerciseStep[] = [
         moduleKey: 'basic',
         level: 1,
         title: 'Update an existing field',
-        description: `In the Field Calculator, you can either create a new field or update an existing one. 
-    Here, the field 'fullname' already exists but only contains surnames. 
-    You will update it using another field 'firstname'.`,
+        description: `In the Field Calculator, you can either create a new field or update an existing one.
+    Here, the field 'fullname' already exists but only contains surnames.We will practice updating an existing field here.
+    Like we mentioned in the step 6, you can use the || operator or + operator to concatenate strings.
+    When both the fields are string types, you can use either || or + to concatenate them.
+    In this practice, you will update the existing 'fullname' field by adding 'firstname' in front of it.`,
         example: `Example:
-    fullname = firstname || ' ' || fullname`,
-        question: `Write an expression to update fullname by adding firstname in front of it.`,
+        field_name_one || ' ' || field_name_two`,
+        question: `Write an expression to update fullname by adding firstname in front of it.
+            Please assume we have selected the "fullname" field to update in the QGIS field calculator.`,
 
         correctAnswers: [
         "firstname||' '||fullname",
-        "firstname || ' ' || fullname",
         '"firstname"||\' \'||"fullname"',
-        '"firstname" || \' \' || "fullname"',
+        "firstname+' '+fullname",
+        '"firstname"+\' \'+"fullname"',
         ],
         hints: [
-        'Use the same expression structure as concatenation.',
-        'Choose "Update existing field" instead of "Create new field".',
+        'Use the same expression structure as as step 6. || or + can be used.',
+        'Choose "Update existing field" instead of "Create new field" in QGIS field calculator.',
+        'Do not forget the space between first name and last name. It is just a string of space \'  \'', 
         ],
         initialTable: {
         id_field: 'fid',
@@ -374,18 +382,73 @@ export const qgisBasicSteps: ExerciseStep[] = [
         pathType: 'QGIS',
         moduleKey: 'basic',
         level: 1,
+        title: 'Slightly more complex numeric calculation',
+        description: `You may need to calculate three or more numeric fields together.
+        For example, you have a vector point layer representing all your store locations.
+        Each store has fields for reviews from different platforms: google_review, yelp_review, facebook_review.
+        You want to calculate the average review score across all platforms for each store and store it in a new field called average_review.
+        You need to use parentheses to ensure the addition happens before the division.
+        In this practice, you will calculate the average of three numeric fields.`,
+        example: `Example:
+    (field_one + field_two) * 10 .`,
+        question: `Write an expression to calculate the average of google_review, yelp_review, and facebook_review.
+        Please assume we have selected the "average_review" field to update in the QGIS field calculator.
+        The average field is a decimal type with 2 decimal places.`,
+
+        correctAnswers: [
+        '(google_review+yelp_review+facebook_review)/3',
+        '("google_review"+"yelp_review"+"facebook_review")/3',
+        '(facebook_review+yelp_review+google_review)/3',
+        '("facebook_review"+"yelp_review"+"google_review")/3',
+        '(yelp_review+google_review+facebook_review)/3',
+        '("yelp_review"+"google_review"+"facebook_review")/3',
+        ],
+        hints: [
+        'Use parentheses to group the addition before division.',
+        'Use + for addition and / for division.',
+        'Average = total / group count',
+        ],
+        initialTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3', '4'],
+        columns: ['google_review', 'yelp_review', 'facebook_review'],
+        values: [
+            ['4.5', '4.0', '5.0'],
+            ['3.8', '4.2', '4.6'], 
+            ['5.0', '5.0', '5.0'], 
+            ['3.0', '2.5', '4.0'], 
+        ],
+    },
+    
+
+        expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3', '4'],
+        columns: ['google_review', 'yelp_review', 'facebook_review', 'average_review'],
+        values: [
+            ['4.5', '4.0', '5.0', '4.50'],
+            ['3.8', '4.2', '4.6', '4.20'],
+            ['5.0', '5.0', '5.0', '5.00'],
+            ['3.0', '2.5', '4.0', '3.17'], 
+        ],
+    },
+    },
+    {
+        id: 10,
+        pathType: 'QGIS',
+        moduleKey: 'basic',
+        level: 1,
         title: 'Boolean (True / False)',
         description: `Boolean expressions return True or False. 
     You can test conditions such as whether a value is greater than a threshold.`,
         example: `Example:
-    length_over_five = length > 5`,
-        question: `Write an expression to check if length is greater than 5.`,
+    For field 'Pass', I input score > 50. The Pass fied will be True if score is greater than 50, otherwise False.`,
+        question: `Write an expression to check if length is greater than 5.
+    Please assume we have selected the "length_over_five" field to update in the QGIS field calculator.`,
 
         correctAnswers: [
         'length>5',
-        '"length">5',
-        '(length>5)',
-        '("length">5)',
+        '"length">5'
         ],
         hints: [
         'Use comparison operators like >, <, =.',
@@ -406,56 +469,13 @@ export const qgisBasicSteps: ExerciseStep[] = [
         id_value: ['1', '2', '3'],
         columns: ['length', 'length_over_five'],
         values: [
-            ['3', 'false'],
-            ['5', 'false'],
-            ['8', 'true'],
+            ['3', 'False'],
+            ['5', 'False'],
+            ['8', 'True'],
         ],
         },
     },
-    {
-        id: 10,
-        pathType: 'QGIS',
-        moduleKey: 'basic',
-        level: 1,
-        title: 'Date and Time (function without variable)',
-        description: `Some functions do not need input fields. 
-    You can use them to return system values such as the current date or time. 
-    This introduces you to functions without variables.`,
-        example: `Example:
-    today_date = to_date(now())`,
-        question: `Write an expression that returns today's date (dd/mm/yyyy format).`,
-
-        correctAnswers: [
-        'to_date(now())',
-        'date(now())',
-        'to_date( now() )',
-        'date( now() )',
-        ],
-        hints: [
-        'Use now() to get the current date and time.',
-        'Wrap it with to_date() to show only the date.',
-        ],
-        initialTable: {
-        id_field: 'fid',
-        id_value: ['1', '2', '3'],
-        columns: ['(none)'],
-        values: [
-            ['-'],
-            ['-'],
-            ['-'],
-        ],
-        },
-        expectedTable: {
-        id_field: 'fid',
-        id_value: ['1', '2', '3'],
-        columns: ['today_date'],
-        values: [
-            ['24/11/2025'],
-            ['24/11/2025'],
-            ['24/11/2025'],
-        ],
-        },
-    },
+    
 
 
     // Steps 12-20...
