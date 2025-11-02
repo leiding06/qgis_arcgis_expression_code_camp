@@ -1,14 +1,14 @@
 'use client';
 // src/app/qgis/basic/step/[id]/page.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronRight, Check, X } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import { getProgress, markStepCompleted} from '@/utils/storage';
 import { validateAnswer } from '@/utils/validator';
 import { qgisBasicSteps } from '@/data/qgis/basic-steps';
 import { AttributeTable } from '@/components/AttributeTable';
-
-
+import { MODULE_LEVEL_SIZES } from '@/data/config';
+import { LevelCompleteModal } from '@/components/LevelCompleteModal';
 
 export default function ExercisePage() {
     const router = useRouter();
@@ -19,9 +19,39 @@ export default function ExercisePage() {
     const [userCode, setUserCode] = useState('');
     const [showFeedback, setShowFeedback] = useState<'correct' | 'wrong' | null>(null);
     const [showHints, setShowHints] = useState(false);
+    const [hasSubmitted, setHasSubmitted] = useState(false); // New state to track if user has submitted
+    const [showLevelComplete, setShowLevelComplete] = useState(false); // New state for level completion
+    
+    
+    // Reset submission state on code change
+    useEffect(() => {
+            setHasSubmitted(false);
+        }, [userCode]);
 
+    // Keyboard shortcuts
+    useEffect(() => {
+        const handleKeyPress = (e: KeyboardEvent) => {
+        // Shift+Enter or Shift+Enter for Submit
+        if ( e.shiftKey && e.key === 'Enter') {
+            e.preventDefault();
+            if (!hasSubmitted && userCode.trim()) {
+            handleSubmit();
+            } else if (showFeedback === 'correct') {
+            handleNext();
+            }
+        }
+        };
+        window.addEventListener('keydown', handleKeyPress);
+            return () => window.removeEventListener('keydown', handleKeyPress);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [userCode, hasSubmitted, showFeedback]);
+
+    
+    // Find current step
     const currentStep = qgisBasicSteps.find(s => s.id === stepId);
+    
 
+    // Early return if step not found 
     if (!currentStep) {
         return (
         <div className="min-h-screen flex items-center justify-center">
@@ -38,22 +68,56 @@ export default function ExercisePage() {
         );
     }
 
+    // currentStep is guaranteed to exist now after the above check
+    const handleLevelComplete = () => {
+    setShowLevelComplete(true);  // popup window
+    };
+
+
+    // Button handlers for level complete popup
+    const handleTakeTest = () => {
+    router.push(`/qgis/basic/level${currentStep.level}/test`);
+    };
+
+    const handleBackToRoadmap = () => {
+    router.push('/qgis/basic');
+    };
+
+
+
+
+    
+
 
 
     const handleSubmit = () => {
         const isCorrect = validateAnswer(userCode, currentStep.correctAnswers);
         setShowFeedback(isCorrect ? 'correct' : 'wrong');
+        setHasSubmitted(true); // Mark that user has submitted
 
         if (isCorrect) {
         const progress = getProgress();
         // Use the actual level from currentStep instead of hardcoded 1
         markStepCompleted(progress, 'QGIS', 'basic', currentStep.level, stepId);
         setShowHints(false);
+        
+        //check if level is completed
+        const levelSizes = MODULE_LEVEL_SIZES.QGIS.basic;
+        const levelStepCount = levelSizes[currentStep.level - 1];
+        const levelStart = levelSizes
+        .slice(0, currentStep.level - 1)
+        .reduce((a, b) => a + b, 0) + 1;
+        const levelEnd = levelStart + levelStepCount - 1;
+
+        if (stepId === levelEnd) {
+        setTimeout(() => handleLevelComplete(), 800);; // Pasue to show “Correct”
+        }
     } else {
         setShowHints(true);
         }
     };
 
+    
     const handleNext = () => {
         setShowFeedback(null);
         setUserCode('');
@@ -73,8 +137,8 @@ export default function ExercisePage() {
         yourCode: 'Field Calculator Editor - Expression Area',
         initialData: 'Initial Attribute Table',
         expectedResult: 'Expected Attribute Table',
-        submit: 'Submit Answer',
-        nextStep: 'Next Step',
+        submit: 'Submit Answer (Shift + Enter)',
+        nextStep: 'Next Step (Shift + Enter)',
         tryAgain: 'Try Again',
         correct: 'Correct! Well done!',
         wrong: 'Not quite right. Try again!',
@@ -86,25 +150,57 @@ export default function ExercisePage() {
 
 
     return (
-        <div className="h-screen flex flex-col bg-gray-200">
+        <div className="h-screen flex flex-col bg-gray-50">
+        {showLevelComplete && (
+        <LevelCompleteModal
+            level={currentStep.level}
+            onTakeTest={handleTakeTest}
+            onBackToRoadmap={handleBackToRoadmap}
+        />
+        )}
+
+
         {/* Navbar */}
         <nav className="bg-white shadow-sm border-b flex-shrink-0">
-            <div className="max-w-full px-6 py-3 flex justify-between items-center">
+            <div className="max-w-full px-6 py-4 flex justify-between items-center">
             <div className="flex items-center gap-4">
                 <button 
                 onClick={() => router.push('/qgis/basic')} 
-                className="p-2 hover:bg-gray-300 border-1 border-gray-300 rounded-lg transition"
+                className="p-2 hover:bg-gray-300 border border-gray-300 rounded-lg transition"
+                title="Back to Basic Editor"
                 >
                 <ChevronRight className="w-5 h-5 text-black rotate-180" />
                 </button>
                 <span className="font-bold text-gray-800">
-                Step {currentStep.id}: {currentStep.title}
+                Level {currentStep.level} - Step {currentStep.id}: {currentStep.title}
                 </span>
             </div>
             
+            {/* Navigation buttons */}
+            <div className="flex items-center gap-2">
+                {/* Previous Step */}
+                {stepId > 1 && (
+                <button
+                    onClick={() => router.push(`/qgis/basic/step/${stepId - 1}`)}
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition"
+                >
+                    ← Previous
+                </button>
+                )}
+                
+                {/* Next Step (only if completed) */}
+                {stepId < qgisBasicSteps.length && showFeedback === 'correct' && (
+                <button
+                    onClick={handleNext}
+                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition"
+                >
+                    Next →
+                </button>
+                )}
+            </div>
             </div>
         </nav>
-
+    
         {/* Main Content - Split View */}
         <div className="flex-1 grid md:grid-cols-2 gap-6 p-6 overflow-hidden">
             
@@ -215,13 +311,16 @@ export default function ExercisePage() {
                     placeholder={'// Write your code here...'} 
                     spellCheck={false}
                     />
+                    {/* Submit button - only show if not submitted or code changed */}
+                    {!hasSubmitted && (
                     <button
-                    onClick={handleSubmit}
-                    disabled={!userCode.trim()}
-                    className="mt-4 w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition"
+                        onClick={handleSubmit}
+                        disabled={!userCode.trim()}
+                        className="mt-4 w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition"
                     >
-                    {text.submit}
+                        {text.submit}
                     </button>
+                    )}
 
                     {/* Feedback Display */}
                     {showFeedback && (

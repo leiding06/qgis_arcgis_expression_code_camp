@@ -59,8 +59,7 @@ export interface ExerciseStep {
     description: string;
     example: string | string[];
     question: string;
-    initialData: string;    
-    expectedResult:string;
+
 
     
     // correct answers
