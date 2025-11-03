@@ -76,8 +76,8 @@ export default function ExercisePage() {
 
     // Button handlers for level complete popup
     const handleTakeTest = () => {
-    router.push(`/qgis/basic/level${currentStep.level}/test`);
-    };
+    router.push(`/qgis/basic/test/${currentStep.level}`);
+};
 
     const handleBackToRoadmap = () => {
     router.push('/qgis/basic');

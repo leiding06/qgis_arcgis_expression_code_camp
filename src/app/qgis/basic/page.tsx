@@ -1,7 +1,7 @@
 'use client';
 //src/app/qgis/basic/page.tsx
 import React, { useState, useEffect } from 'react';
-import { Home, Check } from 'lucide-react';//Award has ben removed  for now, need to add later
+import { Home, Check, FileText } from 'lucide-react';//Award has ben removed  for now, need to add later
 import { useRouter } from 'next/navigation';
 import { getProgress } from '@/utils/storage';
 import { qgisBasicSteps,getStepsByLevel } from '@/data/qgis/basic-steps';
@@ -13,11 +13,11 @@ export default function QGISBasicPage() {
 
     useEffect(() => {
         const progress = getProgress();
-    // 确保 basic 模块存在且有 completedSteps
+
     if (progress.qgis && progress.qgis.basic && Array.isArray(progress.qgis.basic.completedSteps)) {
         setCompletedSteps(progress.qgis.basic.completedSteps);
     } else {
-        setCompletedSteps([]); // 防止undefined导致报错
+        setCompletedSteps([]); 
     }
     
 }, []);
@@ -36,7 +36,9 @@ export default function QGISBasicPage() {
     subtitle: 'Master the fundamentals through 3 progressive levels',
     completed: 'Completed',
     stepLocked: 'Complete previous steps to unlock',
-    backToHome: 'Back to Home'
+    backToHome: 'Back to Home',
+    takeTest: 'Take Level Test',
+    skipToTest: 'Skip to test if you already know the material'
     };
     
     const levels = [
@@ -92,16 +94,45 @@ export default function QGISBasicPage() {
             {levels.map(({ level, title, description, color }) => {
                 const levelSteps = getStepsByLevel(level);
                 const levelCompleted = levelSteps.filter(s => completedSteps.includes(s.id)).length;
-                
+                const isLevelFullyCompleted = levelCompleted === levelSteps.length;
+
                 return (
                 <div key={level} className="bg-white rounded-2xl shadow-lg p-8">
                     {/* Level Header */}
                     <div className="mb-6">
-                    <h2 className="text-l font-bold text-gray-900 mb-2">{title}</h2>
-                    <p className="text-sm text-gray-600">{description}</p>
-                    <p className="text-sm text-gray-500 mt-2">
-                        {levelCompleted} / {levelSteps.length} completed
-                    </p>
+                        <div className="flex items-start justify-between mb-3">
+                            <div className="flex-1">
+                                <h2 className="text-l font-bold text-gray-900 mb-2">{title}</h2>
+                                <p className="text-sm text-gray-600">{description}</p>
+                                <p className="text-sm text-gray-500 mt-2">
+                                    {levelCompleted} / {levelSteps.length} completed
+                                </p>
+                            </div>
+                            {/* Test Button - Always available */}
+                            <button
+                                onClick={() => router.push(`/qgis/basic/test/${level}`)}
+                                className={`ml-4 px-4 py-2 rounded-lg font-medium transition flex items-center gap-2 whitespace-nowrap ${
+                                    isLevelFullyCompleted
+                                        ? 'bg-green-600 text-white hover:bg-green-700 shadow-md'
+                                        : 'bg-blue-50 text-blue-700 border-2 border-blue-200 hover:bg-blue-100'
+                                }`}
+                                title={isLevelFullyCompleted ? text.takeTest : text.skipToTest}
+                            >
+                                <FileText className="w-4 h-4" />
+                                <span className="text-sm">
+                                    {isLevelFullyCompleted ? 'Take Test' : 'Skip to Test'}
+                                </span>
+                            </button>
+                        </div>
+
+                        {/* Info text for skipping */}
+                        {!isLevelFullyCompleted && (
+                            <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                <p className="text-xs text-blue-700">
+                                    💡 Already familiar with this material? Take the test to prove your skills and unlock the next level!
+                                </p>
+                            </div>
+                        )}
                     </div>
 
                     {/* Steps Grid */}
@@ -138,4 +169,4 @@ export default function QGISBasicPage() {
         </div>
         </div>
     );
-    }
+}
