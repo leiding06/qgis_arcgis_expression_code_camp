@@ -31,7 +31,10 @@ export default function ExercisePage() {
     // Keyboard shortcuts
     useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {
-        // Shift+Enter or Shift+Enter for Submit
+        if (showLevelComplete){
+            return; // Ignore keypresses when level complete modal is shown
+        }
+            // Shift+Enter for Submit
         if ( e.shiftKey && e.key === 'Enter') {
             e.preventDefault();
             if (!hasSubmitted && userCode.trim()) {

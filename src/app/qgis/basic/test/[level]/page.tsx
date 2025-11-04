@@ -1,7 +1,7 @@
 
 'use client';
 // src/app/qgis/basic/test/[level]/page.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ChevronRight, Check, X, Trophy, BookOpen } from 'lucide-react';
 import { getTestByLevel } from '@/data/qgis/basic-tests';
@@ -39,6 +39,7 @@ export default function TestPage() {
     const currentQuestion = test.questions[currentQuestionIndex];
     const isLastQuestion = currentQuestionIndex === test.questions.length - 1;
     const progressPercentage = ((currentQuestionIndex + 1) / test.questions.length) * 100;
+    
 
     const handleMultipleChoiceAnswer = (optionIndex: number) => {
         setUserAnswers({
@@ -80,7 +81,7 @@ export default function TestPage() {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         }
     };
-
+    
     const handlePrevious = () => {
         if (currentQuestionIndex > 0) {
         setCurrentQuestionIndex(currentQuestionIndex - 1);
@@ -90,7 +91,7 @@ export default function TestPage() {
     const handleViewResults = () => {
         setShowResults(true);
     };
-
+    
     const handleRetakeTest = () => {
         setCurrentQuestionIndex(0);
         setUserAnswers({});
@@ -100,6 +101,7 @@ export default function TestPage() {
     };
 
     const isPassed = score >= test.passingScore;
+
 
     // Test completion screen
     if (isTestComplete && !showResults) {
@@ -131,13 +133,13 @@ export default function TestPage() {
             {isPassed ? (
                 <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-300 rounded-xl p-5 mb-8">
                 <p className="text-emerald-800 font-semibold text-lg">
-                    🎉 Congratulations! You can now proceed to Level {level + 1}!
+                    Congratulations! You can now proceed to Level {level + 1}!
                 </p>
                 </div>
             ) : (
                 <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-orange-300 rounded-xl p-5 mb-8">
                 <p className="text-orange-800 font-semibold text-lg">
-                    📚 You need {test.passingScore - score} more point(s) to pass. Review and try again!
+                    You need {test.passingScore - score} more point(s) to pass. Review and try again!
                 </p>
                 </div>
             )}
@@ -147,13 +149,13 @@ export default function TestPage() {
                 onClick={handleViewResults}
                 className="px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold text-lg hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
                 >
-                📊 View Detailed Results
+                View Detailed Results
                 </button>
                 <button
                 onClick={handleRetakeTest}
                 className="px-6 py-4 bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-xl font-bold hover:from-slate-700 hover:to-slate-800 shadow-md transition-all"
                 >
-                🔄 Retake Test
+                Retake Test
                 </button>
                 <button
                 onClick={() => router.push('/qgis/basic')}
