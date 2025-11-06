@@ -80,14 +80,32 @@ export default function QGISBasicPage() {
             </div>
         </nav>
 
-        {/* Header */}
-        <div className="max-w-xl mx-auto px-6 py-12">
-            <div className="text-center mb-12">
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">{text.title}</h1>
-            <p className="text-gray-500">
-                {completedSteps.length} / {qgisBasicSteps.length} {text.completed}
-            </p>
-            </div>
+            {/* Header */}
+            <div className="max-w-xl mx-auto px-6 py-12">
+                {/* Progress Summary Card */}
+                <div className="bg-white rounded-2xl shadow-lg p-8 mb-10 border-t-4 border-green-500">
+                    <div className="text-center">
+                        <h1 className="text-2xl font-bold text-gray-800 mb-3">{text.title}</h1>
+                        <div className="flex items-center justify-center gap-3 mb-4">
+                            <div className="text-5xl font-bold text-green-600">
+                                {completedSteps.length}
+                            </div>
+                            <div className="text-left">
+                                <div className="text-sm text-gray-600">out of</div>
+                                <div className="text-2xl font-bold text-gray-400">{qgisBasicSteps.length}</div>
+                            </div>
+                            <div className="text-gray-600 text-lg">steps {text.completed.toLowerCase()}</div>
+                        </div>
+                        
+                        {/* Progress bar */}
+                        <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
+                            <div 
+                                className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 h-3 rounded-full transition-all duration-500 shadow-md"
+                                style={{ width: `${(completedSteps.length / qgisBasicSteps.length) * 100}%` }}
+                            />
+                        </div>
+                    </div>
+                </div>
 
             {/* Levels */}
             <div className="space-y-10">
@@ -108,33 +126,7 @@ export default function QGISBasicPage() {
                                     {levelCompleted} / {levelSteps.length} completed
                                 </p>
                             </div>
-                            {/* Test Button - Always available */}
-                            <button
-                                onClick={() => router.push(`/qgis/basic/test/${level}`)}
-                                className={`ml-4 px-4 py-2 rounded-lg font-medium transition flex items-center gap-2 whitespace-nowrap ${
-                                    isLevelFullyCompleted
-                                        ? 'bg-green-600 text-white hover:bg-green-700 shadow-md'
-                                        : 'bg-blue-50 text-blue-700 border-2 border-blue-200 hover:bg-blue-100'
-                                }`}
-                                title={isLevelFullyCompleted ? text.takeTest : text.skipToTest}
-                            >
-                                <FileText className="w-4 h-4" />
-                                <span className="text-sm">
-                                    {isLevelFullyCompleted ? 'Take Test' : 'Skip to Test'}
-                                </span>
-                            </button>
                         </div>
-
-                        {/* Info text for skipping */}
-                        {!isLevelFullyCompleted && (
-                            <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                                <p className="text-xs text-blue-700">
-                                    💡 Already familiar with this material? Take the test to prove your skills and unlock the next level!
-                                </p>
-                            </div>
-                        )}
-                    </div>
-
                     {/* Steps Grid */}
                     <div className="grid grid-cols-5 md:grid-cols-5 gap-6">
                     {levelSteps.map((step) => {
@@ -159,7 +151,30 @@ export default function QGISBasicPage() {
                         </button>
                         );
                     })}
+                    </div>
+                    {/* Info text for skipping - Below button */}
+                    {!isLevelFullyCompleted && (
+                        <div className="mt-15 mb-4 p-3 bg-gray-100 border border-blue-300 rounded-lg">
+                            <p className="text-sm font-bold text-gray-700 text-center">
+                            Skip to test to unlock next level!
+                            </p>
+                        </div>
+                    )}
 
+
+                    {/* Test Button - Below grid */}
+                    <div className="flex justify-center mb-3">
+                        <button
+                            onClick={() => router.push(`/qgis/basic/test/${level}`)}
+                            className="px-4 py-2 bg-gradient-to-r from-blue-500 to-green-600 text-white rounded-full text-md font-bold shadow-md hover:scale-110 transition flex items-center gap-2"
+                            title={isLevelFullyCompleted ? text.takeTest : text.skipToTest}
+                        >
+                           
+                            <span>
+                                {isLevelFullyCompleted ? 'Take Test' : 'Skip to Test'}
+                            </span>
+                        </button>
+                    </div>
                     
                     </div>
                 </div>
