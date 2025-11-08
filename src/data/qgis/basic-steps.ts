@@ -369,11 +369,11 @@ export const qgisBasicSteps: ExerciseStep[] = [
         expectedTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        columns: ['fullname'],
+        columns: ['firstname', 'fullname'],
         values: [
-            ['Jane Smith'],
-            ['Alex Johnson'],
-            ['Eva Brown'],
+            ['Jane','Jane Smith'],
+            ['Alex','Alex Johnson'],
+            ['Eva','Eva Brown'],
         ],
         },
     },
@@ -457,11 +457,11 @@ export const qgisBasicSteps: ExerciseStep[] = [
         initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        columns: ['length'],
+        columns: ['length','length_over_five'],
         values: [
-            ['3'],
-            ['5'],
-            ['8'],
+            ['3', 'NULL'],
+            ['5', 'NULL'],
+            ['8', 'NULL'],
         ],
         },
         expectedTable: {

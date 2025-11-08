@@ -125,7 +125,18 @@ export default function ExercisePage() {
         setShowFeedback(null);
         setUserCode('');
         setShowHints(false);
+        const levelSizes = MODULE_LEVEL_SIZES.QGIS.basic;
+        const levelStepCount = levelSizes[currentStep.level - 1];
+        const levelStart = levelSizes
+            .slice(0, currentStep.level - 1)
+            .reduce((a, b) => a + b, 0) + 1;
+        const levelEnd = levelStart + levelStepCount - 1;
+
         
+        if (stepId === levelEnd) {
+            
+            return;
+}
         if (stepId < qgisBasicSteps.length) {
         router.push(`/qgis/basic/step/${stepId + 1}`);
         } else {

@@ -20,15 +20,15 @@ interface LevelCompleteModalProps {
             const colors = ['bg-red-400', 'bg-yellow-400', 'bg-green-400', 'bg-blue-400', 'bg-purple-400'];
             const randomColor = colors[Math.floor(Math.random() * colors.length)];
             const randomDelay = Math.random() * 0.5;
-            const randomDuration = 1 + Math.random();
-            const randomX = (Math.random() - 0.5) * 400;
-            const randomY = Math.random() * 400 + 200;
+            const randomDuration = 3 + Math.random()*3;
+            const randomX = (Math.random() - 0.5) * 1000;
+            const randomY = Math.random() * 800 + 400;
             const randomRotate = Math.random() * 360;
 
             return (
                 <div
                 key={i}
-                className={`absolute top-1/2 left-1/2 w-3 h-2 ${randomColor} rounded-sm`}
+                className={`absolute top-0 left-1/2 w-3 h-2 ${randomColor} rounded-sm`}
                 style={{
                     animation: `confettiFall ${randomDuration}s ease-out ${randomDelay}s forwards`,
                     transform: `translate(-50%, -50%) rotate(${randomRotate}deg)`,
