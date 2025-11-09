@@ -6,6 +6,14 @@ import { useRouter } from 'next/navigation';
 import { getProgress } from '@/utils/storage';
 import { qgisBasicSteps,getStepsByLevel } from '@/data/qgis/basic-steps';
 
+// Gradient classes for levels
+const gradientClasses: Record<number, string> = 
+                    {1: 'from-green-500 to-blue-500',
+                        2: 'from-blue-500 to-purple-500',
+                        3: 'from-purple-500 to-orange-500',
+                    };
+
+// Fallback for unexpected levels
 
 export default function QGISBasicPage() {
     const router = useRouter();
@@ -161,15 +169,14 @@ export default function QGISBasicPage() {
                         </div>
                     )}
 
-
+                    
                     {/* Test Button - Below grid */}
                     <div className="flex justify-center mb-3">
                         <button
                             onClick={() => router.push(`/qgis/basic/test/${level}`)}
-                            className="px-4 py-2 bg-gradient-to-r from-blue-500 to-green-600 text-white rounded-full text-md font-bold shadow-md hover:scale-110 transition flex items-center gap-2"
+                            className={`px-4 py-2 bg-gradient-to-r ${gradientClasses[level]} text-white rounded-full text-md font-bold shadow-md hover:scale-110 transition flex items-center gap-2`}
                             title={isLevelFullyCompleted ? text.takeTest : text.skipToTest}
                         >
-                           
                             <span>
                                 {isLevelFullyCompleted ? 'Take Test' : 'Skip to Test'}
                             </span>
