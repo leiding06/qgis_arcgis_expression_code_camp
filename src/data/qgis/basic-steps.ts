@@ -481,30 +481,37 @@ export const qgisBasicSteps: ExerciseStep[] = [
     // Steps 12-20...
     
     // ==========================================
-    // LEVEL 2: Conditional Logic (Steps 21-30)
+    // LEVEL 2: Frequent use functions and variables (Steps 21-30)
     // ==========================================
     {
         id: 11,
         pathType: 'QGIS',
         moduleKey: 'basic',
         level: 2,
-        title: 'Date and Time (function without variable)',
-        description: `Some functions do not need input fields. 
-You can use them to return system values such as the current date or time. 
-This introduces you to functions without variables.`,
-        example: `Example:
-today_date = to_date(now())`,
-        question: `Write an expression that returns today's date (dd/mm/yyyy format).`,
+        title: 'Function without variable',
+        description: `In QGIS expressions, *functions* are built-in tools that perform specific tasks — a bit like formulas in a spreadsheet. 
+        They can calculate values, extract information, or return system data such as the current time or project details.
+
+        Some functions don’t need any input values or fields. These are called **parameter-free functions**, and they simply return a default or constant result.
+        For example, \`now()\` returns the current date and time, and \`pi()\` returns the mathematical constant π.
+
+        Most other functions, however, require one or more input variables inside the brackets — for example, \`area($geometry)\` calculates the area of a feature.
+
+        In this step, you’ll learn how to use a function that doesn’t need any variables.  
+        Tip: you can open the **Help** tab in the QGIS Expression Editor to explore all available functions, their syntax, and examples.`,
+
+        example: `Example: now() returns the current date and time.
+        pi() returns the value of Pi (3.14159...)
+        `,
+        question: `Write an expression that returns the current date and time.`,
 
         correctAnswers: [
-            'to_date(now())',
-            'date(now())',
-            'to_date( now() )',
-            'date( now() )'
+            'now()'
         ],
         hints: [
             'Use now() to get the current date and time.',
-            'Wrap it with to_date() to show only the date.'
+            'Make sure to include the parentheses () and with no spaces.'
+            
         ],
         initialTable: {
         id_field: 'fid',
@@ -519,14 +526,484 @@ today_date = to_date(now())`,
         expectedTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        columns: ['today_date'],
+        columns: ['date_time'],
         values: [
-            ['24/11/2025'],
-            ['24/11/2025'],
-            ['24/11/2025'],
+            ['24/10/2025 22:36:24'],
+            ['24/10/2025 22:36:24'],
+            ['24/10/2025 22:36:24'],
         ],
         }
     },
+
+
+    {
+    id: 12,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 2,
+    title: 'Function with String as Variable',
+    description: `There are only a few functions that do not need any variables. 
+In most cases, you will use functions that operate on existing fields or constant values. 
+A function can take **a string** as its input variable — that means you can pass a text value into the brackets.
+
+For example, \`upper('qgis')\` returns 'QGIS' because it converts the input string to uppercase.
+Similarly, \`length('Open Source')\` returns the number of characters in the string.
+
+You can use such functions to clean, format, or analyze text data. 
+For example, you might want to standardize all text in a field to uppercase before joining tables, or count characters to check for missing information.
+
+Tip: When a function uses a string as input, always use single quotes around the text (e.g. 'London', not London).`,
+
+    example: `Example: upper('qgis') → 'QGIS'
+length('Open Source') → 11`,
+
+    question: `Write an expression that returns the uppercase version of the word 'hello'.`,
+
+    correctAnswers: [
+        "upper('hello')"
+    ],
+
+    hints: [
+        "Use the upper() function to convert text to uppercase.",
+        "Remember to use single quotes around the string: 'hello'."
+    ],
+
+    initialTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['(none)'],
+        values: [
+            ['-'],
+            ['-'],
+            ['-'],
+        ],
+    },
+
+    expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['upper_text'],
+        values: [
+            ['HELLO'],
+            ['HELLO'],
+            ['HELLO'],
+        ],
+    },
+},
+{
+    id: 13,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 2,
+    title: 'Function with Numeric Variable',
+    description: `Many QGIS functions take numeric values as input. 
+These functions are used for mathematical calculations, data normalization, or rounding results. 
+A numeric variable can be a constant (like 3.14) or a numeric field from your layer.
+
+For example, \`sqrt(9)\` returns 3, and \`round(12.3456, 2)\` returns 12.35.
+You can use these functions to simplify data or control decimal precision in numeric fields.
+
+When combining numeric functions with fields, make sure the field data type is numeric, otherwise QGIS will return an error.`,
+
+    example: `Example: round(12.3456, 2) → 12.35
+sqrt(16) → 4`,
+
+    question: `Write an expression that rounds the number 15.6789 to 1 decimal place.`,
+
+    correctAnswers: [
+        "round(15.6789, 1)"
+    ],
+
+    hints: [
+        "Use the round() function with two parameters: the number and the number of decimals.",
+        "round(15.6789, 1) → 15.7"
+    ],
+
+    initialTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['(none)'],
+        values: [
+            ['-'],
+            ['-'],
+            ['-']
+        ],
+    },
+
+    expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['rounded_value'],
+        values: [
+            ['15.7'],
+            ['15.7'],
+            ['15.7'],
+        ],
+    },
+},
+{
+    id: 14,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 2,
+    title: 'Function with Field',
+    description: `Functions can also operate directly on layer fields. 
+When you reference a field in a QGIS expression, you don’t use quotes — simply type the field name inside the brackets.
+
+For example, \`upper(name)\` converts the text in the field “name” to uppercase, and \`round(population, 0)\` rounds the field values.
+
+Using functions with fields lets you transform your data dynamically — each feature gets its own calculated result based on that field’s value.`,
+
+    example: `Example: upper(city_name) → 'LONDON'
+round(population, 0) → 12500`,
+
+    question: `Write an expression that converts the values in field 'city' to uppercase.`,
+
+    correctAnswers: [
+        "upper(city)"
+    ],
+
+    hints: [
+        "Use upper() with the field name inside the brackets.",
+        "Do not use quotes around the field name."
+    ],
+
+    initialTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['city'],
+        values: [
+            ['london'],
+            ['paris'],
+            ['rome']
+        ],
+    },
+
+    expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['upper_city'],
+        values: [
+            ['LONDON'],
+            ['PARIS'],
+            ['ROME'],
+        ],
+    },
+},
+
+{
+    id: 15,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 2,
+    title: 'Default Variables: $ Variables',
+    description: `In QGIS, variables that start with a **$** symbol are built-in system variables. 
+They are automatically provided by QGIS and often relate to the current feature’s geometry or attributes.
+
+For example:
+- \`$area\` returns the area of the current feature.
+- \`$length\` returns the length of a line.
+- \`$x\` and \`$y\` return the centroid coordinates of a feature.
+
+You don’t need to define these variables — QGIS calculates them automatically for each feature. 
+They are extremely useful for geometry-based calculations and labeling.`,
+
+    example: `Example: round($area, 2) → returns area of each feature rounded to 2 decimals`,
+
+    question: `Write an expression that returns the area of each feature rounded to 0 decimal places.`,
+
+    correctAnswers: [
+        "round($area, 0)"
+    ],
+
+    hints: [
+        "Use the $area variable and wrap it with the round() function.",
+        "round($area, 0) removes decimals from the area value."
+    ],
+
+    initialTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['$area'],
+        values: [
+            ['24.56'],
+            ['35.12'],
+            ['10.89'],
+        ],
+    },
+
+    expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['rounded_area'],
+        values: [
+            ['25'],
+            ['35'],
+            ['11'],
+        ],
+    },
+},
+
+
+{
+    id: 16,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 2,
+    title: 'Default Variables: @ Variables',
+    description: `Variables starting with **@** are called *context variables*. 
+They store information about the project, layer, map, or current expression context.
+
+For example:
+- \`@project_title\` gives the name of your current QGIS project.
+- \`@layer_name\` returns the active layer name.
+- \`@row_number\` can be used to number features when evaluating an expression.
+
+Unlike $ variables, @ variables are not tied to geometry — they describe the project or environment in which the expression runs.`,
+
+    example: `Example: 'Project: ' || @project_title → 'Project: Site Survey'`,
+
+    question: `Write an expression that combines the text 'Row ' with the @row_number variable.`,
+
+    correctAnswers: [
+        "'Row ' || @row_number"
+    ],
+
+    hints: [
+        "Use string concatenation (||) to join text and variables.",
+        "Remember: @row_number gives the current row index in an expression context."
+    ],
+
+    initialTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['(none)'],
+        values: [
+            ['-'],
+            ['-'],
+            ['-']
+        ],
+    },
+
+    expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['row_label'],
+        values: [
+            ['Row 1'],
+            ['Row 2'],
+            ['Row 3'],
+        ],
+    },
+},
+
+{
+    id: 17,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 2,
+    title: 'Function with Default Variable',
+    description: `You can combine built-in variables like $area or $length with functions. 
+This allows you to calculate geometry-based values more precisely or format them for display.
+
+For example:
+- \`round($length, 1)\` rounds line length to 1 decimal.
+- \`to_string($area)\` converts numeric area to text.
+- \`concat('Area: ', round($area, 2))\` creates a formatted label.
+
+Combining functions with variables is very common in QGIS — it helps you turn raw data into readable outputs.`,
+
+    example: `Example: concat('Area: ', round($area, 2)) → 'Area: 12.34'`,
+
+    question: `Write an expression that returns 'Length: ' followed by the line length rounded to 0 decimal places.`,
+
+    correctAnswers: [
+        "concat('Length: ', round($length, 0))"
+    ],
+
+    hints: [
+        "Combine text with the $length variable using concat().",
+        "Use round($length, 0) to remove decimals."
+    ],
+
+    initialTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['$length'],
+        values: [
+            ['12.34'],
+            ['8.76'],
+            ['25.9'],
+        ],
+    },
+
+    expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['length_label'],
+        values: [
+            ['Length: 12'],
+            ['Length: 9'],
+            ['Length: 26'],
+        ],
+    },
+},
+
+{
+    id: 18,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 2,
+    title: 'Function with Function',
+    description: `Functions can be nested — one function can use the result of another as its input. 
+This is called **function nesting** and it’s a powerful way to build complex expressions.
+
+For example:
+- \`upper(concat('id_', to_string(123)))\` → 'ID_123'
+- \`round(sqrt(9), 0)\` → 3
+
+When nesting, QGIS always evaluates the innermost function first. 
+Make sure parentheses are balanced and the data types match.`,
+
+    example: `Example: upper(concat('id_', to_string(45))) → 'ID_45'`,
+
+    question: `Write an expression that converts the number 100 to string and then to uppercase.`,
+
+    correctAnswers: [
+        "upper(to_string(100))"
+    ],
+
+    hints: [
+        "Start with to_string(100) → '100'.",
+        "Then wrap it with upper()."
+    ],
+
+    initialTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['(none)'],
+        values: [
+            ['-'],
+            ['-'],
+            ['-']
+        ],
+    },
+
+    expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['upper_text'],
+        values: [
+            ['100'],
+            ['100'],
+            ['100'],
+        ],
+    },
+},
+
+
+{
+    id: 19,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 2,
+    title: 'Function with Two Variables (Same Type)',
+    description: `Some functions can take multiple variables of the same type. 
+For example, numeric functions can accept two numbers, or string functions can accept two text values.
+
+Examples:
+- \`max(5, 10)\` → 10
+- \`concat('Q', 'GIS')\` → 'QGIS'
+
+These are very useful for comparing or combining values of the same data type.`,
+
+    example: `Example: max(12, 30) → 30
+concat('geo', 'map') → 'geomap'`,
+
+    question: `Write an expression that returns the larger number between 8 and 12.`,
+
+    correctAnswers: [
+        "max(8, 12)"
+    ],
+
+    hints: [
+        "Use the max() function for comparing two numeric values.",
+        "max(8,12) → 12"
+    ],
+
+    initialTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['(none)'],
+        values: [
+            ['-'],
+            ['-'],
+            ['-']
+        ],
+    },
+
+    expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['max_value'],
+        values: [
+            ['12'],
+            ['12'],
+            ['12'],
+        ],
+    },
+},
+
+{
+    id: 20,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 2,
+    title: 'Function with Two Variables (Different Types)',
+    description: `Some functions allow combining variables of different data types, such as strings and numbers. 
+In such cases, you often need to convert one type to another using helper functions like to_string().
+
+For example:
+- \`concat('Area: ', to_string($area))\` combines text with numeric area.
+- \`substr(to_string(year), 3, 2)\` extracts text from a numeric value after conversion.
+
+This flexibility lets you mix numbers, strings, and fields in the same expression.`,
+
+    example: `Example: concat('Value: ', to_string(10)) → 'Value: 10'`,
+
+    question: `Write an expression that combines the text 'Total: ' with the number 25.`,
+
+    correctAnswers: [
+        "concat('Total: ', to_string(25))"
+    ],
+
+    hints: [
+        "Use concat() to combine text and numeric values.",
+        "Convert numbers to text using to_string()."
+    ],
+
+    initialTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['(none)'],
+        values: [
+            ['-'],
+            ['-'],
+            ['-']
+        ],
+    },
+
+    expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3'],
+        columns: ['combined_text'],
+        values: [
+            ['Total: 25'],
+            ['Total: 25'],
+            ['Total: 25'],
+        ],
+    },
+},
     // Steps 22-30...
 
 // ==========================================
