@@ -542,20 +542,23 @@ export const qgisBasicSteps: ExerciseStep[] = [
     moduleKey: 'basic',
     level: 2,
     title: 'Function with String as Variable',
-    description: `There are only a few functions that do not need any variables. 
-In most cases, you will use functions that operate on existing fields or constant values. 
-A function can take **a string** as its input variable — that means you can pass a text value into the brackets.
+    description: `Most functions in QGIS require input variables — usually existing fields or constant values. Only a few functions work without any variables.
 
-For example, \`upper('qgis')\` returns 'QGIS' because it converts the input string to uppercase.
-Similarly, \`length('Open Source')\` returns the number of characters in the string.
+A function can take a string as its input variable, meaning you can pass text directly inside the brackets.
 
-You can use such functions to clean, format, or analyze text data. 
-For example, you might want to standardize all text in a field to uppercase before joining tables, or count characters to check for missing information.
+For example:
+- \`upper('qgis')\` returns 'QGIS' because it converts the input string to uppercase.
+- \`length('Open Source')\` returns the number of characters in the string.
+- \`to_string(123)\` converts the number 123 into the string '123', allowing you to combine it with other text fields. (You can’t concatenate values of different types without converting them first.) This is a very handy function — for instance, you might use it when creating labels or formatting mixed data fields.
 
-Tip: When a function uses a string as input, always use single quotes around the text (e.g. 'London', not London).`,
+You can use these functions to clean, format, or analyze text data. For example, you might standardize all text in a field to uppercase before joining tables, or count characters to check for missing information.
+
+We can’t cover all frequently used functions here, but you can explore the full list in the QGIS documentation:
+https://docs.qgis.org/3.40/en/docs/user_manual/expressions/functions_list.html`,
 
     example: `Example: upper('qgis') → 'QGIS'
-length('Open Source') → 11`,
+length('Open Source') → 11
+to_string(1) `,
 
     question: `Write an expression that returns the uppercase version of the word 'hello'.`,
 
