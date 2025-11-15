@@ -489,15 +489,16 @@ export const qgisBasicSteps: ExerciseStep[] = [
         moduleKey: 'basic',
         level: 2,
         title: 'Function without variable',
-        description: `In QGIS expressions, *functions* are built-in tools that perform specific tasks — a bit like formulas in a spreadsheet. 
+        description: `In QGIS expressions, *functions* are built-in tools that perform specific tasks, a bit like formulas in a spreadsheet. 
         They can calculate values, extract information, or return system data such as the current time or project details.
 
         Some functions don’t need any input values or fields. These are called **parameter-free functions**, and they simply return a default or constant result.
         For example, \`now()\` returns the current date and time, and \`pi()\` returns the mathematical constant π.
 
-        Most other functions, however, require one or more input variables inside the brackets — for example, \`area($geometry)\` calculates the area of a feature.
+        Most other functions, however, require one or more input variables inside the brackets. For example, \`area($geometry)\` calculates the area of a feature. Don't worry, we will cover those in later steps.
 
         In this step, you’ll learn how to use a function that doesn’t need any variables.  
+        
         Tip: you can open the **Help** tab in the QGIS Expression Editor to explore all available functions, their syntax, and examples.`,
 
         example: `Example: now() returns the current date and time.
@@ -506,7 +507,9 @@ export const qgisBasicSteps: ExerciseStep[] = [
         question: `Write an expression that returns the current date and time.`,
 
         correctAnswers: [
-            'now()'
+            'now()',
+            'NOW()',
+            'Now()'
         ],
         hints: [
             'Use now() to get the current date and time.',
@@ -516,11 +519,11 @@ export const qgisBasicSteps: ExerciseStep[] = [
         initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        columns: ['(none)'],
+        columns: ['date_time'],
         values: [
-            ['-'],
-            ['-'],
-            ['-'],
+            ['Null'],
+            ['Null'],
+            ['Null'],
         ],
         },
         expectedTable: {
@@ -538,58 +541,62 @@ export const qgisBasicSteps: ExerciseStep[] = [
 
     {
     id: 12,
-    pathType: 'QGIS',
-    moduleKey: 'basic',
-    level: 2,
-    title: 'Function with String as Variable',
-    description: `Most functions in QGIS require input variables — usually existing fields or constant values. Only a few functions work without any variables.
+pathType: 'QGIS',
+moduleKey: 'basic',
+level: 2,
+title: 'Function with String as Variable',
+description: `Most functions in QGIS require input variables—usually existing fields or constant values. Only a few functions work without variables.
 
-A function can take a string as its input variable, meaning you can pass text directly inside the brackets.
+    A function can take a string as its input variable, meaning you can pass text directly inside the brackets.
 
-For example:
-- \`upper('qgis')\` returns 'QGIS' because it converts the input string to uppercase.
-- \`length('Open Source')\` returns the number of characters in the string.
-- \`to_string(123)\` converts the number 123 into the string '123', allowing you to combine it with other text fields. (You can’t concatenate values of different types without converting them first.) This is a very handy function — for instance, you might use it when creating labels or formatting mixed data fields.
+    For example:
+    - \`upper('qgis')\` returns 'QGIS' because it converts the input string to uppercase.
+    - \`length('Open Source')\` returns the number of characters in the string.
+    - \`to_string(123)\` converts the number 123 into the string '123', allowing you to combine it with other text fields. (You can’t concatenate values of different types without converting them first.) This is a very handy function. For instance, you might use it when creating labels or formatting mixed data fields.
 
-You can use these functions to clean, format, or analyze text data. For example, you might standardize all text in a field to uppercase before joining tables, or count characters to check for missing information.
+    We can’t cover all frequently used functions here, but you can explore the full list in the QGIS documentation:
+    https://docs.qgis.org/3.40/en/docs/user_manual/expressions/functions_list.html`,
 
-We can’t cover all frequently used functions here, but you can explore the full list in the QGIS documentation:
-https://docs.qgis.org/3.40/en/docs/user_manual/expressions/functions_list.html`,
+example: `Example: upper('qgis') → 'QGIS'
+    length('Open Source') → 11`,
 
-    example: `Example: upper('qgis') → 'QGIS'
-length('Open Source') → 11
-to_string(1) `,
+question: `We have received the container ID from the customer. It comes in as a lowercase string containing letters and numbers. However, we need to use all uppercase so that it aligns with the data design.
 
-    question: `Write an expression that returns the uppercase version of the word 'hello'.`,
+    This is the container ID: oiwljdn25nwjd01.
+    
+    Can you use it to update the empty CONTAINER_ID column in the correct format?
+    It’s a long ID, so please copy it directly from here to avoid typos.`,
 
-    correctAnswers: [
-        "upper('hello')"
+correctAnswers: [
+    "upper('oiwljdn25nwjd01')",
+    "Upper('oiwljdn25nwjd01')",
+    "UPPER('oiwljdn25nwjd01')"
     ],
 
-    hints: [
-        "Use the upper() function to convert text to uppercase.",
-        "Remember to use single quotes around the string: 'hello'."
+hints: [
+    "Use the upper() function to convert the container ID to uppercase.",
+    "Remember to use single quotes around the text: 'oiwljdn25nwjd01'."
     ],
 
     initialTable: {
-        id_field: 'fid',
-        id_value: ['1', '2', '3'],
-        columns: ['(none)'],
+        id_field: 'PRODUCT_ID',
+        id_value: ['A001', 'A002', 'A003'],
+        columns: ['PORT_ID','CONTAINER_ID'],
         values: [
-            ['-'],
-            ['-'],
-            ['-'],
+            ['P01','TBC'],
+            ['P01','TBC'],
+            ['P01','TBC'],
         ],
     },
 
     expectedTable: {
-        id_field: 'fid',
-        id_value: ['1', '2', '3'],
-        columns: ['upper_text'],
+        id_field: 'PRODUCT_ID',
+        id_value: ['A001', 'A002', 'A003'],
+        columns: ['PORT_ID','CONTAINER_ID'],
         values: [
-            ['HELLO'],
-            ['HELLO'],
-            ['HELLO'],
+            ['P01','OIWLJDN25NWJD01'],
+            ['P01','OIWLJDN25NWJD01'],
+            ['P01','OIWLJDN25NWJD01'],
         ],
     },
 },
