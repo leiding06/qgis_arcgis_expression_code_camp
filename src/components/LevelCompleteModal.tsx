@@ -20,7 +20,7 @@ interface LevelCompleteModalProps {
             const colors = ['bg-red-400', 'bg-yellow-400', 'bg-green-400', 'bg-blue-400', 'bg-purple-400'];
             const randomColor = colors[Math.floor(Math.random() * colors.length)];
             const randomDelay = Math.random() * 0.5;
-            const randomDuration = 3 + Math.random()*3;
+            const randomDuration = 3 + Math.random()*4;
             const randomX = (Math.random() - 0.5) * 1000;
             const randomY = Math.random() * 800 + 400;
             const randomRotate = Math.random() * 360;

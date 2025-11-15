@@ -134,7 +134,6 @@ export default function ExercisePage() {
 
         
         if (stepId === levelEnd) {
-            
             return;
 }
         if (stepId < qgisBasicSteps.length) {

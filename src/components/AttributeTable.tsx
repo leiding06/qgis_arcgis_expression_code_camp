@@ -2,21 +2,21 @@ import React from 'react';
 // src/components/AttributeTable.tsx
 
 export interface AttributeTableProps {
+    title: string;
     columns: string[]; // column title
     data: (string | number)[][];
     isExpected: boolean;
-    isComparisonView?: boolean;
-    title?: string; // optional custom title
+    isComparisonView?: boolean; 
 }
 
 // =================================================================
 // AttributeTable 
 // =================================================================
 export const AttributeTable: React.FC<AttributeTableProps> = ({
-    columns, data, isExpected, isComparisonView = false, title
+    columns, data, isExpected, isComparisonView = false
     }) => {
     const fontSizeClass = isComparisonView ? 'text-xs' : 'text-sm';
-    const tableTitle = title || (isExpected ? "Expected Attribute Table" : "Initial Attribute Table");
+    const tableTitle = isExpected ? "Expected Attribute Table" : "Initial Attribute Table";
     const rowsToShow = isComparisonView ? 3 : data.length;
 
     return (

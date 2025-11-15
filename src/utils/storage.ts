@@ -21,7 +21,7 @@ export const initialProgress: UserProgress = {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
         const parsed = JSON.parse(saved);
-        // 保证 qgis/arcgis 至少为对象
+        // 
         return {
             ...initialProgress,
             ...parsed,
