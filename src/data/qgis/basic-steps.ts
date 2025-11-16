@@ -504,7 +504,8 @@ export const qgisBasicSteps: ExerciseStep[] = [
         example: `Example: now() returns the current date and time.
         pi() returns the value of Pi (3.14159...)
         `,
-        question: `Write an expression that returns the current date and time.`,
+        question: `You have surveyed three locations today and want to record the date and time of the survey in the 'date_time' field. 
+        Write an expression to get the current date and time.`,
 
         correctAnswers: [
             'now()',
@@ -557,7 +558,7 @@ description: `Most functions in QGIS require input variables—usually existing 
     We can’t cover all frequently used functions here, but you can explore the full list in the QGIS documentation:
     https://docs.qgis.org/3.40/en/docs/user_manual/expressions/functions_list.html`,
 
-example: `Example: upper('qgis') → 'QGIS'
+example: `Example: upper('qgis') → 'QGIS' OR 
     length('Open Source') → 11`,
 
 question: `We have received the container ID from the customer. It comes in as a lowercase string containing letters and numbers. However, we need to use all uppercase so that it aligns with the data design.
@@ -613,41 +614,49 @@ A numeric variable can be a constant (like 3.14) or a numeric field from your la
 For example, \`sqrt(9)\` returns 3, and \`round(12.3456, 2)\` returns 12.35.
 You can use these functions to simplify data or control decimal precision in numeric fields.
 
-When combining numeric functions with fields, make sure the field data type is numeric, otherwise QGIS will return an error.`,
+When combining numeric functions with fields, make sure the field data type is numeric, otherwise QGIS will return an error. Or, you need to use type conversion functions first to convert text to numbers.`,
 
-    example: `Example: round(12.3456, 2) → 12.35
-sqrt(16) → 4`,
+    example: `Example: round(12.3456, 2) → 12.35  OR 
+sqrt(16) → 4  OR to_string(100) → '100'` ,
 
-    question: `Write an expression that rounds the number 15.6789 to 1 decimal place.`,
+    question: `Imagine you are working as a tree surveyor. 
+    The current RECORD_ID field stored your name initials. 
+    You need to format the field 'RECORD_ID' of all your recorded points data with a suffix of your ID as a surveyor - 1013. 
+    Please be aware that the field 'RECORD_ID' is a String field. Do you remember how we add two strings together in level 1 practice? 
+    However, this time, the suffix is a numeric value. `,
 
     correctAnswers: [
-        "round(15.6789, 1)"
+        "RECORD_ID || to_string(1013)",
+        "RECORD_ID + to_string(1013)",
+        "RECORD_ID + TO_STRING(1013)",
+        "RECORD_ID || TO_STRING(1013)",
     ],
 
     hints: [
-        "Use the round() function with two parameters: the number and the number of decimals.",
-        "round(15.6789, 1) → 15.7"
+        "Make sure you have converted the numeric suffix 1013 to string using to_string().",
+        "Use || or + to concatenate the RECORD_ID field with the converted string.",
+        "Numeric values do not need quotes."
     ],
 
     initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        columns: ['(none)'],
+        columns: ['RECORD_ID'],
         values: [
-            ['-'],
-            ['-'],
-            ['-']
+            ['AB'],
+            ['AB'],
+            ['AB']
         ],
     },
 
     expectedTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        columns: ['rounded_value'],
+        columns: ['RECORD_ID'],
         values: [
-            ['15.7'],
-            ['15.7'],
-            ['15.7'],
+            ['AB1013'],
+            ['AB1013'],
+            ['AB1013'],
         ],
     },
 },
@@ -658,24 +667,27 @@ sqrt(16) → 4`,
     level: 2,
     title: 'Function with Field',
     description: `Functions can also operate directly on layer fields. 
-When you reference a field in a QGIS expression, you don’t use quotes — simply type the field name inside the brackets.
+
 
 For example, \`upper(name)\` converts the text in the field “name” to uppercase, and \`round(population, 0)\` rounds the field values.
 
 Using functions with fields lets you transform your data dynamically — each feature gets its own calculated result based on that field’s value.`,
 
-    example: `Example: upper(city_name) → 'LONDON'
-round(population, 0) → 12500`,
+    example: `Example: field "country" original has value "japan", upper(country) → 'JAPAN'
+OR field "height cm" orginal have value 168.53, round("height cm, 1) → 168.5`,
 
-    question: `Write an expression that converts the values in field 'city' to uppercase.`,
-
-    correctAnswers: [
-        "upper(city)"
+    question: `You have a polygon layer shows all the cities in the world. You want to display a label of the city name stored in "city" field. But you want them be uppercase.`,
+        correctAnswers: [
+        "upper(city)",
+        "UPPER(city)",
+        "UPPER(\"city\")",
+        "upper(\"city\")",        
     ],
 
     hints: [
         "Use upper() with the field name inside the brackets.",
-        "Do not use quotes around the field name."
+        "As we covered in level 1, you do not have to use quotes when the field name has no spaces. But if the field name contains spaces, you must use double quotes around it."
+        
     ],
 
     initialTable: {
@@ -707,23 +719,29 @@ round(population, 0) → 12500`,
     moduleKey: 'basic',
     level: 2,
     title: 'Default Variables: $ Variables',
-    description: `In QGIS, variables that start with a **$** symbol are built-in system variables. 
+    description: `In QGIS, variables that start with a $ symbol are built-in system variables. 
 They are automatically provided by QGIS and often relate to the current feature’s geometry or attributes.
 
 For example:
-- \`$area\` returns the area of the current feature.
-- \`$length\` returns the length of a line.
-- \`$x\` and \`$y\` return the centroid coordinates of a feature.
+- \`$area\` returns the area of the current feature for a polygon layer.
+- \`$length\` returns the length of a line feature in a line layer.
+- \`$x\` and \`$y\` return the coordinates for point feature.
 
-You don’t need to define these variables — QGIS calculates them automatically for each feature. 
-They are extremely useful for geometry-based calculations and labeling.`,
 
-    example: `Example: round($area, 2) → returns area of each feature rounded to 2 decimals`,
 
-    question: `Write an expression that returns the area of each feature rounded to 0 decimal places.`,
+The unit of the return area or length value is based on project unit. You can change it in project properties.
+The x and y values are depends on the CRS of the layer. We will cover CRS transform in the future.
+They are extremely useful for geometry-based calculations and labeling.
+They are never user-defined.`,
+
+    example: `Example: For a 2m * 2m square feature - $area → 4`,
+
+    question: `Imagine we are working on a point layer of borehole. We need to export it to a csv table with the location information.
+    We have two fields to store the location inforamation. X and Y. But the values in Y is broken, so we need to retrieve it by expression. `,
 
     correctAnswers: [
-        "round($area, 0)"
+        "$y",
+        "$Y"
     ],
 
     hints: [
@@ -732,26 +750,27 @@ They are extremely useful for geometry-based calculations and labeling.`,
     ],
 
     initialTable: {
-        id_field: 'fid',
-        id_value: ['1', '2', '3'],
-        columns: ['$area'],
+        id_field: 'CRS',
+        id_value: ['EPSG:27700', 'EPSG:27700', 'EPSG:27700'],
+        columns: ['X', 'Y'],
         values: [
-            ['24.56'],
-            ['35.12'],
-            ['10.89'],
+            ['606594.42','NULL'],
+            ['603940.03','NULL'],
+            ['603939.24','NULL'],
         ],
     },
 
     expectedTable: {
-        id_field: 'fid',
-        id_value: ['1', '2', '3'],
-        columns: ['rounded_area'],
+        id_field: 'CRS',
+        id_value: ['EPSG:27700', 'EPSG:27700', 'EPSG:27700'],
+        columns: ['X', 'Y'],
         values: [
-            ['25'],
-            ['35'],
-            ['11'],
+            ['606594.42','240175.25'],
+            ['603940.03','235142.74'],
+            ['603939.24','235146.19'],
         ],
     },
+
 },
 
 
@@ -760,49 +779,55 @@ They are extremely useful for geometry-based calculations and labeling.`,
     pathType: 'QGIS',
     moduleKey: 'basic',
     level: 2,
-    title: 'Default Variables: @ Variables',
-    description: `Variables starting with **@** are called *context variables*. 
+    title: 'Default Variables: @ Variables (context variables)',
+    description: `Variables starting with @ are called *context variables*. 
 They store information about the project, layer, map, or current expression context.
 
 For example:
 - \`@project_title\` gives the name of your current QGIS project.
 - \`@layer_name\` returns the active layer name.
-- \`@row_number\` can be used to number features when evaluating an expression.
+- \`@row_number\` can be used to number features with sequential numbers.
+- \`@map_title\` returns the title of the current map.
+- \`@map_scale\` returns the scale of the current map.
+- \`@project_crs\` returns the current project CRS.
+- \`@user_account_name\` returns current user's operating system account name.
 
-Unlike $ variables, @ variables are not tied to geometry — they describe the project or environment in which the expression runs.`,
+Unlike $ variables, @ variables can be set by the user: Project → Properties → Variables.
+You are set your own custom variables. 
+Some are static. For example, @user_account_name is the name of the current OS user.
+Some are dynamic. For example, @map_scale is the scale of the current map.`, 
 
-    example: `Example: 'Project: ' || @project_title → 'Project: Site Survey'`,
+    example: `Example: You have a layer named as'Planned mail box'. And you want to have the layer name stored in as a field value: @layer_name → 'Planned mail box'`,
 
-    question: `Write an expression that combines the text 'Row ' with the @row_number variable.`,
-
+    question: `We have a layer with a Unique_ID field. However, it was a merged layer that contains rows from separated individual survyed result.  which can cause issues for referencing. Can you update the field 'Unique_ID' with unique sequential numbers?`,
     correctAnswers: [
-        "'Row ' || @row_number"
+        "@row_number"
     ],
 
     hints: [
-        "Use string concatenation (||) to join text and variables.",
-        "Remember: @row_number gives the current row index in an expression context."
+        "Read the description again for frequent used variables.",
+        "@row_number gives the current row index in an expression context."
     ],
 
     initialTable: {
-        id_field: 'fid',
-        id_value: ['1', '2', '3'],
-        columns: ['(none)'],
+        id_field: 'Unique_ID',
+        id_value: ['1', '1', '2'],
+        columns: ['Record_by', 'Record_at'],
         values: [
-            ['-'],
-            ['-'],
-            ['-']
+            ['Iris.Smith', '2025-01-01'],
+            ['Jane.Cheng', '2025-03-15'],
+            ['Jane.Cheng', '2025-03-16'],
         ],
     },
 
     expectedTable: {
-        id_field: 'fid',
+        id_field: 'Unique_ID',
         id_value: ['1', '2', '3'],
-        columns: ['row_label'],
+        columns: ['Record_by', 'Record_at'],
         values: [
-            ['Row 1'],
-            ['Row 2'],
-            ['Row 3'],
+            ['Iris.Smith', '2025-01-01'],
+            ['Jane.Cheng', '2025-03-15'],
+            ['Jane.Cheng', '2025-03-16'],
         ],
     },
 },
