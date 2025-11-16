@@ -611,13 +611,12 @@ hints: [
 These functions are used for mathematical calculations, data normalization, or rounding results. 
 A numeric variable can be a constant (like 3.14) or a numeric field from your layer.
 
-For example, \`sqrt(9)\` returns 3, and \`round(12.3456, 2)\` returns 12.35.
+For example, \`sqrt(9)\` returns 3 because it calculates the square root of 9.
 You can use these functions to simplify data or control decimal precision in numeric fields.
 
 When combining numeric functions with fields, make sure the field data type is numeric, otherwise QGIS will return an error. Or, you need to use type conversion functions first to convert text to numbers.`,
 
-    example: `Example: round(12.3456, 2) → 12.35  OR 
-sqrt(16) → 4  OR to_string(100) → '100'` ,
+    example: `Example: sqrt(16) → 4  OR to_string(100) → '100'` ,
 
     question: `Imagine you are working as a tree surveyor. 
     The current RECORD_ID field stored your name initials. 
@@ -745,8 +744,7 @@ They are never user-defined.`,
     ],
 
     hints: [
-        "Use the $area variable and wrap it with the round() function.",
-        "round($area, 0) removes decimals from the area value."
+        "$y returns the Y value of the current feature."
     ],
 
     initialTable: {
@@ -837,49 +835,47 @@ Some are dynamic. For example, @map_scale is the scale of the current map.`,
     pathType: 'QGIS',
     moduleKey: 'basic',
     level: 2,
-    title: 'Function with Default Variable',
-    description: `You can combine built-in variables like $area or $length with functions. 
-This allows you to calculate geometry-based values more precisely or format them for display.
+    title: 'Function with Default Variable or Context Variable',
+    description: `Functions in QGIS Expressions can be applied to both default variables (starting with $) and context variables (starting with @). 
+    Default variables such as $x and $y describe geometric properties of the current feature, while context variables like @layer_name or @map_scale describe information coming from the project or environment. 
+    Regardless of which type they are, you can always wrap them inside functions to manipulate, transform, or extract derived values. 
+    For example, math functions, string functions, and geometry functions all work with both types. 
+    Combining functions with variables is very common in QGIS — it helps you turn raw data into readable outputs.`,
 
-For example:
-- \`round($length, 1)\` rounds line length to 1 decimal.
-- \`to_string($area)\` converts numeric area to text.
-- \`concat('Area: ', round($area, 2))\` creates a formatted label.
+    example: `Example: \`to_string($area)\` converts numeric area to text.
+OR \`upper(@layer_name)\` returns the layer name in uppercase. OR \`round(@map_scale)\` returns the current map scale rounded to the nearest integer.`,
 
-Combining functions with variables is very common in QGIS — it helps you turn raw data into readable outputs.`,
-
-    example: `Example: concat('Area: ', round($area, 2)) → 'Area: 12.34'`,
-
-    question: `Write an expression that returns 'Length: ' followed by the line length rounded to 0 decimal places.`,
+    question: `We have a line layer here. Can you update the 'rounded_length_label' field to show the length of each line feature? Please make it integer.`,
 
     correctAnswers: [
-        "concat('Length: ', round($length, 0))"
+        "round($length)",
+        "round($length, 0)"
     ],
 
     hints: [
-        "Combine text with the $length variable using concat().",
-        "Use round($length, 0) to remove decimals."
+        "Use $length to access the length of each feature.",
+        "when rounding, you can use round($length) to get the nearest integer."
     ],
 
     initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        columns: ['$length'],
+        columns: ['rounded_length_label'],
         values: [
-            ['12.34'],
-            ['8.76'],
-            ['25.9'],
+            ['NULL'],
+            ['NULL'],
+            ['NULL'],
         ],
     },
 
     expectedTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        columns: ['length_label'],
+        columns: ['rounded_length_label'],
         values: [
-            ['Length: 12'],
-            ['Length: 9'],
-            ['Length: 26'],
+            ['12'],
+            ['9'],
+            ['26'],
         ],
     },
 },
@@ -890,48 +886,48 @@ Combining functions with variables is very common in QGIS — it helps you turn 
     moduleKey: 'basic',
     level: 2,
     title: 'Function with Function',
-    description: `Functions can be nested — one function can use the result of another as its input. 
+    description: `Functions can be nested. One function can use the result of another as its input. 
 This is called **function nesting** and it’s a powerful way to build complex expressions.
-
-For example:
-- \`upper(concat('id_', to_string(123)))\` → 'ID_123'
-- \`round(sqrt(9), 0)\` → 3
 
 When nesting, QGIS always evaluates the innermost function first. 
 Make sure parentheses are balanced and the data types match.`,
 
-    example: `Example: upper(concat('id_', to_string(45))) → 'ID_45'`,
+    example: `Example: \`upper(concat('id_', to_string(123)))\` → 'ID_123'
+OR \`floor(to_int('2.3'))\` → 2' OR imagine you have a polygon layer, but you need to fill the X and Y for it. The default $x and $y only work for points. You can use x( centroid($geometry) ) and y( centroid($geometry) ) to get the X and Y value of the centroid of the current polygon feature.`,
 
-    question: `Write an expression that converts the number 100 to string and then to uppercase.`,
+    question: `We have two fields here 'sales' and 'expenses' for each shop location. Can you update the 'profit' field to show the profit of each location?
+    Becasue the field unit are all 'million', a rounded value will be good enough. We also would like to have the unit after it. For example: 3 million.`,
 
     correctAnswers: [
-        "upper(to_string(100))"
+        "to_string(round(sales - expenses)) || 'million'",
+        "to_string(round(sales - expenses)) + 'million'"
     ],
 
     hints: [
-        "Start with to_string(100) → '100'.",
-        "Then wrap it with upper()."
+        "Profie should be sales - expenses.",
+        "Remember you can use round() to get the nearest integer.",
+        "Remember you can't use || or + to concatenate string and integer. You need to convert the data type first by using to_string().",
     ],
 
     initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        columns: ['(none)'],
+        columns: ['sales', 'expenses', 'profit'],
         values: [
-            ['-'],
-            ['-'],
-            ['-']
+            ['13.301', '10.23', 'NULL'],
+            ['14.55', '11.935', 'NULL'],
+            ['9.78', '8.2', 'NULL'],
         ],
     },
 
     expectedTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        columns: ['upper_text'],
+        columns: ['sales', 'expenses', 'profit'],
         values: [
-            ['100'],
-            ['100'],
-            ['100'],
+            ['13.31', '10.23', '3 million'],
+            ['14.55', '11.93', '3 million'],
+            ['9.78', '8.2', '1 million'],
         ],
     },
 },
@@ -942,49 +938,49 @@ Make sure parentheses are balanced and the data types match.`,
     pathType: 'QGIS',
     moduleKey: 'basic',
     level: 2,
-    title: 'Function with Two Variables (Same Type)',
-    description: `Some functions can take multiple variables of the same type. 
-For example, numeric functions can accept two numbers, or string functions can accept two text values.
+    title: 'Function with Two Parameters',
+    description: `We have seen many different functions with one parameter. Some functions can take two parameters. 
+They may be used to compare or combine values of the same data type.
+Or maybe use field name for the first variable and a numeric value for the second variable for substring.
+Or maybe the first parameter is a field name and second parameter is a numeric value for the number of characters to extract from the beginning of the field value.
+Or maybe two geometry and calculate the distance between them.`,
 
-Examples:
-- \`max(5, 10)\` → 10
-- \`concat('Q', 'GIS')\` → 'QGIS'
+    example: `Example: max(12, 30) → 30 OR
+concat('geo', 'map') → 'geomap' OR left('geomap', 3) → 'geo' `,
 
-These are very useful for comparing or combining values of the same data type.`,
-
-    example: `Example: max(12, 30) → 30
-concat('geo', 'map') → 'geomap'`,
-
-    question: `Write an expression that returns the larger number between 8 and 12.`,
+    question: `Remember our previous step, we got the profit of each location as a rounded number with a unit. This time, let's get a more precise profit number, with 1 decimal place. 
+    When you use round() with only one parameter, it return an integer. But if you add a second parameter about how many decimal places you want, and you can get a decimal number.
+    We don't need to use to_string() and add the 'million' unit this time. Please use a comma to separate the first parameter and the second parameter.
+    `,
 
     correctAnswers: [
-        "max(8, 12)"
+        "round(sales - expenses, 1)",
     ],
 
     hints: [
-        "Use the max() function for comparing two numeric values.",
-        "max(8,12) → 12"
+        "Remember you can use round(368.561) to get the nearest integer 368.",
+        "You can use round(368.561, 1) to get the nearest decimal number with one decimal place, which is 368.6."
     ],
 
     initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        columns: ['(none)'],
+        columns: ['sales', 'expenses', 'profit'],
         values: [
-            ['-'],
-            ['-'],
-            ['-']
+            ['13.301', '10.23', 'NULL'],
+            ['14.55', '11.935', 'NULL'],
+            ['9.78', '8.2', 'NULL'],
         ],
     },
 
     expectedTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        columns: ['max_value'],
+        columns: ['sales', 'expenses', 'profit'],
         values: [
-            ['12'],
-            ['12'],
-            ['12'],
+            ['13.31', '10.23', '3.1'],
+            ['14.55', '11.93', '2.6'],
+            ['9.78', '8.2', '1.6'],
         ],
     },
 },
@@ -994,48 +990,52 @@ concat('geo', 'map') → 'geomap'`,
     pathType: 'QGIS',
     moduleKey: 'basic',
     level: 2,
-    title: 'Function with Two Variables (Different Types)',
-    description: `Some functions allow combining variables of different data types, such as strings and numbers. 
-In such cases, you often need to convert one type to another using helper functions like to_string().
+    title: 'Function with three or more parameters',
+    description: `Some functions can even take three or more parameters. You can read details from QGIS documentation or from 'Help' tab in the QGIS Expression Editor.
+    You can search for key words and it will tell you details of parameter rules. 
+    Some function can have 1 or 2 compulsory parameters and 1 or more optional parameters.
+    In our last step for level 2 we will introduce few frequent used functions that take three or more parameters.
+`,
 
-For example:
-- \`concat('Area: ', to_string($area))\` combines text with numeric area.
-- \`substr(to_string(year), 3, 2)\` extracts text from a numeric value after conversion.
+    example: `Example: imagine you have a layer recorded overhead cables, and you have multiple fields for its type, height, and ownership, you want to create field to store all key informations in a list: array(type, height, owner) → [telecomms, 9, Virgin]
+    OR imagine you have field named student_ID but they all have different length of values like 1013, 02045, 223. You want to standardise the format, you can use lpad(student_ID, 8, '0') → 00001013. First parameter is the field name, second parameter is the length of the field, third parameter is the character to pad with. There is also rpad(), adds characters to the right of the field.
+    OR imagine you gave an array field named 'sales_of_2024', which contains sales for each month of 2024 by calendar order.'243.12,281,230.2,...'. But your manager ask you to get the second quarter's value in a new field 'sales_of_2024_second_quarter'. You can use array_slice(string_to_array("sales_of_2024"), 3, 5) → [271.5, 231.28, 255.6]. 
+    The first parameter is an array. You can transfer a field to an array by string_to_array(field_name). The second parameter is the start index (0 based, the first element will be 0 instead of 1), and start index is included, third parameter is end index, which also included.
+    The second quarter will be the fourth month till the sixth month, that's why it is 3 and 5.
+    OR imagine you have a field named 'date_of_built' and it stores date in the format of YYYY-MM-DD, but all the year is wrong, it says 2024 and need to be update to 2025, you can use replace(date_of_built, '2024', '2025') → 2025-01-01. The first parameter is the field name, second parameter is the old value to replace, third parameter is the new value to replace.`,
 
-This flexibility lets you mix numbers, strings, and fields in the same expression.`,
-
-    example: `Example: concat('Value: ', to_string(10)) → 'Value: 10'`,
-
-    question: `Write an expression that combines the text 'Total: ' with the number 25.`,
+    question: `We have an array field named 'land_info', it stores the information of each land parcel in the order of land type, land use, land ownership, last check date.
+    You have been asked to create a new field as land_type_and_use, which only stores the information of land type and land use. Please use array_slice() to get the first two elements of the array field.`,
 
     correctAnswers: [
-        "concat('Total: ', to_string(25))"
+        "array_slice(string_to_array('land_info'), 0, 1)",
     ],
 
     hints: [
-        "Use concat() to combine text and numeric values.",
-        "Convert numbers to text using to_string()."
+        "You can use array_slice() to get the first two elements of the array field.",
+        "If you noticed there is no space after comma, it is because we want to transfer it to an array, this is not an error.",
+        "To get the first two elements, you should use 0 as the start position and 1 as the end position.",
     ],
 
     initialTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        columns: ['(none)'],
+        columns: ['land_info', 'land_type_and_use'],
         values: [
-            ['-'],
-            ['-'],
-            ['-']
+            ['plains, agriculture, private, 2025-01-01', 'NULL' ],
+            ['forests, greenfield, public, 2024-12-31', 'NULL'],
+            ['pasture, grazing, private, 2024-12-31', 'NULL'],
         ],
     },
 
     expectedTable: {
         id_field: 'fid',
         id_value: ['1', '2', '3'],
-        columns: ['combined_text'],
+        columns: ['land_info', 'land_type_and_use'],
         values: [
-            ['Total: 25'],
-            ['Total: 25'],
-            ['Total: 25'],
+            ['plains, agriculture, private, 2025-01-01', 'plains, agriculture' ],
+            ['forests, greenfield, public, 2024-12-31', 'forests, greenfield'],
+            ['pasture, grazing, private, 2024-12-31', 'pasture, grazing'],
         ],
     },
 },
