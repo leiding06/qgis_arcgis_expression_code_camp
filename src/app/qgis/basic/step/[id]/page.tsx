@@ -240,7 +240,11 @@ export default function ExercisePage() {
                 ? currentStep.example.map((line, idx) => (
                     <div key={idx}>{line}</div>
                 ))
-                : currentStep.example}
+                : (
+                    <div className="whitespace-pre-line">
+                        {currentStep.example}
+                    </div>
+                )}
             </div>
             {/* Question */}
             <div className="mb-4">
