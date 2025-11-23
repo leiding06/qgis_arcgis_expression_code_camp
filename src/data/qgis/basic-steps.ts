@@ -1044,52 +1044,742 @@ concat('geo', 'map') → 'geomap' OR left('geomap', 3) → 'geo' `,
 // ==========================================
 // LEVEL 3: Advanced Functions (Steps 11-20)
 // ==========================================
-    {
-        id: 21,
-        pathType: 'QGIS',
-        moduleKey: 'basic',
-        level: 3,
-        title: 'Date and Time (function without variable)',
-        description: `Some functions do not need input fields. 
-You can use them to return system values such as the current date or time. 
-This introduces you to functions without variables.`,
-        example: `Example:
-today_date = to_date(now())`,
-        question: `Write an expression that returns today's date (dd/mm/yyyy format).`,
+  // Level 3: Conditional Logic & Advanced Functions (Steps 21-30)
+// Add these to your qgisBasicSteps array
 
-        correctAnswers: [
-            'to_date(now())',
-            'date(now())',
-            'to_date( now() )',
-            'date( now() )'
-        ],
-        hints: [
-            'Use now() to get the current date and time.',
-            'Wrap it with to_date() to show only the date.'
-        ],
-        initialTable: {
+{
+    id: 21,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 3,
+    title: 'Simple IF function',
+    description: `The IF function is one of the most useful conditional functions in QGIS. 
+    It allows you to test a condition and return different values based on whether the condition is true or false.
+    
+    Syntax: if( condition, value_if_true, value_if_false )
+    
+    For example:
+    - if( population > 1000000, 'Large', 'Small' ) 
+    - if( $area > 5000, 'Big parcel', 'Small parcel' )
+    
+    <p class="italic text-sm mt-2">
+    💡 <strong>Real-world tip:</strong> This is extremely useful for dynamic labels! 
+    For example, you can show different text sizes based on feature importance: 
+    if( "importance" = 'high', 14, 10 ) in label font size expression.
+    </p>`,
+    
+    example: `Example: if( score >= 60, 'Pass', 'Fail' )`,
+    
+    question: `You have a field called 'temperature' with numeric values. 
+    Create a new field 'status' that shows 'Hot' if temperature is greater than 30, otherwise 'Normal'.`,
+    
+    correctAnswers: [
+        "if(temperature > 30, 'Hot', 'Normal')",
+        "if(\"temperature\" > 30, 'Hot', 'Normal')",
+        "if( temperature > 30, 'Hot', 'Normal' )",
+        "if( \"temperature\" > 30, 'Hot', 'Normal' )"
+    ],
+    
+    hints: [
+        'Use the if() function with three parameters.',
+        'First parameter: the condition (temperature > 30)',
+        'Second parameter: value if true (\'Hot\')',
+        'Third parameter: value if false (\'Normal\')'
+    ],
+    
+    initialTable: {
         id_field: 'fid',
-        id_value: ['1', '2', '3'],
-        columns: ['(none)'],
+        id_value: ['1', '2', '3', '4'],
+        columns: ['temperature', 'status'],
         values: [
-            ['-'],
-            ['-'],
-            ['-'],
+            ['25', 'NULL'],
+            ['32', 'NULL'],
+            ['28', 'NULL'],
+            ['35', 'NULL']
         ],
-        },
-        expectedTable: {
-        id_field: 'fid',
-        id_value: ['1', '2', '3'],
-        columns: ['today_date'],
-        values: [
-            ['24/11/2025'],
-            ['24/11/2025'],
-            ['24/11/2025'],
-        ],
-        }
     },
+    
+    expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3', '4'],
+        columns: ['temperature', 'status'],
+        values: [
+            ['25', 'Normal'],
+            ['32', 'Hot'],
+            ['28', 'Normal'],
+            ['35', 'Hot']
+        ],
+    },
+},
 
-];
+{
+    id: 22,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 3,
+    title: 'Nested IF function',
+    description: `You can nest IF functions to test multiple conditions.
+    When you have more than two possible outcomes, you can put another IF function as the "value_if_false" parameter.
+    
+    Syntax: if( condition1, value1, if( condition2, value2, value3 ) )
+    
+    This creates a chain: if condition1 is true → value1, else if condition2 is true → value2, else → value3.
+    
+    <p class="italic text-sm mt-2">
+    💡 <strong>Real-world tip:</strong> Nested IFs are great for categorizing data into multiple groups.
+    However, if you have many conditions (more than 3-4), CASE WHEN (next step) is cleaner and easier to read.
+    </p>`,
+    
+    example: `Example: if( age < 18, 'Child', if( age < 65, 'Adult', 'Senior' ) )`,
+    
+    question: `You have a 'score' field. Create a 'grade' field that shows:
+    - 'A' if score >= 80
+    - 'B' if score >= 60
+    - 'C' if score < 60`,
+    
+    correctAnswers: [
+        "if(score >= 80, 'A', if(score >= 60, 'B', 'C'))",
+        "if(\"score\" >= 80, 'A', if(\"score\" >= 60, 'B', 'C'))",
+        "if( score >= 80, 'A', if( score >= 60, 'B', 'C' ) )",
+        "if( \"score\" >= 80, 'A', if( \"score\" >= 60, 'B', 'C' ) )"
+    ],
+    
+    hints: [
+        'Start with the highest threshold: if score >= 80',
+        'Nest another if for the middle threshold: if score >= 60',
+        'The final value is for everything else (< 60)'
+    ],
+    
+    initialTable: {
+        id_field: 'student_id',
+        id_value: ['S001', 'S002', 'S003', 'S004'],
+        columns: ['score', 'grade'],
+        values: [
+            ['85', 'NULL'],
+            ['72', 'NULL'],
+            ['45', 'NULL'],
+            ['91', 'NULL']
+        ],
+    },
+    
+    expectedTable: {
+        id_field: 'student_id',
+        id_value: ['S001', 'S002', 'S003', 'S004'],
+        columns: ['score', 'grade'],
+        values: [
+            ['85', 'A'],
+            ['72', 'B'],
+            ['45', 'C'],
+            ['91', 'A']
+        ],
+    },
+},
+
+{
+    id: 23,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 3,
+    title: 'CASE WHEN - Basic usage',
+    description: `CASE WHEN is a cleaner way to handle multiple conditions compared to nested IFs.
+    It's especially useful when you have 3 or more possible outcomes.
+    
+    Syntax:
+    CASE
+        WHEN condition1 THEN value1
+        WHEN condition2 THEN value2
+        WHEN condition3 THEN value3
+        ELSE default_value
+    END
+    
+    Each WHEN tests a condition. If true, it returns the corresponding THEN value and stops checking.
+    The ELSE clause is optional but recommended as a fallback.
+    
+    <p class="italic text-sm mt-2">
+    💡 <strong>Real-world tip:</strong> CASE WHEN is perfect for rule-based symbology! 
+    In QGIS, you can use CASE expressions to set different colors for different categories.
+    For example, color roads by type: highways in red, local roads in gray.
+    </p>`,
+    
+    example: `Example:
+    CASE
+        WHEN population > 1000000 THEN 'Metropolis'
+        WHEN population > 100000 THEN 'City'
+        WHEN population > 10000 THEN 'Town'
+        ELSE 'Village'
+    END`,
+    
+    question: `You have a 'land_use' field with values like 'residential', 'commercial', 'industrial', 'park'.
+    Create a 'zone_type' field that shows:
+    - 'Urban' for residential or commercial
+    - 'Industrial' for industrial
+    - 'Green' for park
+    - 'Other' for anything else`,
+    
+    correctAnswers: [
+        "CASE WHEN land_use = 'residential' OR land_use = 'commercial' THEN 'Urban' WHEN land_use = 'industrial' THEN 'Industrial' WHEN land_use = 'park' THEN 'Green' ELSE 'Other' END",
+        "CASE WHEN \"land_use\" = 'residential' OR \"land_use\" = 'commercial' THEN 'Urban' WHEN \"land_use\" = 'industrial' THEN 'Industrial' WHEN \"land_use\" = 'park' THEN 'Green' ELSE 'Other' END",
+        "case when land_use = 'residential' or land_use = 'commercial' then 'Urban' when land_use = 'industrial' then 'Industrial' when land_use = 'park' then 'Green' else 'Other' end",
+        "case when \"land_use\" = 'residential' or \"land_use\" = 'commercial' then 'Urban' when \"land_use\" = 'industrial' then 'Industrial' when \"land_use\" = 'park' then 'Green' else 'Other' end"
+    ],
+    
+    hints: [
+        'Use CASE WHEN structure',
+        'Combine residential and commercial with OR operator',
+        'Remember to close with END',
+        'CASE WHEN is not case-sensitive in QGIS'
+    ],
+    
+    initialTable: {
+        id_field: 'parcel_id',
+        id_value: ['P001', 'P002', 'P003', 'P004', 'P005'],
+        columns: ['land_use', 'zone_type'],
+        values: [
+            ['residential', 'NULL'],
+            ['commercial', 'NULL'],
+            ['industrial', 'NULL'],
+            ['park', 'NULL'],
+            ['agricultural', 'NULL']
+        ],
+    },
+    
+    expectedTable: {
+        id_field: 'parcel_id',
+        id_value: ['P001', 'P002', 'P003', 'P004', 'P005'],
+        columns: ['land_use', 'zone_type'],
+        values: [
+            ['residential', 'Urban'],
+            ['commercial', 'Urban'],
+            ['industrial', 'Industrial'],
+            ['park', 'Green'],
+            ['agricultural', 'Other']
+        ],
+    },
+},
+
+{
+    id: 24,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 3,
+    title: 'CASE WHEN with numeric ranges',
+    description: `CASE WHEN is excellent for categorizing numeric values into ranges.
+    This is very common in GIS analysis - classifying population density, elevation zones, 
+    risk levels, or any continuous data into discrete categories.
+    
+    When working with ranges, order matters! QGIS evaluates conditions from top to bottom 
+    and stops at the first TRUE condition.
+    
+    <p class="italic text-sm mt-2">
+    💡 <strong>Real-world tip:</strong> This is the foundation of graduated symbology in QGIS!
+    When you create a graduated map with 5 color classes, you're essentially writing a CASE WHEN expression.
+    You can even customize these expressions in the Style panel.
+    </p>`,
+    
+    example: `Example - Elevation zones:
+    CASE
+        WHEN elevation > 2000 THEN 'Alpine'
+        WHEN elevation > 1000 THEN 'Montane'
+        WHEN elevation > 500 THEN 'Hill'
+        ELSE 'Lowland'
+    END`,
+    
+    question: `You have a 'population_density' field (people per km²).
+    Create a 'density_class' field with these categories:
+    - 'Very High' if >= 5000
+    - 'High' if >= 1000
+    - 'Medium' if >= 500
+    - 'Low' if < 500`,
+    
+    correctAnswers: [
+        "CASE WHEN population_density >= 5000 THEN 'Very High' WHEN population_density >= 1000 THEN 'High' WHEN population_density >= 500 THEN 'Medium' ELSE 'Low' END",
+        "CASE WHEN \"population_density\" >= 5000 THEN 'Very High' WHEN \"population_density\" >= 1000 THEN 'High' WHEN \"population_density\" >= 500 THEN 'Medium' ELSE 'Low' END",
+        "case when population_density >= 5000 then 'Very High' when population_density >= 1000 then 'High' when population_density >= 500 then 'Medium' else 'Low' end",
+        "case when \"population_density\" >= 5000 then 'Very High' when \"population_density\" >= 1000 then 'High' when \"population_density\" >= 500 then 'Medium' else 'Low' end"
+    ],
+    
+    hints: [
+        'Start with the highest threshold (>= 5000)',
+        'Work your way down to lower values',
+        'Use ELSE for the lowest category',
+        'Make sure to use >= for all conditions'
+    ],
+    
+    initialTable: {
+        id_field: 'district_id',
+        id_value: ['D01', 'D02', 'D03', 'D04', 'D05'],
+        columns: ['population_density', 'density_class'],
+        values: [
+            ['8500', 'NULL'],
+            ['1200', 'NULL'],
+            ['450', 'NULL'],
+            ['5200', 'NULL'],
+            ['750', 'NULL']
+        ],
+    },
+    
+    expectedTable: {
+        id_field: 'district_id',
+        id_value: ['D01', 'D02', 'D03', 'D04', 'D05'],
+        columns: ['population_density', 'density_class'],
+        values: [
+            ['8500', 'Very High'],
+            ['1200', 'High'],
+            ['450', 'Low'],
+            ['5200', 'Very High'],
+            ['750', 'Medium']
+        ],
+    },
+},
+
+{
+    id: 25,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 3,
+    title: 'Handling NULL values',
+    description: `NULL represents missing or unknown data. In QGIS expressions, NULL behaves differently than empty strings or zero.
+    
+    Important NULL handling functions:
+    - IS NULL / IS NOT NULL: test if a value is NULL
+    - coalesce(field1, field2, default): returns the first non-NULL value
+    - if( field IS NULL, default_value, field ): replace NULL with a default
+    
+    Common mistake: NULL = NULL returns NULL (not TRUE)! Always use IS NULL instead.
+    
+    <p class="italic text-sm mt-2">
+    💡 <strong>Real-world tip:</strong> NULL handling is crucial when joining tables or importing data.
+    Missing values can break calculations, so always check for NULLs before doing math operations.
+    </p>`,
+    
+    example: `Example:
+    coalesce(phone_mobile, phone_home, 'No contact') 
+    // Returns first available phone number`,
+    
+    question: `You have an 'email' field that contains NULL values for some records.
+    Create a 'contact_status' field that shows:
+    - 'Contact available' if email IS NOT NULL
+    - 'No contact' if email IS NULL`,
+    
+    correctAnswers: [
+        "if(email IS NOT NULL, 'Contact available', 'No contact')",
+        "if(\"email\" IS NOT NULL, 'Contact available', 'No contact')",
+        "if( email IS NOT NULL, 'Contact available', 'No contact' )",
+        "if( \"email\" IS NOT NULL, 'Contact available', 'No contact' )",
+        "CASE WHEN email IS NOT NULL THEN 'Contact available' ELSE 'No contact' END",
+        "CASE WHEN \"email\" IS NOT NULL THEN 'Contact available' ELSE 'No contact' END",
+        "case when email is not null then 'Contact available' else 'No contact' end",
+        "case when \"email\" is not null then 'Contact available' else 'No contact' end"
+    ],
+    
+    hints: [
+        'Use "IS NOT NULL" to check if a field has a value',
+        'You can use either IF or CASE WHEN',
+        'Do not use email != NULL (this won\'t work correctly)'
+    ],
+    
+    initialTable: {
+        id_field: 'customer_id',
+        id_value: ['C001', 'C002', 'C003', 'C004'],
+        columns: ['email', 'contact_status'],
+        values: [
+            ['john@email.com', 'NULL'],
+            ['NULL', 'NULL'],
+            ['mary@email.com', 'NULL'],
+            ['NULL', 'NULL']
+        ],
+    },
+    
+    expectedTable: {
+        id_field: 'customer_id',
+        id_value: ['C001', 'C002', 'C003', 'C004'],
+        columns: ['email', 'contact_status'],
+        values: [
+            ['john@email.com', 'Contact available'],
+            ['NULL', 'No contact'],
+            ['mary@email.com', 'Contact available'],
+            ['NULL', 'No contact']
+        ],
+    },
+},
+
+{
+    id: 26,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 3,
+    title: 'String matching with LIKE and ILIKE',
+    description: `LIKE and ILIKE are pattern matching operators for text searches.
+    
+    - LIKE: case-sensitive pattern matching
+    - ILIKE: case-insensitive pattern matching (recommended for most cases)
+    - % : wildcard for any number of characters
+    - _ : wildcard for exactly one character
+    
+    Examples:
+    - name LIKE 'John%' : starts with "John"
+    - name LIKE '%street%' : contains "street" anywhere
+    - code LIKE 'A___' : starts with A and has exactly 3 more characters
+    
+    <p class="italic text-sm mt-2">
+    💡 <strong>Real-world tip:</strong> LIKE is perfect for filtering features in rule-based symbology.
+    For example, color all roads that contain "Highway" differently, or label all parks 
+    whose names start with "Central".
+    </p>`,
+    
+    example: `Example: 
+    CASE 
+        WHEN road_name ILIKE '%highway%' THEN 'Major Road'
+        WHEN road_name ILIKE '%street%' THEN 'Minor Road'
+        ELSE 'Other'
+    END`,
+    
+    question: `You have a 'road_name' field. Create a 'road_type' field that shows:
+    - 'Highway' if road_name contains 'Highway' (case-insensitive)
+    - 'Avenue' if road_name contains 'Avenue' (case-insensitive)
+    - 'Street' if road_name contains 'Street' (case-insensitive)
+    - 'Other' for anything else`,
+    
+    correctAnswers: [
+        "CASE WHEN road_name ILIKE '%Highway%' THEN 'Highway' WHEN road_name ILIKE '%Avenue%' THEN 'Avenue' WHEN road_name ILIKE '%Street%' THEN 'Street' ELSE 'Other' END",
+        "CASE WHEN \"road_name\" ILIKE '%Highway%' THEN 'Highway' WHEN \"road_name\" ILIKE '%Avenue%' THEN 'Avenue' WHEN \"road_name\" ILIKE '%Street%' THEN 'Street' ELSE 'Other' END",
+        "case when road_name ilike '%Highway%' then 'Highway' when road_name ilike '%Avenue%' then 'Avenue' when road_name ilike '%Street%' then 'Street' else 'Other' end",
+        "case when \"road_name\" ilike '%Highway%' then 'Highway' when \"road_name\" ilike '%Avenue%' then 'Avenue' when \"road_name\" ilike '%Street%' then 'Street' else 'Other' end"
+    ],
+    
+    hints: [
+        'Use ILIKE for case-insensitive matching',
+        'Use %pattern% to match anywhere in the string',
+        'Order your conditions from most to least specific'
+    ],
+    
+    initialTable: {
+        id_field: 'road_id',
+        id_value: ['R001', 'R002', 'R003', 'R004', 'R005'],
+        columns: ['road_name', 'road_type'],
+        values: [
+            ['Oxford Street', 'NULL'],
+            ['M25 Highway', 'NULL'],
+            ['Park Avenue', 'NULL'],
+            ['Main Road', 'NULL'],
+            ['london highway', 'NULL']
+        ],
+    },
+    
+    expectedTable: {
+        id_field: 'road_id',
+        id_value: ['R001', 'R002', 'R003', 'R004', 'R005'],
+        columns: ['road_name', 'road_type'],
+        values: [
+            ['Oxford Street', 'Street'],
+            ['M25 Highway', 'Highway'],
+            ['Park Avenue', 'Avenue'],
+            ['Main Road', 'Other'],
+            ['london highway', 'Highway']
+        ],
+    },
+},
+
+{
+    id: 27,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 3,
+    title: 'Date calculations and comparisons',
+    description: `Working with dates is common in GIS - tracking survey dates, project timelines, or temporal data.
+    
+    Key date functions:
+    - age(date1, date2): calculates the time difference (returns interval)
+    - day_of_week(date): returns day number (0=Sunday, 6=Saturday)
+    - year(date), month(date), day(date): extract parts of a date
+    - date comparisons: you can use >, <, =, etc. with dates
+    
+    Date format in QGIS: 'YYYY-MM-DD' (e.g., '2025-01-15')
+    
+    <p class="italic text-sm mt-2">
+    💡 <strong>Real-world tip:</strong> Date expressions are useful for dynamic labels that change based on time.
+    For example, in a project management map, you could color tasks differently based on whether 
+    their due_date is past, present, or future using now() and date comparisons.
+    </p>`,
+    
+    example: `Example:
+    CASE
+        WHEN inspection_date < to_date(now()) - 365 THEN 'Overdue'
+        WHEN inspection_date < to_date(now()) THEN 'Due soon'
+        ELSE 'Up to date'
+    END`,
+    
+    question: `You have an 'inspection_date' field. Create an 'inspection_status' field that shows:
+    - 'Expired' if inspection_date is before '2024-01-01'
+    - 'Current' if inspection_date is on or after '2024-01-01'`,
+    
+    correctAnswers: [
+        "if(inspection_date < '2024-01-01', 'Expired', 'Current')",
+        "if(\"inspection_date\" < '2024-01-01', 'Expired', 'Current')",
+        "if( inspection_date < '2024-01-01', 'Expired', 'Current' )",
+        "if( \"inspection_date\" < '2024-01-01', 'Expired', 'Current' )",
+        "CASE WHEN inspection_date < '2024-01-01' THEN 'Expired' ELSE 'Current' END",
+        "CASE WHEN \"inspection_date\" < '2024-01-01' THEN 'Expired' ELSE 'Current' END",
+        "case when inspection_date < '2024-01-01' then 'Expired' else 'Current' end",
+        "case when \"inspection_date\" < '2024-01-01' then 'Expired' else 'Current' end"
+    ],
+    
+    hints: [
+        'Dates can be compared using < and > operators',
+        'Date format: \'YYYY-MM-DD\'',
+        'Use either IF or CASE WHEN'
+    ],
+    
+    initialTable: {
+        id_field: 'building_id',
+        id_value: ['B001', 'B002', 'B003', 'B004'],
+        columns: ['inspection_date', 'inspection_status'],
+        values: [
+            ['2023-08-15', 'NULL'],
+            ['2024-03-20', 'NULL'],
+            ['2023-12-31', 'NULL'],
+            ['2024-06-10', 'NULL']
+        ],
+    },
+    
+    expectedTable: {
+        id_field: 'building_id',
+        id_value: ['B001', 'B002', 'B003', 'B004'],
+        columns: ['inspection_date', 'inspection_status'],
+        values: [
+            ['2023-08-15', 'Expired'],
+            ['2024-03-20', 'Current'],
+            ['2023-12-31', 'Expired'],
+            ['2024-06-10', 'Current']
+        ],
+    },
+},
+
+{
+    id: 28,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 3,
+    title: 'Combining multiple conditions with AND/OR',
+    description: `Real-world scenarios often require testing multiple conditions simultaneously.
+    
+    Logical operators:
+    - AND: both conditions must be true
+    - OR: at least one condition must be true
+    - NOT: inverts the condition
+    
+    You can combine these to create complex logic:
+    (condition1 AND condition2) OR (condition3 AND condition4)
+    
+    Use parentheses () to control the order of evaluation!
+    
+    <p class="italic text-sm mt-2">
+    💡 <strong>Real-world tip:</strong> Complex conditions are essential for advanced map styling.
+    For example, you might want to highlight buildings that are both (old AND residential) OR (new AND commercial).
+    This allows you to create sophisticated rule-based symbology that reflects your analysis needs.
+    </p>`,
+    
+    example: `Example - Finding priority cases:
+    CASE
+        WHEN (status = 'urgent' AND days_open > 7) OR priority = 'critical' 
+            THEN 'High Priority'
+        WHEN status = 'urgent' OR days_open > 14 
+            THEN 'Medium Priority'
+        ELSE 'Normal'
+    END`,
+    
+    question: `You have 'building_age' (years) and 'building_type' fields.
+    Create a 'renovation_priority' field that shows:
+    - 'High' if (building_age > 50 AND building_type = 'residential') OR building_age > 80
+    - 'Medium' if building_age > 30 AND building_age <= 50
+    - 'Low' for everything else`,
+    
+    correctAnswers: [
+        "CASE WHEN (building_age > 50 AND building_type = 'residential') OR building_age > 80 THEN 'High' WHEN building_age > 30 AND building_age <= 50 THEN 'Medium' ELSE 'Low' END",
+        "CASE WHEN (\"building_age\" > 50 AND \"building_type\" = 'residential') OR \"building_age\" > 80 THEN 'High' WHEN \"building_age\" > 30 AND \"building_age\" <= 50 THEN 'Medium' ELSE 'Low' END",
+        "case when (building_age > 50 and building_type = 'residential') or building_age > 80 then 'High' when building_age > 30 and building_age <= 50 then 'Medium' else 'Low' end",
+        "case when (\"building_age\" > 50 and \"building_type\" = 'residential') or \"building_age\" > 80 then 'High' when \"building_age\" > 30 and \"building_age\" <= 50 then 'Medium' else 'Low' end"
+    ],
+    
+    hints: [
+        'Use parentheses to group: (condition1 AND condition2) OR condition3',
+        'Test the High priority condition first',
+        'Remember: AND requires both conditions true, OR requires at least one'
+    ],
+    
+    initialTable: {
+        id_field: 'property_id',
+        id_value: ['P001', 'P002', 'P003', 'P004', 'P005'],
+        columns: ['building_age', 'building_type', 'renovation_priority'],
+        values: [
+            ['55', 'residential', 'NULL'],
+            ['85', 'commercial', 'NULL'],
+            ['40', 'residential', 'NULL'],
+            ['60', 'commercial', 'NULL'],
+            ['25', 'residential', 'NULL']
+        ],
+    },
+    
+    expectedTable: {
+        id_field: 'property_id',
+        id_value: ['P001', 'P002', 'P003', 'P004', 'P005'],
+        columns: ['building_age', 'building_type', 'renovation_priority'],
+        values: [
+            ['55', 'residential', 'High'],
+            ['85', 'commercial', 'High'],
+            ['40', 'residential', 'Medium'],
+            ['60', 'commercial', 'Low'],
+            ['25', 'residential', 'Low']
+        ],
+    },
+},
+
+{
+    id: 29,
+    pathType: 'QGIS',
+    moduleKey: 'basic',
+    level: 3,
+    title: 'CASE WHEN with geometry variables',
+    description: `Combining conditional logic with geometry variables ($area, $length, $x, $y) 
+    allows you to create classifications based on spatial properties.
+    
+    This is extremely powerful for:
+    - Classifying parcels by size
+    - Categorizing roads by length
+    - Identifying features in specific coordinate ranges
+    - Creating dynamic labels based on feature size
+    
+    <p class="italic text-sm mt-2">
+    💡 <strong>Real-world tip:</strong> This technique is perfect for scale-dependent labeling!
+    You can show different label styles based on @map_scale and $area together.
+    For example: show detailed labels only for large features when zoomed out, 
+    but show all labels when zoomed in. Expression example:
+    </p>
+    <code class="text-xs">
+    CASE 
+        WHEN @map_scale > 10000 AND $area < 5000 THEN ''
+        ELSE name
+    END
+    </code>`,
+    
+    example: `Example - Classify parcels by area:
+    CASE
+        WHEN $area > 10000 THEN 'Large parcel'
+        WHEN $area > 1000 THEN 'Medium parcel'
+        ELSE 'Small parcel'
+    END`,
+    
+    question: `You have a polygon layer. Create a 'size_category' field that classifies features by area (in m²):
+    - 'Large' if area >= 50000
+    - 'Medium' if area >= 10000 and < 50000
+    - 'Small' if area < 10000
+    
+    Use the $area variable (assume project unit is meters).`,
+    
+    correctAnswers: [
+        "CASE WHEN $area >= 50000 THEN 'Large' WHEN $area >= 10000 THEN 'Medium' ELSE 'Small' END",
+        "case when $area >= 50000 then 'Large' when $area >= 10000 then 'Medium' else 'Small' end",
+    ],
+    
+    hints: [    
+        'Use parentheses to group: (condition1 AND condition2) OR condition3',
+        'Remember: AND requires both conditions true, OR requires at least one'
+    ],
+    
+    initialTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3', '4'],
+        columns: ['size_category'],        
+        values: [
+            ['NULL'],
+            ['NULL'],
+            ['NULL'],            
+            ['NULL']
+        ]
+    },
+    expectedTable: {
+        id_field: 'fid',
+        id_value: ['1', '2', '3', '4'],        
+        columns: ['size_category'],        
+        values: [
+            ['Large'],
+            ['Medium'],
+            ['Small'],
+            ['Small']
+        ]
+    },
+},{
+    id: 30,
+    pathType: 'QGIS',
+    moduleKey: 'basic',      
+    level: 3,
+    title: 'CASE WHEN with geometry variables',    
+    description: `Combining conditional logic with geometry variables ($area, $length, $x, $y)  
+    allows you to create classifications based on spatial properties.
+    
+    This is extremely powerful for:                     
+    - Classifying parcels by size
+    - Categorizing roads by length
+    - Identifying features in specific coordinate ranges
+    - Creating dynamic labels based on feature size     
+    <p class="italic text-sm mt-2">
+    💡 <strong>Real-world tip:</strong> This technique is perfect for scale-dependent labeling! 
+    You can show different label styles based on @map_scale and $area together. 
+    For example: show detailed labels only for large features when zoomed out, 
+    but show all labels when zoomed in. Expression example:
+    </p>
+    <code class="text-xs">
+    CASE    
+        WHEN @map_scale > 10000 AND $area < 5000 THEN ''
+        ELSE name
+    END
+    </code>`,    
+    example: `Example - Classify parcels by area:
+    CASE
+        WHEN $area > 10000 THEN 'Large parcel'
+        WHEN $area > 1000 THEN 'Medium parcel'        
+        ELSE 'Small parcel'
+    END`,    
+    question: `You have a polygon layer. Create a 'size_category' field that classifies features by area (in m²):
+    - 'Large' if area >= 50000    
+    - 'Medium' if area >= 10000 and < 50000    
+    - 'Small' if area < 10000
+    
+    Use the $area variable (assume project unit is meters).`,    
+    correctAnswers: [
+        "CASE WHEN $area >= 50000 THEN 'Large' WHEN $area >= 10000 THEN 'Medium' ELSE 'Small' END",
+        "case when $area >= 50000 then 'Large' when $area >= 10000 then 'Medium' else 'Small' end",
+    ],    
+    hints: [
+        'Use parentheses to group: (condition1 AND condition2) OR condition3',
+        'Remember: AND requires both conditions true, OR requires at least one' 
+    ]   ,    
+    initialTable: {
+        id_field: 'fid',        
+        id_value: ['1', '2', '3', '4'],        
+        columns: ['size_category'],        
+        values: [
+            ['NULL'],
+            ['NULL'],
+            ['NULL'],            
+            ['NULL']
+        ]
+    },
+    expectedTable: {
+        id_field: 'fid',        
+        id_value: ['1', '2', '3', '4'],        
+        columns: ['size_category'],        
+        values: [
+            ['Large'],
+            ['Medium'],
+            ['Small'],
+            ['Small']
+        ]
+    },
+    },
+    // Add more steps here
+        ]
+    
 
 export const getTotalSteps = () => qgisBasicSteps.length;
 
