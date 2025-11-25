@@ -1198,35 +1198,37 @@ concat('geo', 'map') → 'geomap' OR left('geomap', 3) → 'geo' `,
     💡 <strong>Real-world tip:</strong> CASE WHEN is perfect for rule-based symbology! 
     In QGIS, you can use CASE expressions to set different colors for different categories.
     For example, color roads by type: highways in red, local roads in gray.
+    You can also use it to control map dependency in print layouts. For example, show different titles based on map scale using CASE WHEN in the title expression.
     </p>`,
     
-    example: `Example:
+    example: `Example: you have a field <strong>population</strong> and want to classify field <strong>city_type</strong> as 'Metropolis', 'City', 'Town', or 'Village':
+    <strong>
     CASE
         WHEN population > 1000000 THEN 'Metropolis'
         WHEN population > 100000 THEN 'City'
         WHEN population > 10000 THEN 'Town'
         ELSE 'Village'
-    END`,
+    END</strong>`,
     
-    question: `You have a 'land_use' field with values like 'residential', 'commercial', 'industrial', 'park'.
-    Create a 'zone_type' field that shows:
-    - 'Urban' for residential or commercial
+    question: `You have a "land_use" field with values like 'residential', 'commercial', 'industrial', 'park'.
+    Create a "zone_type" field that shows (already created for you in the sample attribute table here):
+    - 'Urban' for residential
     - 'Industrial' for industrial
     - 'Green' for park
     - 'Other' for anything else`,
     
     correctAnswers: [
-        "CASE WHEN land_use = 'residential' OR land_use = 'commercial' THEN 'Urban' WHEN land_use = 'industrial' THEN 'Industrial' WHEN land_use = 'park' THEN 'Green' ELSE 'Other' END",
-        "CASE WHEN \"land_use\" = 'residential' OR \"land_use\" = 'commercial' THEN 'Urban' WHEN \"land_use\" = 'industrial' THEN 'Industrial' WHEN \"land_use\" = 'park' THEN 'Green' ELSE 'Other' END",
-        "case when land_use = 'residential' or land_use = 'commercial' then 'Urban' when land_use = 'industrial' then 'Industrial' when land_use = 'park' then 'Green' else 'Other' end",
-        "case when \"land_use\" = 'residential' or \"land_use\" = 'commercial' then 'Urban' when \"land_use\" = 'industrial' then 'Industrial' when \"land_use\" = 'park' then 'Green' else 'Other' end"
+        "CASE WHEN land_use = 'residential' THEN 'Urban' WHEN land_use = 'industrial' THEN 'Industrial' WHEN land_use = 'park' THEN 'Green' ELSE 'Other' END",
+        "CASE WHEN \"land_use\" = 'residential' THEN 'Urban' WHEN \"land_use\" = 'industrial' THEN 'Industrial' WHEN \"land_use\" = 'park' THEN 'Green' ELSE 'Other' END",
+        "case when land_use = 'residential' then 'Urban' when land_use = 'industrial' then 'Industrial' when land_use = 'park' then 'Green' else 'Other' end",
+        "case when \"land_use\" = 'residential' then 'Urban' when \"land_use\" = 'industrial' then 'Industrial' when \"land_use\" = 'park' then 'Green' else 'Other' end"
     ],
     
     hints: [
         'Use CASE WHEN structure',
-        'Combine residential and commercial with OR operator',
+        'Use THEN for each condition\'s result',
         'Remember to close with END',
-        'CASE WHEN is not case-sensitive in QGIS'
+        'Since the expression getting more complex, make sure use space or new line when needed for better readability'
     ],
     
     initialTable: {
@@ -1267,7 +1269,8 @@ concat('geo', 'map') → 'geomap' OR left('geomap', 3) → 'geo' `,
     risk levels, or any continuous data into discrete categories.
     
     When working with ranges, order matters! QGIS evaluates conditions from top to bottom 
-    and stops at the first TRUE condition.
+    and stops at the first TRUE condition. 
+
     
     <p class="italic text-sm mt-2">
     💡 <strong>Real-world tip:</strong> This is the foundation of graduated symbology in QGIS!
@@ -1275,7 +1278,8 @@ concat('geo', 'map') → 'geomap' OR left('geomap', 3) → 'geo' `,
     You can even customize these expressions in the Style panel.
     </p>`,
     
-    example: `Example - Elevation zones:
+    example: `Example:
+    Working on a field <strong>zone_type</strong> that shows Elevation zones:
     CASE
         WHEN elevation > 2000 THEN 'Alpine'
         WHEN elevation > 1000 THEN 'Montane'
@@ -1283,12 +1287,12 @@ concat('geo', 'map') → 'geomap' OR left('geomap', 3) → 'geo' `,
         ELSE 'Lowland'
     END`,
     
-    question: `You have a 'population_density' field (people per km²).
-    Create a 'density_class' field with these categories:
+    question: `You have a "population_density" field (people per km²).
+    Update the "density_class" field with these categories:
     - 'Very High' if >= 5000
     - 'High' if >= 1000
     - 'Medium' if >= 500
-    - 'Low' if < 500`,
+    - 'Low' for everything else`,
     
     correctAnswers: [
         "CASE WHEN population_density >= 5000 THEN 'Very High' WHEN population_density >= 1000 THEN 'High' WHEN population_density >= 500 THEN 'Medium' ELSE 'Low' END",
