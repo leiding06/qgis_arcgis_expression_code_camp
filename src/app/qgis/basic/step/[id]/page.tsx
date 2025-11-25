@@ -241,9 +241,9 @@ export default function ExercisePage() {
                     <div key={idx}>{line}</div>
                 ))
                 : (
-                    <div className="whitespace-pre-line">
-                        {currentStep.example}
-                    </div>
+                    <div className="whitespace-pre-line" 
+                    dangerouslySetInnerHTML={{ __html: currentStep.example }}
+                    />
                 )}
             </div>
             {/* Question */}

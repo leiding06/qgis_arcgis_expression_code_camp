@@ -1057,21 +1057,20 @@ concat('geo', 'map') → 'geomap' OR left('geomap', 3) → 'geo' `,
     It allows you to test a condition and return different values based on whether the condition is true or false.
     
     Syntax: if( condition, value_if_true, value_if_false )
-    
-    For example:
-    - if( population > 1000000, 'Large', 'Small' ) 
-    - if( $area > 5000, 'Big parcel', 'Small parcel' )
-    
+
     <p class="italic text-sm mt-2">
-    💡 <strong>Real-world tip:</strong> This is extremely useful for dynamic labels! 
+    💡 <strong>Real-world tip:</strong> Apart from the attribute table's field calculator, this is also extremely useful for dynamic labels! 
     For example, you can show different text sizes based on feature importance: 
     if( "importance" = 'high', 14, 10 ) in label font size expression.
     </p>`,
     
-    example: `Example: if( score >= 60, 'Pass', 'Fail' )`,
+    example: `Example: 
+    1. You have a field <strong>status</strong> that shows 'Pass' if field <strong>score</strong> is greater than or equal to 60, otherwise 'Fail'. The expression for <strong>status</strong> is: <strong>if( score >= 60, 'Pass', 'Fail' )</strong>
+    2. You need to update a field called <strong>is_adult</strong> that shows True if field <strong>age</strong> is 18 or older, otherwise False. The expression for <strong>is_adult</strong> is: <strong>if( age >= 18, True, False )</strong>`,
+
     
-    question: `You have a field called 'temperature' with numeric values. 
-    Create a new field 'status' that shows 'Hot' if temperature is greater than 30, otherwise 'Normal'.`,
+    question: `You have a field called "temperature" with numeric values. 
+    Update the field "status" that shows 'Hot' if temperature is greater than 30, otherwise 'Normal'.`,
     
     correctAnswers: [
         "if(temperature > 30, 'Hot', 'Normal')",
