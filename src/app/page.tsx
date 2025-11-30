@@ -1,11 +1,15 @@
 'use client';
-
+//src/app/page.tsx
 
 import { Globe, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { getProgress, saveProgress } from '@/utils/storage';
 import { UserProgress } from '@/types';
 import { useEffect, useState } from 'react';
+
+import { supabase } from "@/lib/supabaseClient";
+
+
 
 export default function HomePage() {
   const router = useRouter();
@@ -14,6 +18,8 @@ export default function HomePage() {
     const progress = getProgress();
     setDisplayLevel(computeDisplayLevel(progress));
   }, []); 
+
+
 
 
   const handlePathSelect = (path: 'QGIS' | 'ArcGIS') => {
