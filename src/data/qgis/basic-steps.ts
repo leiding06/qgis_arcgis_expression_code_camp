@@ -1345,19 +1345,14 @@ concat('geo', 'map') → 'geomap' OR left('geomap', 3) → 'geo' `,
     
     Important NULL handling functions:
     - IS NULL / IS NOT NULL: test if a value is NULL
-    - coalesce(field1, field2, default): returns the first non-NULL value
-    - if( field IS NULL, default_value, field ): replace NULL with a default
-    
-    Common mistake: NULL = NULL returns NULL (not TRUE)! Always use IS NULL instead.
-    
-    <p class="italic text-sm mt-2">
-    💡 <strong>Real-world tip:</strong> NULL handling is crucial when joining tables or importing data.
-    Missing values can break calculations, so always check for NULLs before doing math operations.
-    </p>`,
+    Do not use = or != to compare with NULL (this won't work correctly)`,
     
     example: `Example:
-    coalesce(phone_mobile, phone_home, 'No contact') 
-    // Returns first available phone number`,
+    coalesce(phone_mobile, phone_home, 'No contact') // Returns first available phone number
+    
+    coalesce(field1, field2, default) //Returns the first non-NULL value
+    
+    if( field IS NULL, result_when_NULL, result_when_not_NULL ) //Replace NULL with a default`,
     
     question: `You have an 'email' field that contains NULL values for some records.
     Create a 'contact_status' field that shows:
@@ -1419,41 +1414,39 @@ concat('geo', 'map') → 'geomap' OR left('geomap', 3) → 'geo' `,
     - % : wildcard for any number of characters
     - _ : wildcard for exactly one character
     
-    Examples:
-    - name LIKE 'John%' : starts with "John"
-    - name LIKE '%street%' : contains "street" anywhere
-    - code LIKE 'A___' : starts with A and has exactly 3 more characters
-    
     <p class="italic text-sm mt-2">
     💡 <strong>Real-world tip:</strong> LIKE is perfect for filtering features in rule-based symbology.
-    For example, color all roads that contain "Highway" differently, or label all parks 
-    whose names start with "Central".
+    For example, color all roads names in the field "road_name" that contain "Highway" differently (road_name LIKE '%Highway%'), or label all parks 
+    whose names start with "Central" or "central" (name ILIKE 'Central%').
     </p>`,
     
     example: `Example: 
-    CASE 
+    - name LIKE 'John%'  //Starts with "John"
+    - name LIKE '%street%' //Contains "street" anywhere
+    - code LIKE 'A___' //Starts with A and has exactly 3 more characters
+    - CASE 
         WHEN road_name ILIKE '%highway%' THEN 'Major Road'
         WHEN road_name ILIKE '%street%' THEN 'Minor Road'
         ELSE 'Other'
-    END`,
+        END`,
     
-    question: `You have a 'road_name' field. Create a 'road_type' field that shows:
+    question: `You have a road_name field and a road_type field. The road_type field should shows:
     - 'Highway' if road_name contains 'Highway' (case-insensitive)
-    - 'Avenue' if road_name contains 'Avenue' (case-insensitive)
+    - 'Avenue' if road_name ends with 'Avenue' (case-insensitive)
     - 'Street' if road_name contains 'Street' (case-insensitive)
     - 'Other' for anything else`,
     
     correctAnswers: [
-        "CASE WHEN road_name ILIKE '%Highway%' THEN 'Highway' WHEN road_name ILIKE '%Avenue%' THEN 'Avenue' WHEN road_name ILIKE '%Street%' THEN 'Street' ELSE 'Other' END",
-        "CASE WHEN \"road_name\" ILIKE '%Highway%' THEN 'Highway' WHEN \"road_name\" ILIKE '%Avenue%' THEN 'Avenue' WHEN \"road_name\" ILIKE '%Street%' THEN 'Street' ELSE 'Other' END",
-        "case when road_name ilike '%Highway%' then 'Highway' when road_name ilike '%Avenue%' then 'Avenue' when road_name ilike '%Street%' then 'Street' else 'Other' end",
-        "case when \"road_name\" ilike '%Highway%' then 'Highway' when \"road_name\" ilike '%Avenue%' then 'Avenue' when \"road_name\" ilike '%Street%' then 'Street' else 'Other' end"
+        "CASE WHEN road_name ILIKE '%Highway%' THEN 'Highway' WHEN road_name ILIKE '%Avenue' THEN 'Avenue' WHEN road_name ILIKE '%Street%' THEN 'Street' ELSE 'Other' END",
+        "CASE WHEN \"road_name\" ILIKE '%Highway%' THEN 'Highway' WHEN \"road_name\" ILIKE '%Avenue' THEN 'Avenue' WHEN \"road_name\" ILIKE '%Street%' THEN 'Street' ELSE 'Other' END",
+        "case when road_name ilike '%Highway%' then 'Highway' when road_name ilike '%Avenue' then 'Avenue' when road_name ilike '%Street%' then 'Street' else 'Other' end",
+        "case when \"road_name\" ilike '%Highway%' then 'Highway' when \"road_name\" ilike '%Avenue' then 'Avenue' when \"road_name\" ilike '%Street%' then 'Street' else 'Other' end"
     ],
     
     hints: [
         'Use ILIKE for case-insensitive matching',
-        'Use %pattern% to match anywhere in the string',
-        'Order your conditions from most to least specific'
+        'Use %pattern% for containing the pattern in the string',
+        'Use %pattern for strings that end with the pattern'
     ],
     
     initialTable: {
@@ -1496,9 +1489,6 @@ concat('geo', 'map') → 'geomap' OR left('geomap', 3) → 'geo' `,
     - day_of_week(date): returns day number (0=Sunday, 6=Saturday)
     - year(date), month(date), day(date): extract parts of a date
     - date comparisons: you can use >, <, =, etc. with dates
-    
-    Date format in QGIS: 'YYYY-MM-DD' (e.g., '2025-01-15')
-    
     <p class="italic text-sm mt-2">
     💡 <strong>Real-world tip:</strong> Date expressions are useful for dynamic labels that change based on time.
     For example, in a project management map, you could color tasks differently based on whether 
@@ -1593,8 +1583,9 @@ concat('geo', 'map') → 'geomap' OR left('geomap', 3) → 'geo' `,
     
     question: `You have 'building_age' (years) and 'building_type' fields.
     Create a 'renovation_priority' field that shows:
-    - 'High' if (building_age > 50 AND building_type = 'residential') OR building_age > 80
-    - 'Medium' if building_age > 30 AND building_age <= 50
+    - 'High' if the building_age is greater than 50 and building_type is 'residential'
+    -  also shows 'High' if building_age is greater than 80
+    - 'Medium' if building_age is greater than 30 and building_age is less than or equal to 50
     - 'Low' for everything else`,
     
     correctAnswers: [
@@ -1606,7 +1597,7 @@ concat('geo', 'map') → 'geomap' OR left('geomap', 3) → 'geo' `,
     
     hints: [
         'Use parentheses to group: (condition1 AND condition2) OR condition3',
-        'Test the High priority condition first',
+        'If the result is same, you should use one condition with OR to simplify the expression',
         'Remember: AND requires both conditions true, OR requires at least one'
     ],
     
@@ -1642,145 +1633,172 @@ concat('geo', 'map') → 'geomap' OR left('geomap', 3) → 'geo' `,
     pathType: 'QGIS',
     moduleKey: 'basic',
     level: 3,
-    title: 'CASE WHEN with geometry variables',
-    description: `Combining conditional logic with geometry variables ($area, $length, $x, $y) 
-    allows you to create classifications based on spatial properties.
+    title: 'BETWEEN operator for ranges',
+    description: `The BETWEEN operator is a clean way to check if a value falls within a range.
     
-    This is extremely powerful for:
-    - Classifying parcels by size
-    - Categorizing roads by length
-    - Identifying features in specific coordinate ranges
-    - Creating dynamic labels based on feature size
+    Syntax: field_name BETWEEN value1 AND value2
+    
+    This tests if a value is >= value1 AND <= value2 (inclusive on both ends).
+    
+    Instead of writing:
+    <code>age >= 18 AND age <= 65</code>
+    
+    You can simply write:
+    <code>age BETWEEN 18 AND 65</code>
+    
+    BETWEEN works with numbers, dates, and even strings (alphabetical order).
+    It makes your expressions more readable, especially when dealing with multiple range conditions.
     
     <p class="italic text-sm mt-2">
-    💡 <strong>Real-world tip:</strong> This technique is perfect for scale-dependent labeling!
-    You can show different label styles based on @map_scale and $area together.
-    For example: show detailed labels only for large features when zoomed out, 
-    but show all labels when zoomed in. Expression example:
-    </p>
-    <code class="text-xs">
-    CASE 
-        WHEN @map_scale > 10000 AND $area < 5000 THEN ''
-        ELSE name
-    END
-    </code>`,
+    💡 <strong>Real-world tip:</strong> BETWEEN is perfect for graduated symbology and label rules!
+    For example, you can create color gradients based on population ranges, or show different 
+    label sizes for features within specific area ranges. It's also great for filtering data by 
+    date ranges, like showing only projects between 2023-01-01 and 2024-12-31.
+    </p>`,
     
-    example: `Example - Classify parcels by area:
+    example: `Example:
     CASE
-        WHEN $area > 10000 THEN 'Large parcel'
-        WHEN $area > 1000 THEN 'Medium parcel'
-        ELSE 'Small parcel'
+        WHEN price BETWEEN 0 AND 100 THEN 'Budget'
+        WHEN price BETWEEN 101 AND 500 THEN 'Mid-range'
+        WHEN price BETWEEN 501 AND 1000 THEN 'Premium'
+        ELSE 'Luxury'
     END`,
     
-    question: `You have a polygon layer. Create a 'size_category' field that classifies features by area (in m²):
-    - 'Large' if area >= 50000
-    - 'Medium' if area >= 10000 and < 50000
-    - 'Small' if area < 10000
-    
-    Use the $area variable (assume project unit is meters).`,
+    question: `You have a 'temperature' field (in Celsius). Create a 'comfort_level' field that shows:
+    - 'Cold' if temperature is between -10 and 15 (inclusive)
+    - 'Comfortable' if temperature is between 16 and 25 (inclusive)
+    - 'Hot' if temperature is between 26 and 40 (inclusive)
+    - 'Extreme' for anything outside these ranges`,
     
     correctAnswers: [
-        "CASE WHEN $area >= 50000 THEN 'Large' WHEN $area >= 10000 THEN 'Medium' ELSE 'Small' END",
-        "case when $area >= 50000 then 'Large' when $area >= 10000 then 'Medium' else 'Small' end",
+        "CASE WHEN temperature BETWEEN -10 AND 15 THEN 'Cold' WHEN temperature BETWEEN 16 AND 25 THEN 'Comfortable' WHEN temperature BETWEEN 26 AND 40 THEN 'Hot' ELSE 'Extreme' END",
+        "CASE WHEN \"temperature\" BETWEEN -10 AND 15 THEN 'Cold' WHEN \"temperature\" BETWEEN 16 AND 25 THEN 'Comfortable' WHEN \"temperature\" BETWEEN 26 AND 40 THEN 'Hot' ELSE 'Extreme' END",
+        "case when temperature between -10 and 15 then 'Cold' when temperature between 16 and 25 then 'Comfortable' when temperature between 26 and 40 then 'Hot' else 'Extreme' end",
+        "case when \"temperature\" between -10 and 15 then 'Cold' when \"temperature\" between 16 and 25 then 'Comfortable' when \"temperature\" between 26 and 40 then 'Hot' else 'Extreme' end"
     ],
     
-    hints: [    
-        'Use parentheses to group: (condition1 AND condition2) OR condition3',
-        'Remember: AND requires both conditions true, OR requires at least one'
+    hints: [
+        'Use BETWEEN with the syntax: field BETWEEN min AND max',
+        'BETWEEN is inclusive on both ends',
+        'Use CASE WHEN to test multiple ranges',
+        'ELSE catches values outside all ranges'
     ],
     
     initialTable: {
-        id_field: 'fid',
-        id_value: ['1', '2', '3', '4'],
-        columns: ['size_category'],        
+        id_field: 'location_id',
+        id_value: ['L001', 'L002', 'L003', 'L004', 'L005', 'L006'],
+        columns: ['temperature', 'comfort_level'],
         values: [
-            ['NULL'],
-            ['NULL'],
-            ['NULL'],            
-            ['NULL']
-        ]
+            ['12', 'NULL'],
+            ['22', 'NULL'],
+            ['35', 'NULL'],
+            ['-5', 'NULL'],
+            ['28', 'NULL'],
+            ['45', 'NULL']
+        ],
     },
+    
     expectedTable: {
-        id_field: 'fid',
-        id_value: ['1', '2', '3', '4'],        
-        columns: ['size_category'],        
+        id_field: 'location_id',
+        id_value: ['L001', 'L002', 'L003', 'L004', 'L005', 'L006'],
+        columns: ['temperature', 'comfort_level'],
         values: [
-            ['Large'],
-            ['Medium'],
-            ['Small'],
-            ['Small']
-        ]
+            ['12', 'Cold'],
+            ['22', 'Comfortable'],
+            ['35', 'Hot'],
+            ['-5', 'Cold'],
+            ['28', 'Hot'],
+            ['45', 'Extreme']
+        ],
     },
-},{
+},
+{
     id: 30,
     pathType: 'QGIS',
-    moduleKey: 'basic',      
+    moduleKey: 'basic',
     level: 3,
-    title: 'CASE WHEN with geometry variables',    
-    description: `Combining conditional logic with geometry variables ($area, $length, $x, $y)  
-    allows you to create classifications based on spatial properties.
+    title: 'IN operator for multiple values',
+    description: `The IN operator tests if a value matches any value in a list. It's much cleaner than writing multiple OR conditions.
     
-    This is extremely powerful for:                     
-    - Classifying parcels by size
-    - Categorizing roads by length
-    - Identifying features in specific coordinate ranges
-    - Creating dynamic labels based on feature size     
+    Syntax: field_name IN (value1, value2, value3)
+    
+    Instead of writing:
+    <code>name = 'Mike' OR name = 'Allen' OR name = 'David'</code>
+    
+    You can simply write:
+    <code>name IN ('Mike', 'Allen', 'David')</code>
+    
+    This is especially useful when you have many values to check. The IN operator works with strings, numbers, and dates.
+    You can also use NOT IN to check if a value is NOT in the list.
+    
     <p class="italic text-sm mt-2">
-    💡 <strong>Real-world tip:</strong> This technique is perfect for scale-dependent labeling! 
-    You can show different label styles based on @map_scale and $area together. 
-    For example: show detailed labels only for large features when zoomed out, 
-    but show all labels when zoomed in. Expression example:
+    💡 <strong>Real-world tip:</strong> IN is perfect for rule-based symbology when you want to group multiple values into one category.
+    For example, you can color all major cities (London, Paris, Berlin, Rome) in red with one simple rule using IN.
+    It's also great for filtering features in expressions: only show labels for specific road types, 
+    or highlight buildings with specific use codes.
     </p>
-    <code class="text-xs">
-    CASE    
-        WHEN @map_scale > 10000 AND $area < 5000 THEN ''
-        ELSE name
-    END
-    </code>`,    
-    example: `Example - Classify parcels by area:
-    CASE
-        WHEN $area > 10000 THEN 'Large parcel'
-        WHEN $area > 1000 THEN 'Medium parcel'        
-        ELSE 'Small parcel'
-    END`,    
-    question: `You have a polygon layer. Create a 'size_category' field that classifies features by area (in m²):
-    - 'Large' if area >= 50000    
-    - 'Medium' if area >= 10000 and < 50000    
-    - 'Small' if area < 10000
+    `,
     
-    Use the $area variable (assume project unit is meters).`,    
+    example: `Example:
+    CASE
+        WHEN name IN ('Mike', 'Allen', 'David') THEN 'Manager'
+        WHEN name IN ('Sarah', 'Emma', 'Lisa') THEN 'Staff'
+        ELSE 'Other'
+    END
+    
+    //Or with NOT IN:
+    CASE
+        WHEN status NOT IN ('cancelled', 'deleted') THEN 'Active'
+        ELSE 'Inactive'
+    END`,
+    
+    question: `You have an 'employee_name' field and a 'department' field. 
+    Create a 'role' field that shows:
+    - 'Senior' if employee_name is in the list: 'John Smith', 'Mary Johnson', 'Robert Williams'
+    - 'Junior' if employee_name is in the list: 'Alice Brown', 'Tom Davis'
+    - 'Intern' for everyone else`,
+    
     correctAnswers: [
-        "CASE WHEN $area >= 50000 THEN 'Large' WHEN $area >= 10000 THEN 'Medium' ELSE 'Small' END",
-        "case when $area >= 50000 then 'Large' when $area >= 10000 then 'Medium' else 'Small' end",
-    ],    
+        "CASE WHEN employee_name IN ('John Smith', 'Mary Johnson', 'Robert Williams') THEN 'Senior' WHEN employee_name IN ('Alice Brown', 'Tom Davis') THEN 'Junior' ELSE 'Intern' END",
+        "CASE WHEN \"employee_name\" IN ('John Smith', 'Mary Johnson', 'Robert Williams') THEN 'Senior' WHEN \"employee_name\" IN ('Alice Brown', 'Tom Davis') THEN 'Junior' ELSE 'Intern' END",
+        "case when employee_name in ('John Smith', 'Mary Johnson', 'Robert Williams') then 'Senior' when employee_name in ('Alice Brown', 'Tom Davis') then 'Junior' else 'Intern' end",
+        "case when \"employee_name\" in ('John Smith', 'Mary Johnson', 'Robert Williams') then 'Senior' when \"employee_name\" in ('Alice Brown', 'Tom Davis') then 'Junior' else 'Intern' end"
+    ],
+    
     hints: [
-        'Use parentheses to group: (condition1 AND condition2) OR condition3',
-        'Remember: AND requires both conditions true, OR requires at least one' 
-    ]   ,    
+        'Use IN operator with a list of values in parentheses',
+        'Each string value in the list needs single quotes',
+        'Separate values with commas',
+        'Structure: CASE WHEN field IN (value1, value2, value3) THEN result'
+    ],
+    
     initialTable: {
-        id_field: 'fid',        
-        id_value: ['1', '2', '3', '4'],        
-        columns: ['size_category'],        
+        id_field: 'employee_id',
+        id_value: ['E001', 'E002', 'E003', 'E004', 'E005'],
+        columns: ['employee_name', 'department', 'role'],
         values: [
-            ['NULL'],
-            ['NULL'],
-            ['NULL'],            
-            ['NULL']
-        ]
+            ['John Smith', 'Engineering', 'NULL'],
+            ['Alice Brown', 'Engineering', 'NULL'],
+            ['Mary Johnson', 'Sales', 'NULL'],
+            ['Tom Davis', 'Marketing', 'NULL'],
+            ['Peter Wilson', 'HR', 'NULL']
+        ],
     },
+    
     expectedTable: {
-        id_field: 'fid',        
-        id_value: ['1', '2', '3', '4'],        
-        columns: ['size_category'],        
+        id_field: 'employee_id',
+        id_value: ['E001', 'E002', 'E003', 'E004', 'E005'],
+        columns: ['employee_name', 'department', 'role'],
         values: [
-            ['Large'],
-            ['Medium'],
-            ['Small'],
-            ['Small']
-        ]
+            ['John Smith', 'Engineering', 'Senior'],
+            ['Alice Brown', 'Engineering', 'Junior'],
+            ['Mary Johnson', 'Sales', 'Senior'],
+            ['Tom Davis', 'Marketing', 'Junior'],
+            ['Peter Wilson', 'HR', 'Intern']
+        ],
     },
-    },
-    // Add more steps here
+}
+
         ]
     
 
