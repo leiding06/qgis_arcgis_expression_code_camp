@@ -6,9 +6,6 @@ import { useRouter } from 'next/navigation';
 import { getProgress, saveProgress } from '@/utils/storage';
 import { UserProgress } from '@/types';
 import { useEffect, useState } from 'react';
-
-import { supabase } from "@/lib/supabaseClient";
-
 import { useAuth } from '@/components/Auth/AuthProvider';
 import AuthModal from '@/components/Auth/AuthModal';
 

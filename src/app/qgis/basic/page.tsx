@@ -1,7 +1,7 @@
 'use client';
 //src/app/qgis/basic/page.tsx
 import React, { useState, useEffect } from 'react';
-import { Home, Check, FileText } from 'lucide-react';//Award has ben removed  for now, need to add later
+import { Home, Check } from 'lucide-react';//Award has ben removed  for now, need to add later
 import { useRouter } from 'next/navigation';
 import { getProgress } from '@/utils/storage';
 import { qgisBasicSteps,getStepsByLevel } from '@/data/qgis/basic-steps';
