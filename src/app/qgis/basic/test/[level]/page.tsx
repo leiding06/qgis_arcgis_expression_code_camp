@@ -1,7 +1,7 @@
 
 'use client';
 // src/app/qgis/basic/test/[level]/page.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ChevronRight, Check, X, Trophy, BookOpen } from 'lucide-react';
 import { getTestByLevel } from '@/data/qgis/basic-tests';
