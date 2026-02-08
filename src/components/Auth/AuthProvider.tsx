@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import type { User } from '@supabase/supabase-js';
+import { migrateLocalProgressIfNeeded } from '@/services/progress/progress.migration';
 
 interface AuthContextType {
     user: User | null;
@@ -28,9 +29,14 @@ interface AuthContextType {
         });
 
         // Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
         setUser(session?.user ?? null);
         setLoading(false);
+
+        // If user is logged in, migrate local progress if needed
+        if (event === 'SIGNED_IN' && session?.user) {
+            await migrateLocalProgressIfNeeded(session.user.id);
+        }
         });
 
         return () => subscription.unsubscribe();
