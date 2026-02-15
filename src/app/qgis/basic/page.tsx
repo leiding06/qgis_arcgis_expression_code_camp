@@ -19,17 +19,26 @@ export default function QGISBasicPage() {
     const router = useRouter();
     const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
-    useEffect(() => {
-        const progress = getProgress();
 
-    if (progress.qgis && progress.qgis.basic && Array.isArray(progress.qgis.basic.completedSteps)) {
-        setCompletedSteps(progress.qgis.basic.completedSteps);
+useEffect(() => {
+    const progress = getProgress();
+
+    if (progress.qgis && progress.qgis.basic) {
+        const allCompleted: number[] = [];
+        
+        const basicModule = progress.qgis.basic;
+        
+        Object.values(basicModule).forEach((levelData) => {
+            if (levelData?.completedSteps && Array.isArray(levelData.completedSteps)) {
+                allCompleted.push(...levelData.completedSteps);
+            }
+        });
+        
+        setCompletedSteps(allCompleted.sort((a, b) => a - b));
     } else {
-        setCompletedSteps([]); 
+        setCompletedSteps([]);
     }
-    
 }, []);
-
 
     const handleStepClick = (stepId: number) => {
         if (stepId > 1 && !completedSteps.includes(stepId - 1)) {
