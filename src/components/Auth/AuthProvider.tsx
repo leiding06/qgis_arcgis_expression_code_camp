@@ -30,13 +30,13 @@ interface AuthContextType {
 
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-        setUser(session?.user ?? null);
-        setLoading(false);
+            setUser(session?.user ?? null);
+            setLoading(false);
 
-        // If user is logged in, migrate local progress if needed
-        if (event === 'SIGNED_IN' && session?.user) {
-            await migrateLocalProgressIfNeeded(session.user.id);
-        }
+            //  SIGNED_IN and INITIAL_SESSION
+            if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
+                await migrateLocalProgressIfNeeded(session.user.id);
+            }
         });
 
         return () => subscription.unsubscribe();

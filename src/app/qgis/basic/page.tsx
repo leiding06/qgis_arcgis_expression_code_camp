@@ -58,26 +58,36 @@ useEffect(() => {
     skipToTest: 'Skip to test if you already know the material'
     };
     
-    const levels = [
-        {
-        level: 1,
-        title: 'Level 1: Data Types & Basic Operations',
-        description: 'Level 1 focuses on fundamental expression skills, including referencing fields, handling text and numeric data types, and performing basic calculations. ',
-        color: 'green'
-        },
-        {
-        level: 2,
-        title: 'Level 2: Intermidiate Functions and Conditional Logis',
-        description: 'Master string functions and complex operations',
-        color: 'blue'
-        },
-        {
-        level: 3,
-        title: 'Level 3: Advanced Functions and More Complex Logic',
-        description: 'Learn if-then-else and advanced expressions',
-        color: 'purple'
-        }
-    ];
+const levels = [
+  {
+    level: 1,
+    title: 'Level 1: Data Types & Basic Operations',
+    description:
+      'Level 1 focuses on fundamental expression skills, including referencing fields, handling text and numeric data types, and performing basic calculations.',
+    completedClass:
+      'bg-emerald-50 text-emerald-600 ring-2 ring-emerald-500/40 shadow-sm',
+    unlockedClass:
+      'bg-white text-emerald-600 border border-emerald-200 hover:bg-emerald-50',
+  },
+  {
+    level: 2,
+    title: 'Level 2: Intermediate Functions and Conditional Logic',
+    description: 'Master string functions and complex operations',
+    completedClass:
+      'bg-sky-50 text-sky-600 ring-2 ring-sky-500/40 shadow-sm',
+    unlockedClass:
+      'bg-white text-sky-600 border border-sky-200 hover:bg-sky-50',
+  },
+  {
+    level: 3,
+    title: 'Level 3: Advanced Functions and More Complex Logic',
+    description: 'Learn if-then-else and advanced expressions',
+    completedClass:
+      'bg-violet-50 text-violet-600 ring-2 ring-violet-500/40 shadow-sm',
+    unlockedClass:
+      'bg-white text-violet-600 border border-violet-200 hover:bg-violet-50',
+  },
+];
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
@@ -126,7 +136,7 @@ useEffect(() => {
 
             {/* Levels */}
             <div className="space-y-10">
-            {levels.map(({ level, title, description, color }) => {
+            {levels.map(({ level, title, description, completedClass, unlockedClass }) => {
                 const levelSteps = getStepsByLevel(level);
                 const levelCompleted = levelSteps.filter(s => completedSteps.includes(s.id)).length;
                 const isLevelFullyCompleted = levelCompleted === levelSteps.length;
@@ -147,27 +157,26 @@ useEffect(() => {
                     {/* Steps Grid */}
                     <div className="grid grid-cols-5 md:grid-cols-5 gap-6">
                     {levelSteps.map((step) => {
-                        const isCompleted = completedSteps.includes(step.id);
-                        const isLocked = step.id > 1 && !completedSteps.includes(step.id - 1);
-                        
-                        return (
-                        <button
-                            key={step.id}
-                            onClick={() => handleStepClick(step.id)}
-                            disabled={isLocked}
-                            className={`aspect-square rounded-full flex items-center justify-center text-lg font-bold transition ${
-                            isCompleted ? 
-                            `bg-${color}-500 text-white shadow-lg border-4 border-${color}-700` : 
-                            isLocked ? 
-                                'bg-gray-200 text-gray-400 cursor-not-allowed border-none' : 
-                                `bg-white text-${color}-600 border-2 border-dashed border-${color}-400 hover:bg-green-100`
-                            }`}
-                            title={isLocked ? text.stepLocked : step.title}
-                        >
-                            {isCompleted ? <Check className="w-5 h-5" /> : step.id}
-                        </button>
-                        );
-                    })}
+                            const isCompleted = completedSteps.includes(step.id);
+                            const isLocked = step.id > 1 && !completedSteps.includes(step.id - 1);
+                            
+                            return (
+                                <button
+                                    key={step.id}
+                                    onClick={() => handleStepClick(step.id)}
+                                    disabled={isLocked}
+                                    className={`aspect-square rounded-full flex items-center justify-center text-base font-semibold transition-all duration-200 transform ${
+
+                                        isCompleted ? completedClass :
+                                        isLocked ? 'bg-gray-200 text-gray-400 cursor-not-allowed' :
+                                        unlockedClass
+                                    }`}
+                                    title={isLocked ? text.stepLocked : step.title}
+                                >
+                                    {isCompleted ? <Check className="w-5 h-5" /> : step.id}
+                                </button>
+                            );
+                        })}
                     </div>
                     {/* Info text for skipping - Below button */}
                     {!isLevelFullyCompleted && (
@@ -180,7 +189,7 @@ useEffect(() => {
 
                     
                     {/* Test Button - Below grid */}
-                    <div className="flex justify-center mb-3">
+                    <div className="flex justify-center mb-5 pt-5">
                         <button
                             onClick={() => router.push(`/qgis/basic/test/${level}`)}
                             className={`px-4 py-2 bg-gradient-to-r ${gradientClasses[level]} text-white rounded-full text-md font-bold shadow-md hover:scale-110 transition flex items-center gap-2`}
