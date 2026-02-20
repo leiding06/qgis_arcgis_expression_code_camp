@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { X, Mail } from 'lucide-react';
-
+import { Eye, EyeOff } from "lucide-react";
 interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -15,6 +15,7 @@ interface AuthModalProps {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null);
+    const [showPassword, setShowPassword] = useState(false);
 
     if (!isOpen) return null;
 
@@ -187,24 +188,39 @@ interface AuthModalProps {
                 />
                 </div>
             </div>
-
-            <div>
+            {/* Password */}
+            <div className="relative">
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                 Password
                 </label>
+                <div className="relative">
                 <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 focus:outline-none transition text-slate-900 bg-white" 
                 placeholder="••••••••"
                 />
+
+                <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+                >
+                    {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                    ) : (
+                    <Eye className="w-5 h-5" />
+                    )}
+                    </button>
                 {isSignUp && (
                 <p className="mt-2 text-xs text-slate-500">
                     Min 8 characters with uppercase, lowercase, and numbers
                 </p>
                 )}
+                
+                </div>
             </div>
 
             <button
