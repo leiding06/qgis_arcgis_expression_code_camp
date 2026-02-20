@@ -195,7 +195,7 @@ interface AuthModalProps {
                 </label>
                 <div className="relative">
                 <input
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? "text" : "password"} //password is a origin HTML input type that will mask the input, we toggle to text when showPassword is true
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
