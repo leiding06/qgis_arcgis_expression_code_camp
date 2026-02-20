@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import type { User } from '@supabase/supabase-js';
 import { migrateLocalProgressIfNeeded } from '@/services/progress/progress.migration';
+import { useRouter } from "next/navigation";
 
 interface AuthContextType {
     user: User | null;
@@ -42,9 +43,13 @@ interface AuthContextType {
         return () => subscription.unsubscribe();
     }, []);
 
+    const router = useRouter();
     const signOut = async () => {
-        await supabase.auth.signOut();
+        console.log("Signout clicked");
+        const { error } = await supabase.auth.signOut();
+        console.log("Signout result:", { error });
         setUser(null);
+        router.refresh()   
     };
 
     return (
