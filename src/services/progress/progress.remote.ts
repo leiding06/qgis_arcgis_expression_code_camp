@@ -19,7 +19,7 @@ export async function getRemoteProgress(userId: string): Promise<UserProgress | 
     return null;
     }
 
-    return data.progress as UserProgress;
+    return data?.progress ?? null;
 }
 
 export async function saveRemoteProgress(
