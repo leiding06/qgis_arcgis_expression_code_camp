@@ -1,7 +1,13 @@
+// src/utils/storage.ts
 import { UserProgress, PathType, ModuleKey} from '@/types';
 import { MODULE_LEVEL_SIZES } from '@/data/config';
 
 const STORAGE_KEY = 'gis_learning_progress';
+
+export const hasLocalProgress = (): boolean => {
+    if (typeof window === 'undefined') return false;
+    return !!localStorage.getItem(STORAGE_KEY);
+};
 
 // initial progree
 export const initialProgress: UserProgress = {
@@ -15,7 +21,7 @@ export const initialProgress: UserProgress = {
     };
 
     // Get user progress
-    export const getProgress = (): UserProgress => {
+export const getProgress = (): UserProgress => {
     if (typeof window === 'undefined') return initialProgress;
     try {
         const saved = localStorage.getItem(STORAGE_KEY);
@@ -36,7 +42,7 @@ export const initialProgress: UserProgress = {
     };
 
     // Save the progress
-    export const saveProgress = (progress: UserProgress): void => {
+export const saveProgress = (progress: UserProgress): void => {
     if (typeof window === 'undefined') return;
     
     try {
@@ -46,7 +52,7 @@ export const initialProgress: UserProgress = {
         console.error('Failed to save progress:', error);
     }
     };
-    const computeLevelFromPoints = (
+const computeLevelFromPoints = (
     path: PathType,
     moduleKey: ModuleKey,
     completedSteps: number
@@ -78,7 +84,7 @@ export const initialProgress: UserProgress = {
         }
         return sizes.length;
     };
-    export const markStepCompleted = (
+export const markStepCompleted = (
     progress: UserProgress,
     path: PathType,
     moduleKey: ModuleKey,
@@ -154,6 +160,12 @@ export const initialProgress: UserProgress = {
 
     // Clear progress
     export const clearProgress = (): void => {
+    if (typeof window === 'undefined') return;
+    localStorage.removeItem(STORAGE_KEY);
+};
+
+
+    export const clearLocalProgress = () => {
     if (typeof window === 'undefined') return;
     localStorage.removeItem(STORAGE_KEY);
 };

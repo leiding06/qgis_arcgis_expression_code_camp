@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabaseClient';
 import type { User } from '@supabase/supabase-js';
 import { migrateLocalProgressIfNeeded } from '@/services/progress/progress.migration';
 import { useRouter } from "next/navigation";
+import { clearLocalProgress } from '@/utils/storage';
 
 interface AuthContextType {
     user: User | null;
@@ -50,6 +51,7 @@ interface AuthContextType {
         console.log("Signout result:", { error });
         setUser(null);
         router.refresh()   
+        clearLocalProgress();
     };
 
     return (
