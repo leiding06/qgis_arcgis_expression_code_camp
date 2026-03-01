@@ -3,15 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Check, X } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
-import { getProgress, markStepCompleted, saveProgress} from '@/utils/storage';
+
 import { validateAnswer } from '@/utils/validator';
 import { qgisBasicSteps } from '@/data/qgis/basic-steps';
 import { AttributeTable } from '@/components/AttributeTable';
 import { MODULE_LEVEL_SIZES } from '@/data/config';
 import { LevelCompleteModal } from '@/components/LevelCompleteModal';
-import { supabase} from '@/lib/supabaseClient';
+
+import { markStepCompleted, saveProgress, clearLocalProgress, initialProgress } from '@/utils/storage';
 import { saveRemoteProgress } from '@/services/progress/progress.remote';
-import {User} from '@supabase/supabase-js';
+import { useProgress } from '@/hooks/useProgress';
+
 
 
 export default function ExercisePage() {
@@ -25,22 +27,9 @@ export default function ExercisePage() {
     const [showHints, setShowHints] = useState(false);
     const [hasSubmitted, setHasSubmitted] = useState(false); // New state to track if user has submitted
     const [showLevelComplete, setShowLevelComplete] = useState(false); // New state for level completion
-    const [user, setUser] = useState<User | null>(null);
-    
-    
-    // Get current user
-    useEffect(() => {
-        supabase.auth.getUser().then(({ data }) => {
-        setUser(data.user);
-        });
+    const { user, progress, setProgress } = useProgress();
         
-        // listen for auth changes to update user state
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-        setUser(session?.user ?? null);
-        });
 
-        return () => subscription.unsubscribe();
-    }, []);
     
     
 
@@ -115,22 +104,22 @@ export default function ExercisePage() {
 
 
     const handleSubmit = () => {
+        console.log('user at submit time:', user?.id);
+        console.log('progress at submit time:', JSON.stringify(progress.qgis?.basic));
+    
         const isCorrect = validateAnswer(userCode, currentStep.correctAnswers);
         setShowFeedback(isCorrect ? 'correct' : 'wrong');
         setHasSubmitted(true); // Mark that user has submitted
 
         if (isCorrect) {
-        const progress = getProgress();
-        const updatedProgress = markStepCompleted(
-        progress, 'QGIS', 'basic', currentStep.level, stepId
-    );
-        // Save progress based on user authentication status
-        if (user) {
-            saveRemoteProgress(user.id, updatedProgress).catch(console.error);
-        } else {
-            // For unauthenticated users, progress is already updated in local storage by markStepCompleted
-            saveProgress(updatedProgress, false);
-        }
+
+            const updatedProgress = markStepCompleted(progress, 'QGIS', 'basic', currentStep.level, stepId);
+            setProgress(updatedProgress); // update local state immediately for responsive UI
+            if (user) {
+                saveRemoteProgress(user.id, updatedProgress).catch(console.error);
+            } else {
+                saveProgress(updatedProgress, false);
+            }
         // Use the actual level from currentStep instead of hardcoded 1
 
         setShowHints(false);
