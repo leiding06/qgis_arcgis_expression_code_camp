@@ -8,7 +8,8 @@ import { UserProgress } from '@/types';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/Auth/AuthProvider';
 import AuthModal from '@/components/Auth/AuthModal';
-
+import { getRemoteProgress } from '@/services/progress/progress.remote';
+import { initialProgress } from '@/utils/storage';
 export default function HomePage() {
   const router = useRouter();
   const [displayLevel, setDisplayLevel] = useState('Level 1'); //initial level
@@ -18,9 +19,16 @@ export default function HomePage() {
   const { user, loading, signOut } = useAuth();
 
   useEffect(() => {
-    const progress = getProgress();
-    setDisplayLevel(computeDisplayLevel(progress));
-  }, []); 
+      const loadLevel = async () => {
+          if (user) {
+              const remote = await getRemoteProgress(user.id);
+              setDisplayLevel(computeDisplayLevel(remote ?? initialProgress));
+          } else {
+              setDisplayLevel(computeDisplayLevel(getProgress()));
+          }
+      };
+      loadLevel();
+  }, [user]); 
 
 
 
@@ -33,35 +41,15 @@ export default function HomePage() {
     
     const progress = getProgress();
     progress.currentPath = path;
-    saveProgress(progress);
+    saveProgress(progress, !!user); // Save to local if not logged in, otherwise it will be saved to remote in the AuthProvider effect
     router.push(`/${path.toLowerCase()}/basic`);
   };
 
   // Get display level from progress
-  const computeDisplayLevel = (p: UserProgress)=> {
-    if (p.currentPath === 'QGIS') {
-      if (p.currentLevel === 1) {
-        return 'Level 1';
-      } else if (p.currentLevel === 2) {
-        return 'Level 2';
-      } else if (p.currentLevel === 3) {
-        return 'Level 3';
-      } else {
-        return 'Level 1';
-      }
-    } else if (p.currentPath === 'ArcGIS') {
-      if (p.currentLevel === 1) {
-        return 'Level 1';
-      } else if (p.currentLevel === 2) {
-        return 'Level 2';
-      } else if (p.currentLevel === 3) {
-        return 'Level 3';
-      } else {
-        return 'Level 1';
-      }
-    }
-    return 'Level 1'; // default return incase return undefined.
-  }
+const computeDisplayLevel = (p: UserProgress): string => {
+    if (!p.currentPath || !p.currentLevel) return 'Level 1';
+    return `Level ${p.currentLevel}`;
+};
   
   const text = {
       title: 'GIS Expression Learning Platform',
@@ -71,7 +59,7 @@ export default function HomePage() {
       qgisDesc: 'Learn QGIS field calculator expressions',
       arcgisTitle: 'ArcGIS Expression Basic Editor',
       arcgisDesc: 'Learn ArcGIS Pro Arcade expressions',
-      display_level: computeDisplayLevel(getProgress()),
+
       comingSoon: 'Coming Soon'
 
   };
