@@ -1281,9 +1281,9 @@ concat('geo', 'map') → 'geomap' OR left('geomap', 3) → 'geo' `,
     example: `Example:
     Working on a field <strong>zone_type</strong> that shows Elevation zones:
     CASE
-        WHEN elevation > 2000 THEN 'Alpine'
-        WHEN elevation > 1000 THEN 'Montane'
-        WHEN elevation > 500 THEN 'Hill'
+        WHEN zone_type > 2000 THEN 'Alpine'
+        WHEN zone_type > 1000 THEN 'Montane'
+        WHEN zone_type > 500 THEN 'Hill'
         ELSE 'Lowland'
     END`,
     

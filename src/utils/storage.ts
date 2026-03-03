@@ -38,13 +38,17 @@ export const getProgress = (): UserProgress => {
     } catch (error) {
         console.error('Failed to load progress:', error);
     }
-    return initialProgress;
+    return { ...initialProgress };
     };
 
     // Save the progress
-export const saveProgress = (progress: UserProgress): void => {
+export const saveProgress = (
+    progress: UserProgress,
+    isLoggedIn: boolean
+): void => {
     if (typeof window === 'undefined') return;
-    
+    console.trace('saveProgress called, isLoggedIn:', isLoggedIn);
+    if (isLoggedIn) return; // Don't save to local if user is logged in, as we will save to remote instead
     try {
         progress.lastUpdated = new Date().toISOString();
         localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
@@ -139,7 +143,6 @@ export const markStepCompleted = (
     // Update current level based on total completed steps
     newProgress.currentLevel = computeLevelFromPoints(path, moduleKey, totalSteps);
 
-    saveProgress(newProgress);
     return newProgress;
     };
 

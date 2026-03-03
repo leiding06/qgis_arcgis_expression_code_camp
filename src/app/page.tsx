@@ -3,13 +3,14 @@
 
 import { Globe, ChevronRight, User, LogIn, LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { getProgress, saveProgress } from '@/utils/storage';
+import { useProgress } from '@/hooks/useProgress';
+import { getRemoteProgress, saveRemoteProgress } from '@/services/progress/progress.remote';
+import { getProgress, saveProgress, initialProgress } from '@/utils/storage';
 import { UserProgress } from '@/types';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/Auth/AuthProvider';
 import AuthModal from '@/components/Auth/AuthModal';
-import { getRemoteProgress } from '@/services/progress/progress.remote';
-import { initialProgress } from '@/utils/storage';
+
 export default function HomePage() {
   const router = useRouter();
   const [displayLevel, setDisplayLevel] = useState('Level 1'); //initial level
@@ -18,30 +19,34 @@ export default function HomePage() {
   //Use AuthProvider to get user info
   const { user, loading, signOut } = useAuth();
 
+  const { user: progressUser, progress } = useProgress();
+
+  // displayLevel
   useEffect(() => {
-      const loadLevel = async () => {
-          if (user) {
-              const remote = await getRemoteProgress(user.id);
-              setDisplayLevel(computeDisplayLevel(remote ?? initialProgress));
-          } else {
-              setDisplayLevel(computeDisplayLevel(getProgress()));
-          }
-      };
-      loadLevel();
-  }, [user]); 
+      setDisplayLevel(computeDisplayLevel(progress));
+  }, [progress]);
 
 
-
-
-  const handlePathSelect = (path: 'QGIS' | 'ArcGIS') => {
+  const handlePathSelect = async (path: 'QGIS' | 'ArcGIS') => {
     if (path === 'ArcGIS') {
       alert('Coming Soon!' );
       return;
     }
     
-    const progress = getProgress();
-    progress.currentPath = path;
-    saveProgress(progress, !!user); // Save to local if not logged in, otherwise it will be saved to remote in the AuthProvider effect
+
+    if (progressUser) {
+        // if logged in: read remote, update path, save remote
+        const remote = await getRemoteProgress(progressUser.id);
+        const progress = remote ?? { ...initialProgress };
+        progress.currentPath = path;
+        await saveRemoteProgress(progressUser.id, progress);
+    } else {
+        // if not logged in: read local, update path, save local
+        const progress = getProgress();
+        progress.currentPath = path;
+        saveProgress(progress, false);
+    }
+// Save to local if not logged in, otherwise it will be saved to remote in the AuthProvider effect
     router.push(`/${path.toLowerCase()}/basic`);
   };
 

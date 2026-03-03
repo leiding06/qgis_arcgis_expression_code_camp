@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Home, Check } from 'lucide-react';//Award has ben removed  for now, need to add later
 import { useRouter } from 'next/navigation';
-import { getProgress } from '@/utils/storage';
+import {useProgress} from '@/hooks/useProgress';
 import { qgisBasicSteps,getStepsByLevel } from '@/data/qgis/basic-steps';
 
 // Gradient classes for levels
@@ -20,26 +20,22 @@ export default function QGISBasicPage() {
     const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
 
-useEffect(() => {
-    const progress = getProgress();
+const { progress } = useProgress();
 
-    if (progress.qgis && progress.qgis.basic) {
+useEffect(() => {
+    console.log('basic page progress:', JSON.stringify(progress.qgis?.basic)); 
+    if (progress.qgis?.basic) {
         const allCompleted: number[] = [];
-        
-        const basicModule = progress.qgis.basic;
-        
-        Object.values(basicModule).forEach((levelData) => {
+        Object.values(progress.qgis.basic).forEach((levelData) => {
             if (levelData?.completedSteps && Array.isArray(levelData.completedSteps)) {
                 allCompleted.push(...levelData.completedSteps);
             }
         });
-        
         setCompletedSteps(allCompleted.sort((a, b) => a - b));
     } else {
         setCompletedSteps([]);
     }
-}, []);
-
+}, [progress]); // progress change will trigger update to completedSteps
     const handleStepClick = (stepId: number) => {
         if (stepId > 1 && !completedSteps.includes(stepId - 1)) {
         return;

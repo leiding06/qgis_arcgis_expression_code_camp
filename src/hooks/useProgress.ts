@@ -9,33 +9,33 @@ export function useProgress() {
     const [user, setUser] = useState<User | null>(null);
     const [progress, setProgress] = useState<UserProgress>(initialProgress);
 
-    useEffect(() => {
-        const loadProgress = async () => {
-            const { data } = await supabase.auth.getUser();
-            const currentUser = data.user;
-            setUser(currentUser);
+useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        console.log('auth event:', _event, 'user:', session?.user?.id);
+        const currentUser = session?.user ?? null;
+        setUser(currentUser);
+
+        if (_event === 'INITIAL_SESSION') {
+            // 页面加载时初始化
             if (currentUser) {
                 const remote = await getRemoteProgress(currentUser.id);
                 setProgress(remote ?? initialProgress);
             } else {
                 setProgress(getProgress());
             }
-        };
-        loadProgress();
+        } else if (_event === 'SIGNED_IN') {
+            // 真正的登录，清本地
+            clearLocalProgress();
+            const remote = await getRemoteProgress(currentUser!.id);
+            setProgress(remote ?? initialProgress);
+        } else if (_event === 'SIGNED_OUT') {
+            setProgress(getProgress());
+        }
+        // TOKEN_REFRESHED 等其他事件不重置 progress
+    });
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            setUser(session?.user ?? null);
-            if (_event === 'SIGNED_IN' && session?.user) {
-                clearLocalProgress();
-                const remote = await getRemoteProgress(session.user.id);
-                setProgress(remote ?? initialProgress);
-            } else if (_event === 'SIGNED_OUT') {
-                setProgress(getProgress());
-            }
-        });
-
-        return () => subscription.unsubscribe();
-    }, []);
+    return () => subscription.unsubscribe();
+}, []);
 
     return { user, progress, setProgress };
 }
