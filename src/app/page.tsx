@@ -3,9 +3,7 @@
 
 import { Globe, ChevronRight, User, LogIn, LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useProgress } from '@/hooks/useProgress';
-import { getRemoteProgress, saveRemoteProgress } from '@/services/progress/progress.remote';
-import { getProgress, saveProgress, initialProgress } from '@/utils/storage';
+import { useProgress } from '@/components/Progress/ProgressProvider';
 import { UserProgress } from '@/types';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/Auth/AuthProvider';
@@ -17,7 +15,7 @@ export default function HomePage() {
   const [showAuthModal, setShowAuthModal] = useState(false); //control login modal
 
   //Use AuthProvider to get user info
-  const { user, loading, signOut } = useAuth();
+  const { loading, signOut } = useAuth();
 
   const { user: progressUser, progress } = useProgress();
 
@@ -28,26 +26,12 @@ export default function HomePage() {
 
 
   const handlePathSelect = async (path: 'QGIS' | 'ArcGIS') => {
-    if (path === 'ArcGIS') {
-      alert('Coming Soon!' );
-      return;
-    }
-    
-
-    if (progressUser) {
-        // if logged in: read remote, update path, save remote
-        const remote = await getRemoteProgress(progressUser.id);
-        const progress = remote ?? { ...initialProgress };
-        progress.currentPath = path;
-        await saveRemoteProgress(progressUser.id, progress);
-    } else {
-        // if not logged in: read local, update path, save local
-        const progress = getProgress();
-        progress.currentPath = path;
-        saveProgress(progress, false);
-    }
-// Save to local if not logged in, otherwise it will be saved to remote in the AuthProvider effect
-    router.push(`/${path.toLowerCase()}/basic`);
+      if (path === 'ArcGIS') {
+          alert('Coming Soon!');
+          return;
+      }
+      
+      router.push(`/${path.toLowerCase()}/basic`);
   };
 
   // Get display level from progress
@@ -85,13 +69,13 @@ const computeDisplayLevel = (p: UserProgress): string => {
               {loading ? (
                 // loading state - show spinner
                 <div className="w-8 h-8 border-2 border-gray-300 border-t-green-600 rounded-full animate-spin" />
-              ) : user ? (
+              ) : progressUser ? (
                 // if logged in - show user email and sign out button
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg">
                     <User className="w-4 h-4 text-gray-600" />
                     <span className="text-sm font-medium text-gray-700">
-                      {user.email}
+                      {progressUser?.email}
                     </span>
                   </div>
                   <button
