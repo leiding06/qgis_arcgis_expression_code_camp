@@ -15,11 +15,13 @@ export default function HomePage() {
   const [showAuthModal, setShowAuthModal] = useState(false); //control login modal
 
   //Use AuthProvider to get user info
-  const { loading, signOut } = useAuth();
+  const { user, loading, signOut } = useAuth();
+  //Use ProgressProvider to get progress info
+  const { progress } = useProgress();
 
-  const { user: progressUser, progress } = useProgress();
 
-  // displayLevel
+
+  // displayLevel, should be lebel 1 by default, so, this code is safe to use
   useEffect(() => {
       setDisplayLevel(computeDisplayLevel(progress));
   }, [progress]);
@@ -35,8 +37,8 @@ export default function HomePage() {
   };
 
   // Get display level from progress
-const computeDisplayLevel = (p: UserProgress): string => {
-    if (!p.currentPath || !p.currentLevel) return 'Level 1';
+const computeDisplayLevel = (p: UserProgress | null): string => {
+    if (!p || !p.currentPath || !p.currentLevel) return 'Level 1';
     return `Level ${p.currentLevel}`;
 };
   
@@ -69,13 +71,13 @@ const computeDisplayLevel = (p: UserProgress): string => {
               {loading ? (
                 // loading state - show spinner
                 <div className="w-8 h-8 border-2 border-gray-300 border-t-green-600 rounded-full animate-spin" />
-              ) : progressUser ? (
+              ) : user ? (
                 // if logged in - show user email and sign out button
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg">
                     <User className="w-4 h-4 text-gray-600" />
                     <span className="text-sm font-medium text-gray-700">
-                      {progressUser?.email}
+                      {user?.email}
                     </span>
                   </div>
                   <button

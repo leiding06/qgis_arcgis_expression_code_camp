@@ -9,26 +9,21 @@ import { qgisBasicSteps } from '@/data/qgis/basic-steps';
 import { AttributeTable } from '@/components/AttributeTable';
 import { MODULE_LEVEL_SIZES } from '@/data/config';
 import { LevelCompleteModal } from '@/components/LevelCompleteModal';
-
-import { markStepCompleted, saveProgress, clearLocalProgress, initialProgress } from '@/utils/storage';
-import { saveRemoteProgress } from '@/services/progress/progress.remote';
-import { useProgress } from '@/hooks/useProgress';
-
+import { useProgress } from '@/components/Progress/ProgressProvider';
+import { markStepCompleted } from '@/utils/progressUtils';
 
 
 export default function ExercisePage() {
     const router = useRouter();
     const params = useParams();
     const stepId = parseInt(params.id as string);
-    
-
     const [userCode, setUserCode] = useState('');
     const [showFeedback, setShowFeedback] = useState<'correct' | 'wrong' | null>(null);
     const [showHints, setShowHints] = useState(false);
     const [hasSubmitted, setHasSubmitted] = useState(false); // New state to track if user has submitted
     const [showLevelComplete, setShowLevelComplete] = useState(false); // New state for level completion
-    const { user, progress, setProgress } = useProgress();
-        
+
+    const { progress, updateProgress } = useProgress();
 
     
     
@@ -103,45 +98,50 @@ export default function ExercisePage() {
 
 
 
-    const handleSubmit = () => {
-        console.log('user at submit time:', user?.id);
-        console.log('progress at submit time:', JSON.stringify(progress.qgis?.basic));
-    
+    const handleSubmit = async () => {
+        if (!progress) {
+            alert("Please login to save your progress.");
+            return;
+            }
         const isCorrect = validateAnswer(userCode, currentStep.correctAnswers);
         setShowFeedback(isCorrect ? 'correct' : 'wrong');
         setHasSubmitted(true); // Mark that user has submitted
 
         if (isCorrect) {
 
-            const updatedProgress = markStepCompleted(progress, 'QGIS', 'basic', currentStep.level, stepId);
-            setProgress(updatedProgress); // update local state immediately for responsive UI
-            if (user) {
-                saveRemoteProgress(user.id, updatedProgress).catch(console.error);
-            } else {
-                saveProgress(updatedProgress, false);
+            const updatedProgress = markStepCompleted(
+            progress,
+            'QGIS',
+            'basic',
+            currentStep.level,
+            stepId
+            );
+
+            await updateProgress(updatedProgress);
+
+            setShowHints(false);
+
+            const levelSizes = MODULE_LEVEL_SIZES.QGIS.basic;
+            const levelStepCount = levelSizes[currentStep.level - 1];
+
+            const levelStart = levelSizes
+            .slice(0, currentStep.level - 1)
+            .reduce((a, b) => a + b, 0) + 1;
+
+            const levelEnd = levelStart + levelStepCount - 1;
+
+            if (stepId === levelEnd) {
+            setTimeout(() => handleLevelComplete(), 800);
             }
-        // Use the actual level from currentStep instead of hardcoded 1
 
-        setShowHints(false);
-        
-        //check if level is completed
-        const levelSizes = MODULE_LEVEL_SIZES.QGIS.basic;
-        const levelStepCount = levelSizes[currentStep.level - 1];
-        const levelStart = levelSizes
-        .slice(0, currentStep.level - 1)
-        .reduce((a, b) => a + b, 0) + 1;
-        const levelEnd = levelStart + levelStepCount - 1;
-
-        if (stepId === levelEnd) {
-        setTimeout(() => handleLevelComplete(), 800);; // Pasue to show “Correct”
+        } else {
+            setShowHints(true);
         }
-    } else {
-        setShowHints(true);
-        }
-    };
+        };
+    
 
     
-    const handleNext = () => {
+    const handleNext = () : void => {
         setShowFeedback(null);
         setUserCode('');
         setShowHints(false);
