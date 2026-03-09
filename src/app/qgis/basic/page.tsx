@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Home, Check } from 'lucide-react';//Award has ben removed  for now, need to add later
 import { useRouter } from 'next/navigation';
-import {useProgress} from '@/hooks/useProgress';
+import { useProgress } from '@/components/Progress/ProgressProvider';
 import { qgisBasicSteps,getStepsByLevel } from '@/data/qgis/basic-steps';
 
 // Gradient classes for levels
@@ -23,8 +23,8 @@ export default function QGISBasicPage() {
 const { progress } = useProgress();
 
 useEffect(() => {
-    console.log('basic page progress:', JSON.stringify(progress.qgis?.basic)); 
-    if (progress.qgis?.basic) {
+    console.log('progress at submit time:', JSON.stringify(progress?.qgis?.basic));
+    if (progress && progress.qgis?.basic) {
         const allCompleted: number[] = [];
         Object.values(progress.qgis.basic).forEach((levelData) => {
             if (levelData?.completedSteps && Array.isArray(levelData.completedSteps)) {
@@ -55,34 +55,34 @@ useEffect(() => {
     };
     
 const levels = [
-  {
-    level: 1,
-    title: 'Level 1: Data Types & Basic Operations',
-    description:
-      'Level 1 focuses on fundamental expression skills, including referencing fields, handling text and numeric data types, and performing basic calculations.',
-    completedClass:
-      'bg-emerald-50 text-emerald-600 ring-2 ring-emerald-500/40 shadow-sm',
-    unlockedClass:
-      'bg-white text-emerald-600 border border-emerald-200 hover:bg-emerald-50',
-  },
-  {
-    level: 2,
-    title: 'Level 2: Intermediate Functions and Conditional Logic',
-    description: 'Master string functions and complex operations',
-    completedClass:
-      'bg-sky-50 text-sky-600 ring-2 ring-sky-500/40 shadow-sm',
-    unlockedClass:
-      'bg-white text-sky-600 border border-sky-200 hover:bg-sky-50',
-  },
-  {
-    level: 3,
-    title: 'Level 3: Advanced Functions and More Complex Logic',
-    description: 'Learn if-then-else and advanced expressions',
-    completedClass:
-      'bg-violet-50 text-violet-600 ring-2 ring-violet-500/40 shadow-sm',
-    unlockedClass:
-      'bg-white text-violet-600 border border-violet-200 hover:bg-violet-50',
-  },
+    {
+        level: 1,
+        title: 'Level 1: Data Types & Basic Operations',
+        description:
+        'Level 1 focuses on fundamental expression skills, including referencing fields, handling text and numeric data types, and performing basic calculations.',
+        completedClass:
+        'bg-emerald-50 text-emerald-600 ring-2 ring-emerald-500/40 shadow-sm',
+        unlockedClass:
+        'bg-white text-emerald-600 border border-emerald-200 hover:bg-emerald-50',
+    },
+    {
+        level: 2,
+        title: 'Level 2: Intermediate Functions and Conditional Logic',
+        description: 'Master string functions and complex operations',
+        completedClass:
+        'bg-sky-50 text-sky-600 ring-2 ring-sky-500/40 shadow-sm',
+        unlockedClass:
+        'bg-white text-sky-600 border border-sky-200 hover:bg-sky-50',
+    },
+    {
+        level: 3,
+        title: 'Level 3: Advanced Functions and More Complex Logic',
+        description: 'Learn if-then-else and advanced expressions',
+        completedClass:
+        'bg-violet-50 text-violet-600 ring-2 ring-violet-500/40 shadow-sm',
+        unlockedClass:
+        'bg-white text-violet-600 border border-violet-200 hover:bg-violet-50',
+    },
 ];
 
     return (

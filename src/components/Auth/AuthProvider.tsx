@@ -1,11 +1,12 @@
+// src/components/Auth/AuthProvider.tsx
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import type { User } from '@supabase/supabase-js';
-import { migrateLocalProgressIfNeeded } from '@/services/progress/progress.migration';
 import { useRouter } from "next/navigation";
-import { clearLocalProgress } from '@/utils/storage';
+
+
 
 interface AuthContextType {
     user: User | null;
@@ -22,7 +23,7 @@ interface AuthContextType {
     export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
-
+    const router = useRouter();
     useEffect(() => {
         // Get initial session
         supabase.auth.getSession().then(({ data: { session } }) => {
@@ -35,23 +36,18 @@ interface AuthContextType {
             setUser(session?.user ?? null);
             setLoading(false);
 
-            //  SIGNED_IN and INITIAL_SESSION
-            if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
-                await migrateLocalProgressIfNeeded(session.user.id);
-            }
         });
 
         return () => subscription.unsubscribe();
     }, []);
 
-    const router = useRouter();
+    
     const signOut = async () => {
         console.log("Signout clicked");
         const { error } = await supabase.auth.signOut();
         console.log("Signout result:", { error });
-        setUser(null);
         router.refresh()   
-        clearLocalProgress();
+
     };
 
     return (

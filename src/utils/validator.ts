@@ -1,3 +1,5 @@
+// src/utils/validator.ts
+
 // Answer validation utilities
 // Strict validation to teach proper QGIS expression syntax
 // IMPORTANT: QGIS follows SQL standard:
@@ -40,7 +42,7 @@ export const validateAnswer = (
     const normalizeForComparison = (expr: string | number): string => {
         const strExpr = String(expr);
         return strExpr
-// QGIS functions are case-insensitive
+        .toLowerCase() // QGIS functions are case-insensitive
         .replace(/\s+/g, ' ') // Normalize multiple spaces to single space
         .replace(/\s*,\s*/g, ',') // Normalize spaces around commas
         .replace(/\s*\(\s*/g, '(') // Normalize spaces after opening parenthesis

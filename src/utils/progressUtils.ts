@@ -17,6 +17,21 @@ export function markStepCompleted(
     if (!updated[pathKey][module]) {
         updated[pathKey][module] = {};  // Initialize module if it doesn't exist
     }
+    if (!updated[pathKey][module][level]) {
+        updated[pathKey][module][level] = {
+            completedSteps: [],
+            currentStep: 1,
+            testPassed: false,
+        };
+    }
 
+    const stepProgress: StepProgress = updated[pathKey][module][level];
+
+    // Avoid adding duplicate stepId
+    if (!stepProgress.completedSteps.includes(stepId)) {
+        stepProgress.completedSteps.push(stepId);
+    }
+
+    updated.lastUpdated = new Date().toISOString();
     return updated;
     }

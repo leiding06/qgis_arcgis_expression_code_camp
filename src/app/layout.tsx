@@ -1,8 +1,9 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 
 import "./globals.css";
 import { AuthProvider } from '@/components/Auth/AuthProvider';
-
+import { ProgressProvider } from '@/components/Progress/ProgressProvider';
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,7 +19,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          {children}
+          <ProgressProvider>
+            {children}
+          </ProgressProvider>
         </AuthProvider>
       </body>
     </html>

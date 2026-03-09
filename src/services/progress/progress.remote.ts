@@ -41,3 +41,9 @@ export async function saveRemoteProgress(
     throw error;
     }
 }
+
+export const defaultProgress = {
+    currentPath: 'qgis',
+    currentLevel: 1,
+
+}
