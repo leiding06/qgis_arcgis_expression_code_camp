@@ -1,13 +1,14 @@
 'use client';
 //src/app/page.tsx
 
-import { Globe, ChevronRight, User, LogIn, LogOut } from 'lucide-react';
+import { Globe, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useProgress } from '@/components/Progress/ProgressProvider';
 import { UserProgress } from '@/types';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/Auth/AuthProvider';
 import AuthModal from '@/components/Auth/AuthModal';
+import AuthSection from '@/components/Header';
 
 export default function HomePage() {
   const router = useRouter();
@@ -66,40 +67,8 @@ const computeDisplayLevel = (p: UserProgress | null): string => {
             <Globe className="w-6 h-6 text-black" />
             <span className="text-xl font-bold text-gray-800">{text.title}</span>
           </div>
-          
-        <div>
-              {loading ? (
-                // loading state - show spinner
-                <div className="w-8 h-8 border-2 border-gray-300 border-t-green-600 rounded-full animate-spin" />
-              ) : user ? (
-                // if logged in - show user email and sign out button
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg">
-                    <User className="w-4 h-4 text-gray-600" />
-                    <span className="text-sm font-medium text-gray-700">
-                      {user?.email}
-                    </span>
-                  </div>
-                  <button
-                    onClick={signOut}
-                    className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition flex items-center gap-2"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Sign Out
-                  </button>
-                </div>
-              ) : (
-                // if not logged in - show sign in button
-                <button
-                  onClick={() => setShowAuthModal(true)}
-                  className="px-6 py-2 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg hover:from-green-700 hover:to-teal-700 transition flex items-center gap-2 font-semibold shadow-lg"
-                >
-                  <LogIn className="w-4 h-4" />
-                  Sign In
-                </button>
-              )}
-            </div>
           </div>
+          <AuthSection setShowAuthModal={setShowAuthModal} />
         </nav>
 
       {/* Main Content */}
