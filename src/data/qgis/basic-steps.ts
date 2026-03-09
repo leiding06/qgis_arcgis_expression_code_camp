@@ -119,14 +119,14 @@ export const qgisBasicSteps: ExerciseStep[] = [
         You can also define length limits; for example, a length of 3 means the maximum storable value is 999.
         Please be aware that direct calculations between different data types (like text and numbers) are not possible. We will cover type conversion functions in later steps.
         In this practice, the new field 'month' is an Integer type, so you can only use numbers, not text.
-        You do not need to use quotes when entering numeric values, but you are allowed to do so.`,
+        No quotes are needed for numeric values.`,
 
         example: `Example:
     10 or "10"
     // October represented as number`,
         question: `Set the month field to 10 (October).
         Please assume we have selected the "month" field to update in the QGIS field calculator.`,
-        correctAnswers: [10, '10'],
+        correctAnswers: [10],
         hints: [
         'You can use single quotes, but not necessary.',
         'Integer fields can only store whole numbers.',
@@ -899,14 +899,15 @@ OR \`floor(to_int('2.3'))\` → 2' OR imagine you have a polygon layer, but you 
     Becasue the field unit are all 'million', a rounded value will be good enough. We also would like to have the unit after it. For example: 3 million.`,
 
     correctAnswers: [
-        "to_string(round(sales - expenses)) || 'million'",
-        "to_string(round(sales - expenses)) + 'million'"
+        "to_string(round(sales - expenses)) || ' million'",
+        "to_string(round(sales - expenses)) + ' million'"
     ],
 
     hints: [
         "Profie should be sales - expenses.",
         "Remember you can use round() to get the nearest integer.",
         "Remember you can't use || or + to concatenate string and integer. You need to convert the data type first by using to_string().",
+        "Don't forget the space between the number and the unit ' million'."
     ],
 
     initialTable: {
@@ -1008,7 +1009,8 @@ concat('geo', 'map') → 'geomap' OR left('geomap', 3) → 'geo' `,
     You have been asked to create a new field as land_type_and_use, which only stores the information of land type and land use. Please use array_slice() to get the first two elements of the array field.`,
 
     correctAnswers: [
-        "array_slice(string_to_array('land_info'), 0, 1)",
+        "array_slice(string_to_array(land_info), 0, 1)",
+        "array_slice(string_to_array(\"land_info\"), 0, 1)",
     ],
 
     hints: [

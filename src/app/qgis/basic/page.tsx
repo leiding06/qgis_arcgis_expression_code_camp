@@ -87,21 +87,6 @@ const levels = [
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
-        {/* Navbar */}
-        <nav className="bg-white shadow-sm border-b">
-            <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
-            <div className="flex items-center gap-4">
-                <button 
-                onClick={() => router.push('/')} 
-                className="p-2 text-black hover:bg-gray-100 rounded-lg transition"
-                >
-                <Home className="w-5 h-5" />
-                </button>
-                <span className="text-xl font-bold text-gray-800">{text.title}</span>
-            </div>
-            
-            </div>
-        </nav>
 
             {/* Header */}
             <div className="max-w-xl mx-auto px-6 py-12">

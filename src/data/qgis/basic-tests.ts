@@ -71,7 +71,7 @@ export interface TestQuestion {
             question: "Which of the following correctly adds a prefix 'ID_' to a field called 'number'?",
             points: 1,
             options: [
-            "'ID_' + \"number\"",
+            "'ID_' & \"number\"",
             "'ID_' || \"number\"",
             "\"number\" || 'ID_'",
             "'ID_' & \"number\""
@@ -122,12 +122,12 @@ export interface TestQuestion {
             question: "Which of the following statements correctly describes the $ and @ variables in QGIS expressions?",
             points: 1,
             options: [
-            "$ variables can be user-defined, @ variables are system-defined",
-            "$ variables relate to project/layer/context , @ variables relate to geometry/features",
-            "$ variables are for strings, @ variables are for numbers",
-            "There is no difference, they are interchangeable"
+                "$ variables relate to geometry/features, @ variables relate to project/layer/context",  // 正确
+                "$ variables relate to project/layer/context, @ variables relate to geometry/features",
+                "$ variables are for strings, @ variables are for numbers",
+                "There is no difference, they are interchangeable"
             ],
-            correctOption: 1,
+            correctOption: 0,
             explanation: "$ variables (like $area, $x, $y) are default variables related to the current feature's geometry. @ variables (like @layer_name, @row_number) are context variables that store information about the project, layer, or expression context."
         },
         {
@@ -154,7 +154,7 @@ export interface TestQuestion {
             "$area",
             "area()"
             ],
-            correctOption: 3,
+            correctOption: 2,
             explanation: "$area returns the area of the current polygon feature. The unit depends on your project's CRS settings."
         },
         {
@@ -186,7 +186,7 @@ export interface TestQuestion {
             "The current date and time",
             "The project creation date"
             ],
-            correctOption: 3,
+            correctOption: 2,
             explanation: "now() returns both the current date and time. You can use to_date(now()) if you only need the date portion."
         },
         {

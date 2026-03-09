@@ -1,6 +1,6 @@
 // app/layout.tsx
 import type { Metadata } from "next";
-
+import Navbar from "@/components/Header";
 import "./globals.css";
 import { AuthProvider } from '@/components/Auth/AuthProvider';
 import { ProgressProvider } from '@/components/Progress/ProgressProvider';
@@ -20,6 +20,7 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           <ProgressProvider>
+              <Navbar />
             {children}
           </ProgressProvider>
         </AuthProvider>

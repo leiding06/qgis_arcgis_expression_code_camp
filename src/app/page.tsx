@@ -1,22 +1,19 @@
 'use client';
 //src/app/page.tsx
 
-import { Globe, ChevronRight } from 'lucide-react';
+import {  ChevronRight,  } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useProgress } from '@/components/Progress/ProgressProvider';
 import { UserProgress } from '@/types';
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/components/Auth/AuthProvider';
-import AuthModal from '@/components/Auth/AuthModal';
-import AuthSection from '@/components/Header';
 
 export default function HomePage() {
   const router = useRouter();
   const [displayLevel, setDisplayLevel] = useState('Level 1'); //initial level
-  const [showAuthModal, setShowAuthModal] = useState(false); //control login modal
+//control login modal
 
   //Use AuthProvider to get user info
-  const { user, loading, signOut } = useAuth();
+
   //Use ProgressProvider to get progress info
   const { progress } = useProgress();
 
@@ -60,16 +57,8 @@ const computeDisplayLevel = (p: UserProgress | null): string => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
-      {/* Navbar */}
-      <nav className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Globe className="w-6 h-6 text-black" />
-            <span className="text-xl font-bold text-gray-800">{text.title}</span>
-          </div>
-          </div>
-          <AuthSection setShowAuthModal={setShowAuthModal} />
-        </nav>
+
+
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-6 py-16">
@@ -113,11 +102,7 @@ const computeDisplayLevel = (p: UserProgress | null): string => {
             </div>
           </button>
         </div>
-        {/* Auth Modal, Pop up when user not logged in */}
-        <AuthModal 
-        isOpen={showAuthModal} 
-        onClose={() => setShowAuthModal(false)} 
-      />
+
       </div>
     </div>
   );
