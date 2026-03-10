@@ -41,9 +41,7 @@ export const qgisBasicSteps: ExerciseStep[] = [
 
     correctAnswers: [
         'source_field',
-        '"source_field"',
-        'new_field = source_field',
-        'new_field = "source_field"'
+        '"source_field"'
     ],
 
     hints: [
