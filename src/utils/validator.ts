@@ -43,12 +43,14 @@ export const validateAnswer = (
         const strExpr = String(expr);
         return strExpr
         .toLowerCase() // QGIS functions are case-insensitive
+        .replace(/\s*\+\s*/g, '||') // treat + same as || for string concat
         .replace(/\s+/g, ' ') // Normalize multiple spaces to single space
         .replace(/\s*,\s*/g, ',') // Normalize spaces around commas
         .replace(/\s*\(\s*/g, '(') // Normalize spaces after opening parenthesis
         .replace(/\s*\)\s*/g, ')') // Normalize spaces before closing parenthesis
         .replace(/\s*\|\|\s*/g, '||') // Normalize spaces around concatenation operator
         .replace(/\s*([+\-*/=<>!]+)\s*/g, (match, p1) => p1) // Normalize spaces around operators
+        .replace(/"([a-zA-Z_][a-zA-Z0-9_]*)"/g, '$1') // "field" → field (no spaces = optional quotes)
         .trim();
     // NOTE: We do NOT normalize quotes - they must be correct!
     };
