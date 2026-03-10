@@ -23,7 +23,7 @@ export default function Navbar() {
                 style={{ fontFamily: "'Courier New', Courier, monospace" }} 
                 className="text-base text-xl font-bold text-gray-800 tracking-tight hover:text-green-700 transition"
             >
-                <span className="text-green-600">&gt;_</span> GIS Expression Camp (BETA)
+                <span className="text-green-600">&gt;_</span> GIS Expression Camp (BETA-Desktop only)
             </button>
 
             </div>
