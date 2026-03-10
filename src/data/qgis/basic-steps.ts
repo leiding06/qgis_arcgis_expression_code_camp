@@ -49,7 +49,8 @@ export const qgisBasicSteps: ExerciseStep[] = [
     hints: [
         'Simply reference the field name, e.g. <strong>source_field</strong>.',
         'No quotes are needed for field names without spaces.',
-        'However, you can also include double quotes around field names.<p><strong>new_field = source_field</strong> or <strong>new_field = "source_field"</strong></p>.'
+        'However, you have to include double quotes around field names when there is space.',
+        'Please do not include the original field name as you are already in the field calculator and selected the field source_field.'
     ],
 
     initialTable: {
