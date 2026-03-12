@@ -6,14 +6,20 @@ import { useRouter, useParams } from 'next/navigation';
 import { ChevronRight, Check, X, Trophy, BookOpen } from 'lucide-react';
 import { getTestByLevel } from '@/data/qgis/basic-tests';
 import { validateAnswer } from '@/utils/validator';
+import { useAuth } from '@/components/Auth/AuthProvider';
+import { useProgress } from '@/components/Progress/ProgressProvider';
 
 export default function TestPage() {
     const router = useRouter();
     const params = useParams();
     const level = parseInt(params.level as string);
-    
+    console.log("TestPage rendering, level:", level);
     const test = getTestByLevel(level);
-    
+    console.log("test found:", test?.title); 
+    const { user } = useAuth();
+    const { completeTest } = useProgress();
+    console.log("user:", user, "completeTest:", typeof completeTest); 
+
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [userAnswers, setUserAnswers] = useState<{ [key: number]: string | number }>({});
     const [score, setScore] = useState(0);
@@ -37,11 +43,15 @@ export default function TestPage() {
     }
     
     const currentQuestion = test.questions[currentQuestionIndex];
+    console.log("currentQuestion:", currentQuestion);
+
+
     const isLastQuestion = currentQuestionIndex === test.questions.length - 1;
     const progressPercentage = ((currentQuestionIndex + 1) / test.questions.length) * 100;
     
 
     const handleMultipleChoiceAnswer = (optionIndex: number) => {
+console.log("answer clicked, id:", currentQuestion.id, "type:", typeof currentQuestion.id);
         setUserAnswers({
         ...userAnswers,
         [currentQuestion.id]: optionIndex
@@ -55,7 +65,8 @@ export default function TestPage() {
         });
     };
 
-    const handleNext = () => {
+
+    const handleNext = async () => {
         if (isLastQuestion) {
         let totalScore = 0;
         test.questions.forEach((question) => {
@@ -77,10 +88,20 @@ export default function TestPage() {
         
         setScore(totalScore);
         setIsTestComplete(true);
+        if (user) {
+            await completeTest(
+                'QGIS',
+                'basic',
+                level,
+                totalScore,
+                test.totalScore,
+                totalScore >= test.passingScore
+            );
+        }
         } else {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
-        }
     };
+}
     
     const handlePrevious = () => {
         if (currentQuestionIndex > 0) {
@@ -99,9 +120,9 @@ export default function TestPage() {
         setIsTestComplete(false);
         setShowResults(false);
     };
-
+    console.log("reached isPassed");
     const isPassed = score >= test.passingScore;
-
+    console.log("isPassed calculated:", isPassed, "score:", score, "passingScore:", test.passingScore);
 
     // Test completion screen
     if (isTestComplete && !showResults) {
@@ -306,6 +327,8 @@ export default function TestPage() {
         </div>
         );
     }
+    console.log("About to render, isPassed:", isPassed);
+console.log("isTestComplete:", isTestComplete, "showResults:", showResults);
 
     // Main test interface
     return (
@@ -442,4 +465,4 @@ export default function TestPage() {
         </div>
         </div>
     );
-    }
+    };

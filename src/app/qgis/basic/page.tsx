@@ -13,33 +13,50 @@ const gradientClasses: Record<number, string> =
                         3: 'from-purple-500 to-orange-500',
                     };
 
+                    
 // Fallback for unexpected levels
 
 export default function QGISBasicPage() {
     const router = useRouter();
     const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-
+    const [passedLevels, setPassedLevels] = useState<number[]>([]);
 
 const { progress } = useProgress();
 
 useEffect(() => {
     console.log('progress at submit time:', JSON.stringify(progress?.qgis?.basic));
+    
     if (progress && progress.qgis?.basic) {
         const allCompleted: number[] = [];
-        Object.values(progress.qgis.basic).forEach((levelData) => {
+        const passed: number[] = [];
+        Object.entries(progress.qgis.basic).forEach(([levelKey, levelData]) => {  
             if (levelData?.completedSteps && Array.isArray(levelData.completedSteps)) {
                 allCompleted.push(...levelData.completedSteps);
             }
+            if (levelData?.testPassed) {  
+                const levelNum = parseInt(levelKey.replace('level', ''));
+                passed.push(levelNum);
+            }
         });
         setCompletedSteps(allCompleted.sort((a, b) => a - b));
+        setPassedLevels(passed);
     } else {
         setCompletedSteps([]);
+        setPassedLevels([]);
     }
 }, [progress]); // progress change will trigger update to completedSteps
     const handleStepClick = (stepId: number) => {
-        if (stepId > 1 && !completedSteps.includes(stepId - 1)) {
-        return;
-        }
+        const step = qgisBasicSteps.find(s => s.id === stepId);
+        if (!step) return;
+
+        // if it's not the first step, need to complete previous level to unlock
+        if (step.level > 1 && !passedLevels.includes(step.level - 1)) return;
+
+        // same level, need to complete previous step to unlock
+        const levelSteps = getStepsByLevel(step.level);
+        const firstStepId = levelSteps[0].id;
+        if (stepId > firstStepId && !completedSteps.includes(stepId - 1)) return;
+
         router.push(`/qgis/basic/step/${stepId}`);
     };
 
@@ -138,8 +155,11 @@ const levels = [
                     {/* Steps Grid */}
                     <div className="grid grid-cols-5 md:grid-cols-5 gap-6">
                     {levelSteps.map((step) => {
+                            const firstStepId = levelSteps[0].id;
                             const isCompleted = completedSteps.includes(step.id);
-                            const isLocked = step.id > 1 && !completedSteps.includes(step.id - 1);
+                            const levelLocked = level > 1 && !passedLevels.includes(level - 1);
+                            const stepLocked = step.id > firstStepId && !completedSteps.includes(step.id - 1);
+                            const isLocked = levelLocked || stepLocked;
                             
                             return (
                                 <button
