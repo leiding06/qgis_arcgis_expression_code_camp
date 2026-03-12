@@ -2,7 +2,7 @@
 'use client';
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth} from '@/components/Auth/AuthProvider';;
-import { getRemoteProgress, saveRemoteProgress } from '@/services/progress/progress.remote';
+import { getRemoteProgress, saveRemoteProgress, saveTestResult } from '@/services/progress/progress.remote';
 import { UserProgress } from '@/types';
 import { markStepCompleted } from '@/utils/progressUtils';  
 
@@ -16,12 +16,22 @@ interface ProgressContextType {
         level: number,
         stepId: number
     ) => Promise<void>;
+    completeTest: (
+    path: 'QGIS' | 'ARCGIS',
+    module: string,
+    level: number,
+    score: number,
+    totalScore: number,
+    passed: boolean
+) => Promise<void>;
+
 }
 
 const ProgressContext = createContext<ProgressContextType>({
     progress: null,
     updateProgress: async () => {},
     completeStep: async () => {},
+    completeTest: async () => {},
 });
 
 export function ProgressProvider({ children }: { children: React.ReactNode }) {
@@ -40,14 +50,6 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
         loadProgress();
     }, [user]); //当user变化时，重新加载进度
 
-/*************  ✨ Windsurf Command ⭐  *************/
-    /**
-     * Update the user's progress locally and remotely.
-     * Merges the given partial progress with the current progress and saves it to the remote database.
-     * If no user or no progress is found, does nothing.
-     * @param p - The partial progress to update.
-     */
-/*******  8bc4bf1f-fdf8-4837-9495-95e2ff4eefcd  *******/
     const updateProgress = async (p: Partial<UserProgress>) => {
         if (!user || !progress) return; //if no user or no progress, do nothing
         const newProgress = { ...progress, ...p }; //merge old progress with new partial progress； spread operator (...) to merge objects, if there are same keys, the latter will overwrite the former
@@ -83,9 +85,54 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     await saveRemoteProgress(user.id, newProgress);
 };
 
+        const completeTest = async (
+                path: 'QGIS' | 'ARCGIS',
+                module: string,
+                level: number,
+                score: number,
+                totalScore: number,
+                passed: boolean
+            ) => {
+                if (!user) return;
+
+                await saveTestResult(user.id, path, module, level, score, totalScore, passed);
+
+                if (passed) {
+                    const baseProgress: UserProgress = progress ?? {
+                        currentPath: 'QGIS',
+                        currentModule: module,
+                        currentLevel: level,
+                        qgis: {},
+                        arcgis: {},
+                        achievements: [],
+                        lastUpdated: new Date().toISOString()
+                    };
+
+                    const levelKey = `level${level}`;
+                    const pathKey = path.toLowerCase() as 'qgis' | 'arcgis';
+
+                    const newProgress: UserProgress = {
+                        ...baseProgress,
+                        [pathKey]: {
+                            ...baseProgress[pathKey],
+                            [module]: {
+                                ...baseProgress[pathKey]?.[module],
+                                [levelKey]: {
+                                    ...baseProgress[pathKey]?.[module]?.[levelKey],
+                                    testPassed: true,
+                                }
+                            }
+                        },
+                        lastUpdated: new Date().toISOString()
+                    };
+
+                    setProgress(newProgress);
+                    await saveRemoteProgress(user.id, newProgress);
+                }
+            };
 
     return (
-        <ProgressContext.Provider value={{ progress, updateProgress, completeStep }}>
+        <ProgressContext.Provider value={{ progress, updateProgress, completeStep, completeTest }}>
             {children}
         </ProgressContext.Provider>
     );

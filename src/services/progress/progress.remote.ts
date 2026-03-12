@@ -47,3 +47,30 @@ export const defaultProgress = {
     currentLevel: 1,
 
 }
+
+export async function saveTestResult(
+    userId: string,
+    pathType: string,
+    moduleKey: string,
+    level: number,
+    score: number,
+    totalScore: number,
+    passed: boolean
+) {
+    const { error } = await supabase
+        .from('test_results')
+        .insert({
+            user_id: userId,
+            path_type: pathType,
+            module_key: moduleKey,
+            level,
+            score,
+            total_score: totalScore,
+            passed,
+            completed_at: new Date().toISOString(),
+        });
+    if (error) {
+        console.error('saveTestResult error:', error);
+        throw error;
+    }
+}
