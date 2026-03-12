@@ -89,7 +89,8 @@ export interface TestQuestion {
             correctAnswers: [
             "'Name: ' || \"name\" || ' - Type: ' || \"type\"",
             "'Name: '||\"name\"||' - Type: '||\"type\"",
-            "'Name: ' || \"name\" || ' - ' || 'Type: ' || \"type\""
+            "'Name: ' || \"name\" || ' - ' || 'Type: ' || \"type\"",
+            "'Name: '||name||' - '||'Type: '||type"
             ],
 
         },
