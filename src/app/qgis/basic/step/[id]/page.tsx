@@ -3,15 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Check, X } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
-
+import { useAuth } from '@/components/Auth/AuthProvider';
 import { validateAnswer } from '@/utils/validator';
 import { qgisBasicSteps } from '@/data/qgis/basic-steps';
 import { AttributeTable } from '@/components/AttributeTable';
 import { MODULE_LEVEL_SIZES } from '@/data/config';
 import { LevelCompleteModal } from '@/components/LevelCompleteModal';
 import { useProgress } from '@/components/Progress/ProgressProvider';
-import { markStepCompleted } from '@/utils/progressUtils';
-
 
 export default function ExercisePage() {
     const router = useRouter();
@@ -22,8 +20,8 @@ export default function ExercisePage() {
     const [showHints, setShowHints] = useState(false);
     const [hasSubmitted, setHasSubmitted] = useState(false); // New state to track if user has submitted
     const [showLevelComplete, setShowLevelComplete] = useState(false); // New state for level completion
-
-    const { progress, updateProgress } = useProgress();
+    const { user, loading } = useAuth();
+    const { completeStep } = useProgress();
 
     
     
@@ -99,7 +97,10 @@ export default function ExercisePage() {
 
 
     const handleSubmit = async () => {
-        if (!progress) {
+            console.log("user:", user);
+            console.log("loading:", loading); 
+
+        if (!user) {
             alert("Please login to save your progress.");
             return;
             }
@@ -108,16 +109,9 @@ export default function ExercisePage() {
         setHasSubmitted(true); // Mark that user has submitted
 
         if (isCorrect) {
+            
 
-            const updatedProgress = markStepCompleted(
-            progress,
-            'QGIS',
-            'basic',
-            currentStep.level,
-            stepId
-            );
-
-            await updateProgress(updatedProgress);
+            await completeStep('QGIS', 'basic', currentStep.level, stepId);
 
             setShowHints(false);
 

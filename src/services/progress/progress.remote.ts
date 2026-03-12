@@ -8,7 +8,7 @@ export async function getRemoteProgress(userId: string): Promise<UserProgress | 
         .from('user_progress')
         .select('progress')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
 
     if (error) {
     // If no progress found for user, return null (not error)
