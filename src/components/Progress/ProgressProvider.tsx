@@ -40,6 +40,14 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
         loadProgress();
     }, [user]); //当user变化时，重新加载进度
 
+/*************  ✨ Windsurf Command ⭐  *************/
+    /**
+     * Update the user's progress locally and remotely.
+     * Merges the given partial progress with the current progress and saves it to the remote database.
+     * If no user or no progress is found, does nothing.
+     * @param p - The partial progress to update.
+     */
+/*******  8bc4bf1f-fdf8-4837-9495-95e2ff4eefcd  *******/
     const updateProgress = async (p: Partial<UserProgress>) => {
         if (!user || !progress) return; //if no user or no progress, do nothing
         const newProgress = { ...progress, ...p }; //merge old progress with new partial progress； spread operator (...) to merge objects, if there are same keys, the latter will overwrite the former
@@ -54,27 +62,34 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
             level: number,
             stepId: number
         ) => {
-            if (!progress) return;
+            if (!user) return;
 
-            const newProgress = markStepCompleted(
-                progress,
-                path,
-                module,
-                level,
-                stepId
-            );
+                const baseProgress: UserProgress = progress ?? {
+                    currentPath: 'QGIS',
+                    currentModule: 'basic',
+                    currentLevel: 1,
+                    qgis: {
+                        basic: {
+                            level1: { completedSteps: [], currentStep: 1, testPassed: false }
+                        }
+                    },
+                    arcgis: {},
+                    achievements: [],
+                    lastUpdated: new Date().toISOString()
+                };
 
-            setProgress(newProgress);
+    const newProgress = markStepCompleted(baseProgress, path, module, level, stepId);
+    setProgress(newProgress);
+    await saveRemoteProgress(user.id, newProgress);
+};
 
-            if (user) {
-                await saveRemoteProgress(user.id, newProgress);
-            }
-        };
+
     return (
         <ProgressContext.Provider value={{ progress, updateProgress, completeStep }}>
             {children}
         </ProgressContext.Provider>
     );
 }
+
 
 export const useProgress = () => useContext(ProgressContext);   
