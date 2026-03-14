@@ -1,6 +1,6 @@
 # GIS Expressions Camp 🗺️  
 **Learn, practice, and master QGIS & ArcGIS expressions through interactive challenges.**  
-
+https://gisexpressioncodecamp.vercel.app/
 ---
 
 ## 🌍 Overview
@@ -18,7 +18,6 @@ Whether you’re automating your map layouts, building dynamic labels, or creati
 - 🧮 **Interactive Editor:** Practice writing QGIS and ArcGIS expressions in a code-like environment.  
 - 🧠 **Guided Lessons:** Learn syntax, functions, and best practices step-by-step.  
 - 🗺️ **Use Cases:** Explore examples for field calculator, styling, dynamic labels, and layout automation.  
-- 💬 **Community Submissions:** Share your own expression snippets and solutions.  
 - 🧰 **Cross-Platform:** Designed for both QGIS and ArcGIS users.  
 
 ---
