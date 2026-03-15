@@ -138,6 +138,7 @@ const levels = [
                 const levelSteps = getStepsByLevel(level);
                 const levelCompleted = levelSteps.filter(s => completedSteps.includes(s.id)).length;
                 const isLevelFullyCompleted = levelCompleted === levelSteps.length;
+                const firstStepId = levelSteps[0].id;
 
                 return (
                 <div key={level} className="bg-white rounded-2xl shadow-lg p-8">
@@ -155,7 +156,6 @@ const levels = [
                     {/* Steps Grid */}
                     <div className="grid grid-cols-5 md:grid-cols-5 gap-6">
                     {levelSteps.map((step) => {
-                            const firstStepId = levelSteps[0].id;
                             const isCompleted = completedSteps.includes(step.id);
                             const levelLocked = level > 1 && !passedLevels.includes(level - 1);
                             const stepLocked = step.id > firstStepId && !completedSteps.includes(step.id - 1);
