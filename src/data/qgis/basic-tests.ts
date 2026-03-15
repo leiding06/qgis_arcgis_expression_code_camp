@@ -61,7 +61,7 @@ export interface TestQuestion {
             "\"city\" || ', ' || \"country\"",
             "\"city\"||', '||\"country\"",
             "\"city\" || ',' || ' ' || \"country\"",
-            "\"city\"||','||' '||\"country\""
+            "\"city\"||','||' '||\"country\"",
             ],
 
         },

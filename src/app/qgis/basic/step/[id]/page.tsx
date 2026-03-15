@@ -10,7 +10,43 @@ import { AttributeTable } from '@/components/AttributeTable';
 import { MODULE_LEVEL_SIZES } from '@/data/config';
 import { LevelCompleteModal } from '@/components/LevelCompleteModal';
 import { useProgress } from '@/components/Progress/ProgressProvider';
+//import  { ShowAnswer } from '@/components/ShowAnswer';
+// 删掉这行
+// import ShowAnswer from '@/components/ShowAnswer';
 
+// 在 ExercisePage 函数外面，文件顶部加：
+function ShowAnswer({ correctAnswers, wrongCount, threshold = 3 }: {
+    correctAnswers: (string | number)[];
+    wrongCount: number;
+    threshold?: number;
+}) {
+    const [showAnswer, setShowAnswer] = React.useState(false);
+    if (wrongCount < threshold) return null;
+    return (
+        <div className="mt-3">
+            {!showAnswer ? (
+                <button
+                    onClick={() => setShowAnswer(true)}
+                    className="w-full py-2 border border-dashed border-orange-400/60 text-orange-400 hover:bg-orange-400/10 rounded-lg text-sm font-medium transition-all duration-200"
+                >
+                    Show me Answer!
+                </button>
+            ) : (
+                <div className="p-4 bg-orange-950/40 border border-orange-400/30 rounded-lg">
+                    <p className="text-orange-300 text-xs font-semibold uppercase tracking-wide mb-2">
+                        One of the correct answer:
+                    </p>
+                    <code className="block text-orange-100 text-sm font-mono bg-black/30 px-3 py-2 rounded mb-2">
+                        {correctAnswers[0]}
+                    </code>
+                    {correctAnswers.length > 1 && (
+                        <p className="text-gray-500 text-xs">* Other valid answers exist</p>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+}
 export default function ExercisePage() {
     const router = useRouter();
     const params = useParams();
@@ -20,15 +56,16 @@ export default function ExercisePage() {
     const [showHints, setShowHints] = useState(false);
     const [hasSubmitted, setHasSubmitted] = useState(false); // New state to track if user has submitted
     const [showLevelComplete, setShowLevelComplete] = useState(false); // New state for level completion
-    const { user, loading } = useAuth();
+    const { user } = useAuth();
     const { completeStep } = useProgress();
-
+    const [wrongCount, setWrongCount] = useState(0);
     
     
 
     // Reset submission state on code change
     useEffect(() => {
             setHasSubmitted(false);
+
         }, [userCode]);
 
     // Keyboard shortcuts
@@ -51,6 +88,7 @@ export default function ExercisePage() {
             return () => window.removeEventListener('keydown', handleKeyPress);
         // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [userCode, hasSubmitted, showFeedback]);
+    
 
     
     // Find current step
@@ -97,8 +135,6 @@ export default function ExercisePage() {
 
 
     const handleSubmit = async () => {
-            console.log("user:", user);
-            console.log("loading:", loading); 
 
         if (!user) {
             alert("Please login to save your progress.");
@@ -109,7 +145,7 @@ export default function ExercisePage() {
         setHasSubmitted(true); // Mark that user has submitted
 
         if (isCorrect) {
-            
+            setWrongCount(0); // Reset wrong count when user starts editing again
 
             await completeStep('QGIS', 'basic', currentStep.level, stepId);
 
@@ -130,6 +166,7 @@ export default function ExercisePage() {
 
         } else {
             setShowHints(true);
+            setWrongCount(prev => prev + 1);
         }
         };
     
@@ -352,6 +389,11 @@ export default function ExercisePage() {
                         {text.submit}
                     </button>
                     )}
+                    <ShowAnswer
+                        correctAnswers={currentStep.correctAnswers}
+                        wrongCount={wrongCount}
+                        threshold={3} // Show "Show Answer" button after 3 wrong attempts
+                    />  
 
                     {/* Feedback Display */}
                     {showFeedback && (
