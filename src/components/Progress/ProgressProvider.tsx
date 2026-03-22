@@ -67,7 +67,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
             if (!user) return;
 
                 const baseProgress: UserProgress = progress ?? {
-                    currentPath: 'QGIS',
+                    currentPath: path === 'QGIS' ? 'QGIS' : 'ArcGIS',
                     currentModule: 'basic',
                     currentLevel: 1,
                     qgis: {
@@ -99,7 +99,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
 
                 if (passed) {
                     const baseProgress: UserProgress = progress ?? {
-                        currentPath: 'QGIS',
+                        currentPath: path === 'QGIS' ? 'QGIS' : 'ArcGIS',
                         currentModule: module,
                         currentLevel: level,
                         qgis: {},
